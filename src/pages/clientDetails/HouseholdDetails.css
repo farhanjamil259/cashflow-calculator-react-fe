@@ -1,0 +1,68 @@
+.ant-table-tbody > tr > td {
+    border-bottom: 0px solid #f0f0f0;
+}
+
+table tbody tr td a span svg {
+    opacity: 10%;
+}
+
+table tbody tr:hover td a span svg {
+    opacity: 100%;
+}
+
+.cashflow-heeding{
+    margin:0px !important;
+    font-weight: bold !important;
+    padding-bottom: 20px;
+    font-size: 60px !important;
+}
+.income-heading{
+    display: inline-block;
+    width: 100%;
+    color: #66bb6a;
+}
+.income-amount{
+    display: inline-block;
+    width: 100%;
+    color: #66bb6a;
+    font-size: 24px;
+    font-weight: bold;
+}
+.expense-heading{
+    display: inline-block;
+    width: 100%;
+    color: #ef5350;
+}
+.expense-amount{
+    display: inline-block;
+    width: 100%;
+    color: #ef5350;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.asset-heading{
+    display: inline-block;
+    width: 100%;
+    color: #42a5f5;
+}
+.asset-amount{
+    display: inline-block;
+    width: 100%;
+    color: #42a5f5;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.liability-heading{
+    display: inline-block;
+    width: 100%;
+    color: #7e57c2;
+}
+.liability-amount{
+    display: inline-block;
+    width: 100%;
+    color: #7e57c2;
+    font-size: 24px;
+    font-weight: bold;
+}
