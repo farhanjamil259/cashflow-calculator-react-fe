@@ -1,149 +1,56 @@
-import {renderToStaticMarkup} from "react-dom/server";
-import {ReactElement} from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { ReactElement } from "react";
 
-export function encodeSvg(reactElement: ReactElement) {
-    return `url(data:image/svg+xml,${escape(renderToStaticMarkup(reactElement))})`;
+const borderColor = "black";
+const backgroundColor = "";
+const iconColor = "white";
+
+function encodeSvg(reactElement: ReactElement) {
+  return `url(data:image/svg+xml,${escape(renderToStaticMarkup(reactElement))})`;
 }
 
-export  const startIcon = encodeSvg(
+function CommonIcon(props: any) {
+  const path = props.path;
+  const path2 = props.path2;
+  return (
     <svg
-        style={{ backgroundColor: "red", color: "black" }}
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-        focusable="false"
-        width="50"
-        height="50"
-        preserveAspectRatio="xMidYMid meet"
-        viewBox="0 0 24 24"
+      id="myID"
+      style={{ color: iconColor, height: "100px" }}
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      focusable="false"
+      preserveAspectRatio="xMidYMid meet"
+      viewBox="0 0 20 20"
     >
-        <rect
-            width="24"
-            height="24"
-            fill="rgba(0, 0, 0, 0)"
-            style={{ strokeWidth: "1", stroke: "rgb(0,0,0)" }}
-        />
-        <path
-            d="M5 5.274c0-1.707 1.826-2.792 3.325-1.977l12.362 6.726c1.566.853 1.566 3.101 0 3.953L8.325 20.702C6.826 21.518 5 20.432 5 18.726V5.274z"
-            fill="currentColor"
-        />
-     </svg>
-)
-export  const endIcon = encodeSvg(
-    <svg
-        style={{ backgroundColor: "red", color: "black" }}
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-        focusable="false"
-        width="50"
-        height="50"
-        preserveAspectRatio="xMidYMid meet"
-        viewBox="0 0 24 24"
-    >
-        <rect
-            width="24"
-            height="24"
-            fill="rgba(0, 0, 0, 0)"
-            style={{ strokeWidth: "1", stroke: "rgb(0,0,0)" }}
-        />
-        <path
-            d="M4.75 3A1.75 1.75 0 0 0 3 4.75v14.5c0 .966.784 1.75 1.75 1.75h14.5A1.75 1.75 0 0 0 21 19.25V4.75A1.75 1.75 0 0 0 19.25 3H4.75z"
-            fill="currentColor"
-        />
-     </svg>
-)
+      <rect width="20" height="20" rx="5" ry="5" fill="#81d4fa" />
+      <path d={path} fill="currentColor" />
+      <path d={path2} fill="currentColor" />
+    </svg>
+  );
+}
 
-export  const bottleIcon = encodeSvg(
-    <svg
-        style={{ backgroundColor: "red", color: "black" }}
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-        focusable="false"
-        width="50"
-        height="50"
-        preserveAspectRatio="xMidYMid meet"
-        viewBox="0 0 24 24"
-    >
-        <rect
-            width="24"
-            height="24"
-            fill="rgba(0, 0, 0, 0)"
-            style={{ strokeWidth: "1", stroke: "rgb(0,0,0)" }}
-        />
-        <path
-            d="M11.28 2.8l-.5.5a5.5 5.5 0 0 0-4.37-.43l-.08-.07A2.5 2.5 0 0 0 2.8 6.33l.07.08a5.5 5.5 0 0 0 .43 4.37l-.5.5a1.5 1.5 0 0 0 0 2.12l1.41 1.42a1.5 1.5 0 0 0 2.12 0l.35-.36l7.08 7.07a1.5 1.5 0 0 0 2.12 0l5.65-5.65a1.5 1.5 0 0 0 0-2.12l-7.07-7.08l.36-.35a1.5 1.5 0 0 0 0-2.12L13.4 2.8a1.5 1.5 0 0 0-2.12 0m2.48 2.47l-8.49 8.49l-1.41-1.42l8.48-8.48m2.48 7.77l-3.19 3.19l-1.06-1.06l3.19-3.19m3.18 3.19l-3.18 3.18l-1.07-1.06l3.19-3.19z"
-            fill="currentColor"
-        />
-     </svg>
-)
+export const startIcon = encodeSvg(
+  <CommonIcon path="M17.22 8.687a1.498 1.498 0 0 1 0 2.626l-9.997 5.499A1.5 1.5 0 0 1 5 15.499V4.501a1.5 1.5 0 0 1 2.223-1.313l9.997 5.499zm-.482 1.75a.5.5 0 0 0 0-.875L6.741 4.063A.5.5 0 0 0 6 4.501v10.998a.5.5 0 0 0 .741.438l9.997-5.5z" />
+);
+export const endIcon = encodeSvg(
+  <CommonIcon path="M15.5 4a.5.5 0 0 1 .5.5v11a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5h11zm-11-1A1.5 1.5 0 0 0 3 4.5v11A1.5 1.5 0 0 0 4.5 17h11a1.5 1.5 0 0 0 1.5-1.5v-11A1.5 1.5 0 0 0 15.5 3h-11z" />
+);
 
-export  const umbrellaIcon = encodeSvg(
-    <svg
-        style={{ backgroundColor: "red", color: "black" }}
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-        focusable="false"
-        width="50"
-        height="50"
-        preserveAspectRatio="xMidYMid meet"
-        viewBox="0 0 64 64"
-    >
-        <rect
-            width="64"
-            height="64"
-            fill="rgba(0, 0, 0, 0)"
-            style={{ strokeWidth: "1", stroke: "rgb(0,0,0)" }}
-        />
-        <path
-            d="M32.938 6.708v-3.77a.937.937 0 1 0-1.876 0v3.77C16.781 7.126 4.957 17.053 2 30.229A9.675 9.675 0 0 1 8.963 27.3a9.654 9.654 0 0 1 7.68 3.763a9.647 9.647 0 0 1 7.678-3.763c2.637 0 5.01 1.05 6.742 2.729v18.846h-.938V54.5a3.755 3.755 0 0 1-3.75 3.75a3.756 3.756 0 0 1-3.75-3.75a1.874 1.874 0 1 0-3.75 0c0 4.136 3.365 7.5 7.5 7.5c4.137 0 7.5-3.364 7.5-7.5v-5.625h-.938V30.029a9.652 9.652 0 0 1 6.742-2.729a9.652 9.652 0 0 1 7.68 3.763a9.65 9.65 0 0 1 7.68-3.763A9.67 9.67 0 0 1 62 30.229C59.045 17.053 47.221 7.126 32.938 6.708"
-            fill="currentColor"
-        />
-     </svg>
-)
+export const bottleIcon = encodeSvg(
+  <CommonIcon
+    path="M10.002 4.43a.5.5 0 0 1 .566-.425a2.86 2.86 0 0 1 2.424 2.421a.5.5 0 0 1-.99.143a1.86 1.86 0 0 0-1.575-1.574a.5.5 0 0 1-.425-.565z"
+    path2="M5 7a5 5 0 0 1 10 0a8.313 8.313 0 0 1-1.598 4.859c-.791 1.074-1.837 1.892-2.902 2.093V14a1 1 0 0 0 1 1H14a2 2 0 0 1 2 2v.5a.5.5 0 0 1-1 0V17a1 1 0 0 0-1-1h-2.5a2 2 0 0 1-2-2v-.048c-1.065-.2-2.11-1.017-2.902-2.091A8.311 8.311 0 0 1 5 7zm5-4a4 4 0 0 0-4 4c0 1.637.585 3.16 1.402 4.268C8.237 12.399 9.232 13 10 13c.768 0 1.763-.602 2.598-1.734A7.313 7.313 0 0 0 14 7a4 4 0 0 0-4-4z"
+  />
+);
 
-export  const bookIcon = encodeSvg(
-    <svg
-        style={{ backgroundColor: "red", color: "black" }}
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-        focusable="false"
-        width="50"
-        height="50"
-        preserveAspectRatio="xMidYMid meet"
-        viewBox="0 0 24 24"
-    >
-        <rect
-            width="24"
-            height="24"
-            fill="rgba(0, 0, 0, 0)"
-            style={{ strokeWidth: "1", stroke: "rgb(0,0,0)" }}
-        />
-        <path
-            d="M19 2l-5 4.5v11l5-4.5V2M6.5 5C4.55 5 2.45 5.4 1 6.5v14.66c0 .25.25.5.5.5c.1 0 .15-.07.25-.07c1.35-.65 3.3-1.09 4.75-1.09c1.95 0 4.05.4 5.5 1.5c1.35-.85 3.8-1.5 5.5-1.5c1.65 0 3.35.31 4.75 1.06c.1.05.15.03.25.03c.25 0 .5-.25.5-.5V6.5c-.6-.45-1.25-.75-2-1V19c-1.1-.35-2.3-.5-3.5-.5c-1.7 0-4.15.65-5.5 1.5V6.5C10.55 5.4 8.45 5 6.5 5z"
-            fill="currentColor"
-        />
-     </svg>
-)
+export const umbrellaIcon = encodeSvg(
+  <CommonIcon path="M8.263 4.608a5.214 5.214 0 0 1 9.032 5.214l-.197.34a.5.5 0 0 1-.683.183l-3.465-2l-1.931 3.38c1.34.407 2.492 1.331 3.315 2.528a1.499 1.499 0 0 0-1.01.307c-.96-1.254-2.336-2.06-3.824-2.06s-2.864.806-3.824 2.06a1.498 1.498 0 0 0-1.01-.307C5.786 12.625 7.513 11.5 9.5 11.5c.163 0 .324.008.483.022l2.101-3.677L8.25 5.63a.5.5 0 0 1-.183-.683l.196-.34zm.921.408l1.703.983a.596.596 0 0 1 .011-.017c.536-.741 1.04-1.31 1.699-1.808a9.21 9.21 0 0 1 1.574-.938a4.216 4.216 0 0 0-4.987 1.78zm4.82 2.782c.465-.816.688-1.46.766-2.085c.063-.503.035-1.016-.059-1.627c-.629.299-1.106.579-1.51.885c-.536.406-.963.873-1.444 1.53l2.247 1.297zm.866.5l1.611.93a4.216 4.216 0 0 0-.742-5.014c.071.56.09 1.088.023 1.623c-.099.791-.38 1.563-.892 2.461zm-9.632 7.295a.5.5 0 0 0-.96.038c-.17.695-.492 1.076-.859 1.297c-.384.232-.873.322-1.419.322a.5.5 0 0 0 0 1c.638 0 1.333-.102 1.936-.465a2.66 2.66 0 0 0 .884-.873c1.193 1.521 3.522 1.514 4.68-.016c1.177 1.554 3.56 1.537 4.735-.057A3.46 3.46 0 0 0 17 18.25a.5.5 0 0 0 0-1c-.983 0-1.963-.64-2.287-1.652a.5.5 0 0 0-.95-.005c-.643 1.939-3.16 1.914-3.79.08a.5.5 0 0 0-.946 0c-.63 1.834-3.147 1.859-3.79-.08z" />
+);
 
-export  const hatIcon = encodeSvg(
-    <svg
-        style={{ backgroundColor: "red", color: "black" }}
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-        focusable="false"
-        width="50"
-        height="50"
-        preserveAspectRatio="xMidYMid meet"
-        viewBox="0 0 24 24"
-    >
-        <rect
-            width="24"
-            height="24"
-            fill="rgba(0, 0, 0, 0)"
-            style={{ strokeWidth: "1", stroke: "rgb(0,0,0)" }}
-        />
-        <path
-            d="M5 17.75v-3.766l4.06 2.653a5.375 5.375 0 0 0 5.88 0L19 13.984v3.766a.75.75 0 0 1-.15.45l-.001.001l-.001.002l-.003.004l-.009.01l-.012.016l-.013.017l-.086.101a5.325 5.325 0 0 1-.317.33c-.277.267-.69.614-1.25.958C16.037 20.329 14.339 21 12 21c-2.339 0-4.036-.67-5.159-1.361a7.433 7.433 0 0 1-1.25-.957a5.313 5.313 0 0 1-.427-.464l-.009-.01l-.003-.005v-.002A.755.755 0 0 1 5 17.75z" fill="#626262"/><path d="M22.16 10.128l-8.04 5.253a3.875 3.875 0 0 1-4.24 0L3 10.886v5.364a.75.75 0 0 1-1.5 0V10c0-.088.015-.172.043-.25a.75.75 0 0 1 .302-.881l8.064-5.17a3.875 3.875 0 0 1 4.182 0l8.064 5.17a.75.75 0 0 1 .005 1.259z"
-            fill="currentColor"
-        />
-     </svg>
-)
+export const bookIcon = encodeSvg(
+  <CommonIcon path="M10 16c-.456.607-1.182 1-2 1H3.5A1.5 1.5 0 0 1 2 15.5v-11A1.5 1.5 0 0 1 3.5 3H8c.818 0 1.544.393 2 1c.456-.607 1.182-1 2-1h4.5A1.5 1.5 0 0 1 18 4.5v11a1.5 1.5 0 0 1-1.5 1.5H12a2.496 2.496 0 0 1-2-1zM3 4.5v11a.5.5 0 0 0 .5.5H8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 8 4H3.5a.5.5 0 0 0-.5.5zm7.5 10A1.5 1.5 0 0 0 12 16h4.5a.5.5 0 0 0 .5-.5v-11a.5.5 0 0 0-.5-.5H12a1.5 1.5 0 0 0-1.5 1.5v9z" />
+);
+
+export const hatIcon = encodeSvg(
+  <CommonIcon path="M8.506 3.401a3 3 0 0 1 2.988 0l7.255 4.166a.5.5 0 0 1 0 .867L16 10.012V14.5a.5.5 0 0 1-.146.354l-.002.001l-.002.003l-.007.006l-.023.022l-.08.074c-.07.061-.17.147-.301.248a8.104 8.104 0 0 1-1.141.733A9.092 9.092 0 0 1 10 17.001a9.092 9.092 0 0 1-4.298-1.06a8.1 8.1 0 0 1-1.14-.733a5.832 5.832 0 0 1-.382-.322A.532.532 0 0 1 4 14.5v-4.488L2 8.864V13.5a.5.5 0 1 1-1 0V8a.5.5 0 0 1 .26-.439l7.246-4.16zm2.988 9.198a3 3 0 0 1-2.988 0L5 10.586v3.691a7.11 7.11 0 0 0 1.173.782c.88.47 2.175.941 3.827.941a8.093 8.093 0 0 0 3.827-.94A7.106 7.106 0 0 0 15 14.276v-3.69l-3.506 2.012zm-.498-8.33a2 2 0 0 0-1.992 0L2.504 8l6.5 3.732a2 2 0 0 0 1.992 0L17.496 8l-6.5-3.732z" />
+);
