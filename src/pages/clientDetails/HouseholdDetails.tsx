@@ -278,8 +278,8 @@ const HouseholdDetails = () => {
             align: "right",
             verticalAlign: "middle",
             layout: "vertical",
-            x: -100,
-            y: 0,
+            width: "50%"
+
         },
         colors: ["#0288d1", "#039be5", "#03a9f4", "#29b6f6"],
         series: [
@@ -366,13 +366,13 @@ const HouseholdDetails = () => {
             align: "right",
             verticalAlign: "middle",
             layout: "vertical",
-            x: -170,
-            y: 0,
+            width: "50%"
+
         },
         colors: ["#ab47bc", "#ba68c8", "#ce93d8"],
         series: [
             {
-                name: "Assets",
+                name: "Liabilities",
                 colorByPoint: true,
                 type: "pie",
                 innerSize: "70%",
@@ -421,8 +421,7 @@ const HouseholdDetails = () => {
             align: "right",
             verticalAlign: "middle",
             layout: "vertical",
-            x: -100,
-            y: 0,
+            width: "50%"
         },
         colors: [
             "#388e3c",
@@ -435,7 +434,7 @@ const HouseholdDetails = () => {
         ],
         series: [
             {
-                name: "Assets",
+                name: "Income",
                 colorByPoint: true,
                 type: "pie",
                 innerSize: "70%",
@@ -604,8 +603,7 @@ const HouseholdDetails = () => {
             align: "right",
             verticalAlign: "top",
             layout: "vertical",
-            x: -170,
-            y: 0,
+            width: "50%"
         },
         colors:[
             "#c62828",
@@ -620,7 +618,7 @@ const HouseholdDetails = () => {
 
         series: [
             {
-                name: "Assets",
+                name: "Expense",
                 colorByPoint: true,
                 type: "pie",
                 innerSize: "70%",
@@ -831,7 +829,7 @@ const HouseholdDetails = () => {
                                                         </Title>
                                                     </Row>
                                                     <Row justify="start">
-                                                        <Col span={9}>
+                                                        <Col span={12}>
                                                             <Row justify="space-around">
                                                                 <Text className="asset-heading"> Assets</Text>
 
@@ -840,7 +838,7 @@ const HouseholdDetails = () => {
                                                                 </Text>
                                                             </Row>
                                                         </Col>
-                                                        <Col span={9}>
+                                                        <Col span={12}>
                                                             <Row justify="space-around">
                                                                 <Text  className="liability-heading"> Liabilities</Text>
                                                                 <Text className="liability-amount">
@@ -892,7 +890,7 @@ const HouseholdDetails = () => {
                                                         </Title>
                                                     </Row>
                                                     <Row justify="start">
-                                                        <Col span={9}>
+                                                        <Col span={12}>
                                                             <Row justify="space-around">
                                                                 <Text className="income-heading"> Income</Text>
 
@@ -901,7 +899,7 @@ const HouseholdDetails = () => {
                                                                 </Text>
                                                             </Row>
                                                         </Col>
-                                                        <Col span={9}>
+                                                        <Col span={12}>
                                                             <Row justify="space-around">
                                                                 <Text  className="expense-heading"> Expenses</Text>
                                                                 <Text className="expense-amount">

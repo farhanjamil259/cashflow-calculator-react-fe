@@ -1,6 +1,6 @@
 export const apiRoute = "http://localhost:4000/";
 // export const apiRoute = "http://192.168.0.100:4000/";
-// export const apiRoute = "https://azimus.herokuapp.com/";
+// export const apiRoute = "https://azimusv2.herokuapp.com/";
 
 //auth routes
 export const loginRoute = `${apiRoute}api/auth/login/`;
