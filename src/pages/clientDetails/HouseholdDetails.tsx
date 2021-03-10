@@ -443,7 +443,6 @@ const HouseholdDetails = () => {
                         name: "Employment Income",
                         y: inputs.household_income.employment_income.reduce(
                             (sum: any, p: any) => {
-                                console.log(p);
                                 if (
                                     inputs.current_year <= p.end_year &&
                                     inputs.current_year >= p.start_year
@@ -460,7 +459,6 @@ const HouseholdDetails = () => {
                         name: "Self Employment Income",
                         y: inputs.household_income.self_employment_income.reduce(
                             (sum: any, p: any) => {
-                                console.log(p);
                                 if (
                                     inputs.current_year <= p.end_year &&
                                     inputs.current_year >= p.start_year
@@ -488,7 +486,6 @@ const HouseholdDetails = () => {
                         name: "Dividend Income",
                         y: inputs.household_income.dividend_income.reduce(
                             (sum: any, p: any) => {
-                                console.log(p);
                                 if (
                                     inputs.current_year <= p.end_year &&
                                     inputs.current_year >= p.start_year

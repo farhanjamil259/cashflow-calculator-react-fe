@@ -86,7 +86,7 @@ const Cashflow = () => {
       },
       categories: [
         ...summary.map((s, i) => {
-          return `${s.year} <br> ${s.ages.owner_ages[0].age}<br>${s.ages.owner_ages[1].age}`;
+          return `<b>${s.year}</b> <br> ${s.ages.owner_ages[0].age}<br>${s.ages.owner_ages[1].age}`;
         }),
       ],
       min: 0,

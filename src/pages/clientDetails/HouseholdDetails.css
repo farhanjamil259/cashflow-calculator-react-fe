@@ -67,3 +67,8 @@ table tbody tr:hover td a span svg {
     font-size: 24px;
     font-weight: bold;
 }
+
+/*.highcharts-point:hover {*/
+/*    width: 70px;*/
+/*    height: 70px;*/
+/*}*/

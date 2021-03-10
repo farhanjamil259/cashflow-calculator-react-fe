@@ -169,6 +169,12 @@ function LifeMilestones() {
     },
     plotOptions: {
       series: {
+        events: {
+          mouseOver: function () {
+            var chart = this.chart;
+            // console.log(chart.series)
+          }
+        },
         dataGrouping: {
           enabled: true,
         },
