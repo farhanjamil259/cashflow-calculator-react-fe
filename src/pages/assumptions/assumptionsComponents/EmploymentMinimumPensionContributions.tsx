@@ -7,6 +7,8 @@ import { RootStateOrAny, useSelector } from "react-redux";
 import CurrencyFormat from "react-currency-format";
 import { Fragment } from "react";
 import {firstColumnWidth, secondColumnWidth, thirdColumnWidth} from "../AssumptionsCommonVariable";
+import {pound} from "../../../components/currencySumbol";
+import {numberFormat} from "highcharts";
 
 const { Text } = Typography;
 
@@ -25,17 +27,11 @@ const EmploymentMinimumPensionContributions = () => {
             title: "Member's",
             dataIndex: "allowance",
             width: secondColumnWidth,
+            align: "right" as "right",
             render: (text: any, record: any) => {
                 return (
                     <Text>
-                        {" "}
-                        <CurrencyFormat
-                            value={text * 100}
-                            displayType={"text"}
-                            decimalScale={2}
-                            thousandSeparator={true}
-                            suffix={"%"}
-                        />
+                        {pound} {numberFormat(text, 0, ".", ",")}
                     </Text>
                 );
             },
@@ -44,6 +40,7 @@ const EmploymentMinimumPensionContributions = () => {
             title: "Employer's",
             dataIndex: "rate",
             width: thirdColumnWidth,
+            align: "right" as "right",
             render: (text: any, record: any) => {
                 return (
                     <Text>

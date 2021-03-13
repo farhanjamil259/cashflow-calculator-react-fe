@@ -12,6 +12,8 @@ const Loading = () => {
         const getAsm = async () => {
             await dispatch(getAssumptionsAction())
 
+
+
         }
         getAsm().then(()=>history.push(loginFormRoute)).catch(err=>console.log(err));
     }, [dispatch, history])

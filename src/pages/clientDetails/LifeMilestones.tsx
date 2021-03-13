@@ -125,6 +125,8 @@ function LifeMilestones() {
     }),
   ];
 
+
+
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     chart: {
       height: 300,
@@ -142,7 +144,7 @@ function LifeMilestones() {
     xAxis: {
       categories: [
         ...summary.map((s, i) => {
-          return `${s.year} <br> ${s.ages.owner_ages[0].age <= 100 ? s.ages.owner_ages[0].age : "-"}<br>${
+          return `<b>${s.year}</b> <br> ${s.ages.owner_ages[0].age <= 100 ? s.ages.owner_ages[0].age : "-"}<br>${
             s.ages.owner_ages[1].age <= 100 ? s.ages.owner_ages[1].age : "-"
           }`;
         }),
@@ -285,7 +287,9 @@ function LifeMilestones() {
     },
   ];
 
-  const dataEvent = lifeEvents;
+  const dataEvent = lifeEvents.sort((a: IEvents, b:IEvents)=>{
+    return a.year > b.year ? 1: -1
+  });
 
   const [form] = Form.useForm();
   const { Option } = Select;

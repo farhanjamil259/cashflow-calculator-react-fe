@@ -25,6 +25,8 @@ const MarketData = () => {
             title: "Notes",
             dataIndex: "threshold",
             width: secondColumnWidth,
+
+            align: "right" as "right",
             render: (text: any, record: any) => {
                 return (
                     <Text>
@@ -37,6 +39,7 @@ const MarketData = () => {
             title: "Rate",
             dataIndex: "rate",
             width: thirdColumnWidth,
+            align: "right" as "right",
             render: (text: any, record: any) => {
                 return (
                     <Text>

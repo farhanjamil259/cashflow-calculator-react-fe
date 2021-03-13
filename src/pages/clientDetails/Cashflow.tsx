@@ -239,7 +239,7 @@ const Cashflow = () => {
     },
     series: [
       {
-        name: "Surplus",
+        name: "Shortfall",
         type: "column",
         data: [
           ...summary.map((s) => {
@@ -566,12 +566,11 @@ const Cashflow = () => {
         <Row style={{ marginTop: "16px" }}>
           <Col span={24}>
             <Tabs
-              centered
               size="large"
               type="card"
               animated={true}
               tabBarExtraContent={{
-                left: (
+                right: (
                   <Title level={4}>
                     <a href={"#!"}  onClick={() => {
                       if (selectedSummaryAtIndexNumber > 0){

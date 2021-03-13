@@ -1,5 +1,5 @@
 
 
-export const firstColumnWidth = "40%";
+export const firstColumnWidth = "50%";
 export const secondColumnWidth = "30%";
-export const thirdColumnWidth = "10%";
+export const thirdColumnWidth = "20%";

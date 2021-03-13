@@ -7,6 +7,8 @@ import { RootStateOrAny, useSelector } from "react-redux";
 import CurrencyFormat from "react-currency-format";
 import { Fragment } from "react";
 import {firstColumnWidth, secondColumnWidth, thirdColumnWidth} from "../AssumptionsCommonVariable";
+import {pound} from "../../../components/currencySumbol";
+import {numberFormat} from "highcharts";
 
 const { Text } = Typography;
 
@@ -26,15 +28,11 @@ const IncomeLimits2 = () => {
             title: "Threshold",
             dataIndex: "threshold",
             width: secondColumnWidth,
+            align: "right" as "right",
             render: (text: any, record: any) => {
                 return (
                     <Text>
-                        <CurrencyFormat
-                            value={text}
-                            displayType={"text"}
-                            thousandSeparator={true}
-                            prefix={"£ "}
-                        />
+                        {pound} {numberFormat(text, 0, ".", ",")}
                     </Text>
                 );
             },
