@@ -10,6 +10,9 @@ import { assumptionReducer } from "./assumptions/assumptions";
 import { inputsReducer, currentInputSetReducer } from "./inputs/inputs";
 import { activeClientReducer, clientsReducer } from "./clients/client";
 import { summaryReducer } from "./summary/summary";
+import { realSummaryReducer } from "./summary/realSummary";
+
+
 const rootReducers = combineReducers({
   userReducer,
   loadingReducer,
@@ -19,6 +22,7 @@ const rootReducers = combineReducers({
   currentInputSetReducer,
   summaryReducer,
   activeClientReducer,
+  realSummaryReducer
 });
 
 //store

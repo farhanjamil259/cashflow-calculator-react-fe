@@ -1,11 +1,11 @@
 import React, {useState} from "react";
 import {Card, Col, Row, Typography, Input, Button, Modal} from "antd";
-import {HomeFilled, SmileFilled} from "@ant-design/icons";
+import { SmileFilled} from "@ant-design/icons";
 import Layout from "antd/lib/layout/layout";
 import {Table, Space} from "antd";
 import {RootStateOrAny, useDispatch, useSelector} from "react-redux";
-import {Link, useHistory} from "react-router-dom";
-import {inputSetDetailsRoute, inputsFormRoute} from "../../routes/navRoutes";
+import { useHistory} from "react-router-dom";
+import { inputsFormRoute} from "../../routes/navRoutes";
 import {GetInputsAction, setCurrentInputSetAction} from "../../redux/inputs/inputs";
 import axios from "axios";
 import {AlertAction} from "../../redux/general/alert";
@@ -14,7 +14,9 @@ import dummyInputs from "../inputs/data/dummyInputs";
 import {IInputs} from "../../interfaces/ISubInputs";
 import {inputsRoute, summaryRoute} from "../../routes/apiRoutes";
 import {setSummaryAction} from "../../redux/summary/summary";
-import {setActiveClientAction} from "../../redux/clients/client";
+import CalcRealSummary from "../../helpers/calcRealSummary";
+import IAssumptions from "../../interfaces/IAssumptions";
+import {setRealSummaryAction} from "../../redux/summary/realSummary";
 
 const {Text, Title} = Typography;
 const {TextArea} = Input;
@@ -89,6 +91,8 @@ const ClientDashboard = () => {
 
         }
     });
+
+    const assumptions : IAssumptions = useSelector((state: RootStateOrAny) => state.assumptionReducer)
 
     return (
         <Layout className="layout" style={{background: "white"}}>
@@ -184,6 +188,9 @@ const ClientDashboard = () => {
                                         dispatch(setCurrentInputSetAction(inputs[record.key]))
                                         const res = await axios.get(summaryRoute + inputs[0]._id)
                                         await dispatch(setSummaryAction(res.data))
+                                        await dispatch(setRealSummaryAction(CalcRealSummary(res.data, assumptions)))
+
+
 
                                         history.push("/dashboard/clientDashboard/clientPlanDetails")
                                     }
