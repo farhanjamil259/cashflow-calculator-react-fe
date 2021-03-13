@@ -2,12 +2,10 @@ import React from "react";
 import Layout from "antd/lib/layout/layout";
 import {
     Card,
-    Popover,
     Button,
     Row,
     Col,
     Switch,
-    Typography,
     Slider,
 } from "antd";
 
@@ -18,24 +16,17 @@ import "rc-slider/assets/index.css";
 import {useState} from "react";
 import IForecastSummary from "../../interfaces/IForecastSummary";
 import {RootStateOrAny, useSelector} from "react-redux";
-import {
-    SettingFilled,
-} from "@ant-design/icons/lib/icons";
-import YearBreakdownTabs from "../../components/YearBreakdownTabs";
 
-const {Text} = Typography;
+import YearBreakdownTabs from "../../components/YearBreakdownTabs";
 
 const Cashflow = () => {
     const nominalSummary: IForecastSummary[] = useSelector(
         (state: RootStateOrAny) => state.summaryReducer
     );
-
     const realSummary: IForecastSummary[] = useSelector(
         (state: RootStateOrAny) => state.realSummaryReducer
     );
-
     const [summary, setSummary] = useState<IForecastSummary[]>(nominalSummary);
-
     const [sliderValue, setSliderValue] = useState([
         summary[0].year,
         summary[summary.length - 1].year,
@@ -75,7 +66,9 @@ const Cashflow = () => {
             },
             categories: [
                 ...summary.map((s, i) => {
-                    return `<b>${s.year}</b> <br> ${s.ages.owner_ages[0].age}<br>${s.ages.owner_ages[1].age}`;
+                    return `<b>${s.year}</b> <br> ${s.ages.owner_ages[0].age <= 100 ? s.ages.owner_ages[0].age : "-"}<br>${
+                        s.ages.owner_ages[1].age <= 100 ? s.ages.owner_ages[1].age : "-"
+                    }`;
                 }),
             ],
             min: 0,
@@ -223,6 +216,7 @@ const Cashflow = () => {
                 },
             },
         },
+
         colors: [
             "#81d4fa",
             "#4fc3f7",
@@ -248,6 +242,7 @@ const Cashflow = () => {
                 color: "#d32f2f",
                 legendIndex: 9,
             },
+
             {
                 name: "Other",
                 type: "column",
@@ -257,6 +252,16 @@ const Cashflow = () => {
                     }),
                 ],
                 legendIndex: 7,
+            },
+            {
+                name: "Residential Property Sale Proceeds",
+                type: "column",
+                data: [
+                    ...summary.map((s) => {
+                        return s.income_analysis.total_residential_sale_proceeds;
+                    }),
+                ],
+                legendIndex: 6.5,
             },
             {
                 name: "Pension",
@@ -319,6 +324,7 @@ const Cashflow = () => {
                 ],
                 legendIndex: 1,
             },
+
             {
                 type: "line",
                 name: "Total Expenses",
@@ -400,6 +406,16 @@ const Cashflow = () => {
                                                     }),
                                                 ],
                                                 legendIndex: 7,
+                                            },
+                                            {
+                                                name: "Residential Property Sale Proceeds",
+                                                type: "column",
+                                                data: [
+                                                    ...summary.map((s) => {
+                                                        return s.income_analysis.total_residential_sale_proceeds;
+                                                    }),
+                                                ],
+                                                legendIndex: 6.5,
                                             },
                                             {
                                                 name: "Pension",
@@ -511,6 +527,16 @@ const Cashflow = () => {
                                                     }),
                                                 ],
                                                 legendIndex: 7,
+                                            },
+                                            {
+                                                name: "Residential Property Sale Proceeds",
+                                                type: "column",
+                                                data: [
+                                                    ...summary.map((s) => {
+                                                        return s.income_analysis.total_residential_sale_proceeds;
+                                                    }),
+                                                ],
+                                                legendIndex: 6.5,
                                             },
                                             {
                                                 name: "Pension",

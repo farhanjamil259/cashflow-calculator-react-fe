@@ -78,18 +78,6 @@ function LifeMilestones() {
 
     const lifeEvents: IEvents[] = [
         {
-            name: "Test",
-            year: inputs.current_year,
-            owner: "",
-            icon: startIcon(planColor),
-        },
-        {
-            name: "Test",
-            year: inputs.current_year,
-            owner: "",
-            icon: startIcon(planColor),
-        },
-        {
             name: "Plan Start",
             year: inputs.current_year,
             owner: "",
@@ -149,6 +137,33 @@ function LifeMilestones() {
         colors: ["#000"],
         credits: {
             enabled: false,
+        },
+        tooltip: {
+            useHTML: true,
+            backgroundColor: "white",
+            borderWidth: 0,
+            formatter: function () {
+                let tooltip_html = this.x.toString();
+                tooltip_html += "<table>";
+
+                this.points!.forEach(function (entry: any, index) {
+                    if (entry.y > 0) {
+
+                            tooltip_html +=
+                                '<tr><td style="font-weight:bold ">' +
+                                entry.series.name +
+                                "</td></tr>";
+
+                    }
+                });
+                tooltip_html += "</table>";
+
+                return tooltip_html;
+            },
+          headerFormat: '<small>{point.key}</small><table>',
+            shared: true,
+            headerShape: "square"
+
         },
         legend: {
             enabled: false,
@@ -279,9 +294,6 @@ function LifeMilestones() {
             }
         })
 
-
-
-
         setChartOptions(newClone);
     }, []);
 
@@ -342,8 +354,8 @@ function LifeMilestones() {
     return (
         <Layout style={{backgroundColor: "white"}}>
 
-            <Row>
-                <Col span={24}>
+            <Row justify="space-around">
+                <Col span={23}>
                     <HighchartsReact highcharts={Highcharts} options={chartOptions}/>
                 </Col>
             </Row>
