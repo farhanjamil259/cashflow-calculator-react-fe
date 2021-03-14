@@ -191,7 +191,7 @@ const IncomeBreakdown = () => {
 
     series: [
       {
-        name: "Residential Property Sale Proceeds",
+        name: "Property Sale",
         type: "column",
         visible: false,
         data: [
@@ -280,7 +280,7 @@ const IncomeBreakdown = () => {
   return (
     <Layout style={{ backgroundColor: "white" }}>
       <Card
-        title="Cashflow"
+        title="Income"
         style={{ margin: "16px" }}
         bordered={false}
         extra={
@@ -306,7 +306,7 @@ const IncomeBreakdown = () => {
                     ...incomeBreakdownOptions,
                     series: [
                       {
-                        name: "Residential Property Sale Proceeds",
+                        name: "Property Sale",
                         type: "column",
                         data: [
                           ...summary.map((s) => {
@@ -386,7 +386,7 @@ const IncomeBreakdown = () => {
                     ...incomeBreakdownOptions,
                     series: [
                       {
-                        name: "Residential Property Sale Proceeds",
+                        name: "Property Sale",
                         type: "column",
                         data: [
                           ...summary.map((s) => {

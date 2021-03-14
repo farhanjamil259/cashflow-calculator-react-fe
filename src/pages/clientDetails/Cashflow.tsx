@@ -143,7 +143,7 @@ const Cashflow = () => {
                 entry.series.color +
                 '">' +
                 entry.series.name +
-                ':</td><td style="text-align: right"> ' +
+                '</td><td style="text-align: right"> ' +
                 "£" +
                 numberFormat(entry.y, 0, ".", ",") +
                 "</td></tr>";
@@ -225,7 +225,7 @@ const Cashflow = () => {
         legendIndex: 7,
       },
       {
-        name: "Residential Property Sale Proceeds",
+        name: "Property Sale",
         visible: false,
         type: "column",
         data: [
@@ -338,7 +338,7 @@ const Cashflow = () => {
             <Switch
               style={{ marginRight: "16px" }}
               checkedChildren="Zoom"
-              unCheckedChildren="Static"
+              unCheckedChildren="Zoom"
               defaultChecked={false}
               onChange={(e) => {
                 setChartControls({ ...chartControls, zoomable: e });
@@ -377,7 +377,7 @@ const Cashflow = () => {
                         legendIndex: 7,
                       },
                       {
-                        name: "Residential Property Sale Proceeds",
+                        name: "Property Sale",
                         type: "column",
                         data: [
                           ...summary.map((s) => {
@@ -493,7 +493,7 @@ const Cashflow = () => {
                         legendIndex: 7,
                       },
                       {
-                        name: "Residential Property Sale Proceeds",
+                        name: "Property Sale",
                         type: "column",
                         data: [
                           ...summary.map((s) => {
@@ -643,8 +643,8 @@ const Cashflow = () => {
           </Row>
         )}
 
-        <Row justify="space-around">
-          <Col span={23}>
+        <Row >
+          <Col span={24}>
             <HighchartsReact
               highcharts={highcharts}
               options={cashFlowChartOptions}
@@ -653,6 +653,7 @@ const Cashflow = () => {
                 setSome(chart.yAxis[0].max);
               }}
             />
+
           </Col>
           {chartControls.zoomable && (
             <Col style={{ paddingBottom: "80px", paddingTop: "20px" }}>

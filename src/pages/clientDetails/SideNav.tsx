@@ -39,8 +39,8 @@ const SideNav = () => {
                     <Menu.Item key="6" >
                         <Link to={"/dashboard/clientDashboard/clientPlanDetails/expensesBreakdown"} onClick={() => setMenuKey(["6"])}>Expenses Breakdown</Link>
                     </Menu.Item>
-                    <Menu.Item key="7"  style={{ marginTop: "20px", backgroundColor: "#ef5350"}} >
-                        <Link to={"/dashboard/clientDashboard"} onClick={() => setMenuKey(["6"])} style={{color: "white"}}>Back to Client Dashboard</Link>
+                    <Menu.Item key="6" >
+                        <Link to={"/dashboard/clientDashboard"} onClick={() => setMenuKey(["7"])}>Client Dashboard</Link>
                     </Menu.Item>
 
                 </Menu>

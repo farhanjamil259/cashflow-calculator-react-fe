@@ -10,18 +10,18 @@ const dummyInputs: IInputs = {
   household_owners: [
     {
       id: uuid(),
-      name: "Mr Optimistic",
+      name: "Harry Myers",
       birth_year: 1989,
       retirement_age: 65,
     },
     {
       id: uuid(),
-      name: "Mrs Optimistic",
+      name: "Sarah Myers",
       birth_year: 1994,
       retirement_age: 50,
     },
   ],
-  children: [{ id: uuid(), name: "Optimistic Jr", birth_year: 2024 }],
+  children: [{ id: uuid(), name: "Colin Myers", birth_year: 2024 }],
   assets: {
     properties: [
       {

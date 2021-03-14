@@ -11,10 +11,12 @@ const {Text} = Typography
 const YearBreakdownTabs = (props: any) => {
     const selectedSummaryAtIndex = props.selectedSummaryAtIndex
 
+    const columnWidths = ["25%", "25%", "25%", "25%"]
+
     return <Tabs
         size="large"
         type="card"
-        animated={true}
+        animated={false}
         tabBarExtraContent={{
             right: (
                 <Title level={4}>
@@ -41,29 +43,51 @@ const YearBreakdownTabs = (props: any) => {
                         title: "Name",
                         dataIndex: "name",
                         key: "name",
+                        width: columnWidths[0]
                     },
                     {
                         title: "Category",
                         dataIndex: "category",
                         key: "category",
+                        width: columnWidths[1]
                     },
                     {
                         title: "Owner",
                         dataIndex: "owner",
                         key: "owner",
+                        width: columnWidths[2]
                     },
                     {
                         title: "Value",
                         dataIndex: "value",
                         key: "value",
                         align: "right",
+                        width: columnWidths[3]
                     },
                 ]}
                 dataSource={[
                     {
                         name: "Employment Income",
                         category: "Employment",
-                        owner: "Mr, Mrs",
+                        owner: <span>                <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            xmlnsXlink="http://www.w3.org/1999/xlink"
+                            aria-hidden="true"
+                            focusable="false"
+                            width="1em"
+                            height="1em"
+                            preserveAspectRatio="xMidYMid meet"
+                            viewBox="0 0 32 32"
+                        >
+                  <path
+                      d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z"
+                      fill="#a5d6a7"
+                  />
+                  <path
+                      d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z"
+                      fill="#a5d6a7"
+                  />
+                </svg> </span>,
                         value:
                             "£" +
                             numberFormat(
@@ -189,22 +213,26 @@ const YearBreakdownTabs = (props: any) => {
                         title: "Name",
                         dataIndex: "name",
                         key: "name",
+                        width: columnWidths[0]
                     },
                     {
                         title: "Category",
                         dataIndex: "category",
                         key: "category",
+                        width: columnWidths[1]
                     },
                     {
                         title: "Owner",
                         dataIndex: "owner",
                         key: "owner",
+                        width: columnWidths[2]
                     },
                     {
                         title: "Value",
                         dataIndex: "value",
                         key: "value",
                         align: "right",
+                        width: columnWidths[3]
                     },
                 ]}
                 dataSource={[
@@ -380,22 +408,26 @@ const YearBreakdownTabs = (props: any) => {
                         title: "Name",
                         dataIndex: "name",
                         key: "name",
+                        width: columnWidths[0]
                     },
                     {
                         title: "Category",
                         dataIndex: "category",
                         key: "category",
+                        width: columnWidths[1]
                     },
                     {
                         title: "Owner",
                         dataIndex: "owner",
                         key: "owner",
+                        width: columnWidths[2]
                     },
                     {
                         title: "Value",
                         dataIndex: "value",
                         key: "value",
                         align: "right",
+                        width: columnWidths[3]
                     },
                 ]}
                 dataSource={[
@@ -446,22 +478,26 @@ const YearBreakdownTabs = (props: any) => {
                         title: "Name",
                         dataIndex: "name",
                         key: "name",
+                        width: columnWidths[0]
                     },
                     {
                         title: "Category",
                         dataIndex: "category",
                         key: "category",
+                        width: columnWidths[1]
                     },
                     {
                         title: "Owner",
                         dataIndex: "owner",
                         key: "owner",
+                        width: columnWidths[2]
                     },
                     {
                         title: "Value",
                         dataIndex: "value",
                         key: "value",
                         align: "right",
+                        width: columnWidths[3]
                     },
                 ]}
                 dataSource={[
@@ -512,22 +548,26 @@ const YearBreakdownTabs = (props: any) => {
                         title: "Name",
                         dataIndex: "name",
                         key: "name",
+                        width: columnWidths[0]
                     },
                     {
                         title: "Category",
                         dataIndex: "category",
                         key: "category",
+                        width: columnWidths[1]
                     },
                     {
                         title: "Owner",
                         dataIndex: "owner",
                         key: "owner",
+                        width: columnWidths[2]
                     },
                     {
                         title: "Value",
                         dataIndex: "value",
                         key: "value",
                         align: "right",
+                        width: columnWidths[3],
                         render: (text: any) => {
                             return `£ ${numberFormat(text, 0, ".", ",")}`;
                         },
@@ -583,22 +623,26 @@ const YearBreakdownTabs = (props: any) => {
                         title: "Name",
                         dataIndex: "name",
                         key: "name",
+                        width: columnWidths[0]
                     },
                     {
                         title: "Category",
                         dataIndex: "category",
                         key: "category",
+                        width: columnWidths[1]
                     },
                     {
                         title: "Owner",
                         dataIndex: "owner",
                         key: "owner",
+                        width: columnWidths[2]
                     },
                     {
                         title: "Value",
                         dataIndex: "value",
                         key: "value",
                         align: "right",
+                        width: columnWidths[3],
                         render: (text: any) => {
                             return `£ ${numberFormat(text, 0, ".", ",")}`;
                         },

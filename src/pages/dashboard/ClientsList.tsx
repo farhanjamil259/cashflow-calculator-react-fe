@@ -49,13 +49,13 @@ const ClientsList = () => {
             title: "Created",
             dataIndex: "created",
             key: "created",
-            render: (date: any) => <>{moment(date).format("MMM DD, YYYY")}</>,
+            render: (date: any) => <>{moment(date).format("DD MMMM YYYY")}</>,
         },
         {
             title: "Modified",
             dataIndex: "modified",
             key: "modified",
-            render: (date: any) => <>{moment(date).format("MMM DD, YYYY")}</>,
+            render: (date: any) => <>{moment(date).format("DD MMMM YYYY")}</>,
         },
         {
             title: "Advisers",
@@ -254,15 +254,18 @@ const ClientsList = () => {
                 onCancel={handleCancel}
             >
                 <p>
-                    <strong>Name: </strong> {activeClientId.na}
+                    <strong>Client: </strong> {activeClientId.name}
+                </p>
+                <p>
+                    <strong>Adviser: </strong> {user.name}
                 </p>
                 <p>
                     <strong>Created: </strong>
-                    {activeClientId.advisor} {moment(activeClientId.created).format("DD MMM, YYYY")}
+                   {moment(activeClientId.created).format("DD MMMM YYYY")}
                 </p>
                 <p>
                     <strong>Last Modified: </strong>
-                    {activeClientId.advisor} {moment(activeClientId.created).format("DD MMM, YYYY")}
+                   {moment(activeClientId.created).format("DD MMMM YYYY")}
                 </p>
             </Modal>
         </Layout>

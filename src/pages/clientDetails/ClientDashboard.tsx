@@ -1,12 +1,15 @@
 import React, {useState} from "react";
 import {Card, Col, Row, Typography, Input, Button, Modal} from "antd";
-import { SmileFilled} from "@ant-design/icons";
+import {SmileFilled} from "@ant-design/icons";
 import Layout from "antd/lib/layout/layout";
 import {Table, Space} from "antd";
 import {RootStateOrAny, useDispatch, useSelector} from "react-redux";
-import { useHistory} from "react-router-dom";
-import { inputsFormRoute} from "../../routes/navRoutes";
-import {GetInputsAction, setCurrentInputSetAction} from "../../redux/inputs/inputs";
+import {useHistory} from "react-router-dom";
+import {inputsFormRoute} from "../../routes/navRoutes";
+import {
+    GetInputsAction,
+    setCurrentInputSetAction,
+} from "../../redux/inputs/inputs";
 import axios from "axios";
 import {AlertAction} from "../../redux/general/alert";
 
@@ -22,12 +25,14 @@ const {Text, Title} = Typography;
 const {TextArea} = Input;
 
 const ClientDashboard = () => {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const history = useHistory();
     const [isModalVisible2, setIsModelVisible2] = useState(false);
-    const [selectedId, setSelectedId] = useState("")
-    const [loading, setLoading] = useState(false)
-    const client = useSelector((state: RootStateOrAny) => state.activeClientReducer);
+    const [selectedId, setSelectedId] = useState("");
+    const [loading, setLoading] = useState(false);
+    const client = useSelector(
+        (state: RootStateOrAny) => state.activeClientReducer
+    );
     const inputs = useSelector((state: RootStateOrAny) => state.inputsReducer);
     const columns = [
         {
@@ -35,10 +40,9 @@ const ClientDashboard = () => {
             render: (text: any, r: any, i: any) => <>{i + 1}</>,
         },
         {
-            title: "Set Name",
+            title: "Plan Name",
             dataIndex: "set_name",
             key: "set_name",
-
         },
         {
             title: "",
@@ -48,10 +52,51 @@ const ClientDashboard = () => {
             render: (text: any, record: any) => (
                 <>
                     {record.people.owner.map((o: any, i: any) => {
-                        return <SmileFilled style={{marginRight: "10px", color: i === 0 ? "#3f51b5" : "#2196f3"}}/>
+                        return (
+                            <span>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                >
+                  <path
+                      d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z"
+                      fill={i === 0 ? "#a5d6a7" : "#81d4fa"}
+                  />
+                  <path
+                      d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z"
+                      fill={i === 0 ? "#a5d6a7" : "#81d4fa"}
+                  />
+                </svg>
+              </span>
+                        );
                     })}
                     {record.people.child.map((c: any, i: any) => {
-                        return <SmileFilled style={{color: "#90caf9"}}/>
+                        return (
+                            <span>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                >
+                  <path
+                      d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z"
+                      fill="#7e57c2"
+                  />
+                  <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#626262"/>
+                </svg>
+              </span>
+                        );
                     })}
                 </>
             ),
@@ -67,32 +112,40 @@ const ClientDashboard = () => {
             key: "action",
             render: (text: any, record: any) => (
                 <Space size="middle">
-                    <a href="#!" onClick={(e) => {
-                        e.stopPropagation()
-                        setSelectedId(record.id)
-                        setIsModelVisible2(true)
-                    }}>Delete</a>
+                    <a
+                        href="#!"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedId(record.id);
+                            setIsModelVisible2(true);
+                        }}
+                    >
+                        Delete
+                    </a>
                 </Space>
             ),
         },
     ];
 
-    const data = useSelector((state: RootStateOrAny) => state.inputsReducer).map((d: any, i: number) => {
-        return {
-            id: d._id,
-            key: i,
-            set_name: d.input_set_name,
-            current_year: d.current_year,
+    const data = useSelector((state: RootStateOrAny) => state.inputsReducer).map(
+        (d: any, i: number) => {
+            return {
+                id: d._id,
+                key: i,
+                set_name: d.input_set_name,
+                current_year: d.current_year,
 
-            people: {
-                owner: d.household_owners,
-                child: d.children
-            }
-
+                people: {
+                    owner: d.household_owners,
+                    child: d.children,
+                },
+            };
         }
-    });
+    );
 
-    const assumptions : IAssumptions = useSelector((state: RootStateOrAny) => state.assumptionReducer)
+    const assumptions: IAssumptions = useSelector(
+        (state: RootStateOrAny) => state.assumptionReducer
+    );
 
     return (
         <Layout className="layout" style={{background: "white"}}>
@@ -102,15 +155,18 @@ const ClientDashboard = () => {
                         <Card>
                             <Row>
                                 <Col>
-                                    <Title level={3}>{client.fname} {client.lname}</Title>
-
+                                    <Title level={3}>
+                                        {client.fname} {client.lname}
+                                    </Title>
                                 </Col>
                             </Row>
                             <Row style={{marginTop: "16px"}}>
                                 <Col lg={12} md={24} sm={24} xs={24}>
                                     <Text>Email</Text>
                                     <br/>
-                                    <Text strong>{`${client.fname}${client.lname}@email.com`}</Text>
+                                    <Text
+                                        strong
+                                    >{`${client.fname}${client.lname}@email.com`}</Text>
                                 </Col>
 
                                 <Col lg={12} md={24} sm={24} xs={24}>
@@ -152,15 +208,18 @@ const ClientDashboard = () => {
                                         loading={loading}
                                         onClick={async () => {
                                             const newDummy: IInputs = {...dummyInputs};
-                                            newDummy.input_set_name = "Plan #  " + Math.floor(Math.random() * 999)
+                                            newDummy.input_set_name =
+                                                "Plan #  " + Math.floor(Math.random() * 999);
                                             try {
-                                                setLoading(true)
-                                                const res = await axios.post(inputsRoute + client._id, newDummy)
-                                                console.log(res)
-                                                await dispatch(GetInputsAction(client._id))
-                                                setLoading(false)
+                                                setLoading(true);
+                                                const res = await axios.post(
+                                                    inputsRoute + client._id,
+                                                    newDummy
+                                                );
+                                                console.log(res);
+                                                await dispatch(GetInputsAction(client._id));
+                                                setLoading(false);
                                             } catch (err) {
-
                                             }
                                         }}
                                     >
@@ -169,34 +228,41 @@ const ClientDashboard = () => {
                                     <Button
                                         type="primary"
                                         onClick={() => {
-
                                             history.push(inputsFormRoute);
                                         }}
                                     >
                                         Create new Plan
-                                    </Button></>
+                                    </Button>
+                                </>
                             }
                         >
-                            <Table columns={columns} loading={loading} dataSource={data} onRow={ (record : any, rowIndex : any)=>{
-                                return {
-                                    style : {
-                                        cursor : "pointer"
-                                    },
-                                    onClick: async ()=>{
+                            <Table
+                                columns={columns}
+                                loading={loading}
+                                dataSource={data}
+                                onRow={(record: any, rowIndex: any) => {
+                                    return {
+                                        style: {
+                                            cursor: "pointer",
+                                        },
+                                        onClick: async () => {
+                                            setLoading(true);
+                                            dispatch(setCurrentInputSetAction(inputs[record.key]));
+                                            const res = await axios.get(summaryRoute + inputs[0]._id);
+                                            await dispatch(setSummaryAction(res.data));
+                                            await dispatch(
+                                                setRealSummaryAction(
+                                                    CalcRealSummary(res.data, assumptions)
+                                                )
+                                            );
 
-                                        setLoading(true)
-                                        dispatch(setCurrentInputSetAction(inputs[record.key]))
-                                        const res = await axios.get(summaryRoute + inputs[0]._id)
-                                        await dispatch(setSummaryAction(res.data))
-                                        await dispatch(setRealSummaryAction(CalcRealSummary(res.data, assumptions)))
-
-
-
-                                        history.push("/dashboard/clientDashboard/clientPlanDetails")
-                                    }
-                                }
-                            }
-                            }/>
+                                            history.push(
+                                                "/dashboard/clientDashboard/clientPlanDetails"
+                                            );
+                                        },
+                                    };
+                                }}
+                            />
                         </Card>
                     </Col>
                 </Row>
@@ -209,15 +275,15 @@ const ClientDashboard = () => {
                 confirmLoading={loading}
                 onOk={async () => {
                     try {
-                        await axios.delete(inputsRoute + selectedId)
-                        dispatch(AlertAction("Input Set Deleted", "error"))
-                        await dispatch((GetInputsAction(client._id)))
-                        setIsModelVisible2(false)
+                        await axios.delete(inputsRoute + selectedId);
+                        dispatch(AlertAction("Input Set Deleted", "error"));
+                        await dispatch(GetInputsAction(client._id));
+                        setIsModelVisible2(false);
                     } catch (err) {
-                        console.log(err)
+                        console.log(err);
                     }
                 }}
-                onCancel={() => setIsModelVisible2((false))}
+                onCancel={() => setIsModelVisible2(false)}
             >
                 <p>
                     <strong>Are you sure you want to delete the input set? </strong>
@@ -225,7 +291,6 @@ const ClientDashboard = () => {
                 <p>
                     <strong>This action cannot be undone! </strong>
                 </p>
-
             </Modal>
         </Layout>
     );

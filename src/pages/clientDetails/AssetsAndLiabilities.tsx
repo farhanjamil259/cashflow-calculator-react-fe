@@ -233,6 +233,13 @@ const AssetsAndLiabilities = () => {
                     return s.assets_and_liabilities_analysis.aggregated_bank_accounts
                 })]
             },
+            {
+                name: "Property", type: "column", data: [...summary.map((s) => {
+                    return s.property_analysis.property_details[0].amount + s.property_analysis.property_details[1].amount
+                })],
+                color: "pink",
+                visible : false
+            },
 
             {
                 name: "Liabilities",
@@ -248,6 +255,7 @@ const AssetsAndLiabilities = () => {
                 },
                 pointPlacement: -0.5,
                 lineWidth: 3,
+                color : "black"
             },
         ],
     });
@@ -266,7 +274,7 @@ const AssetsAndLiabilities = () => {
 
         <Layout style={{backgroundColor: "white"}}>
             <Card
-                title="Cashflow"
+                title="Assets and Liabilities"
                 style={{margin: "16px"}}
                 bordered={false}
                 extra={
@@ -292,26 +300,32 @@ const AssetsAndLiabilities = () => {
                                         ...assetsAndLiabilityChartOptions,
                                         series: [
                                             {
-                                                name: "Pension Plans", type: "column", data: [...nominalSummary.map((s) => {
+                                                name: "Pension Plans", type: "column", data: [...summary.map((s) => {
                                                     return s.assets_and_liabilities_analysis.total_pension_plans
                                                 })]
                                             },
                                             {
-                                                name: "Savings and Investments", type: "column", data: [...nominalSummary.map((s) => {
+                                                name: "Savings and Investments", type: "column", data: [...summary.map((s) => {
                                                     return s.assets_and_liabilities_analysis.total_savings_and_investments
                                                 })]
                                             },
                                             {
-                                                name: "Aggregated Bank Accounts", type: "column", data: [...nominalSummary.map((s) => {
+                                                name: "Aggregated Bank Accounts", type: "column", data: [...summary.map((s) => {
                                                     return s.assets_and_liabilities_analysis.aggregated_bank_accounts
                                                 })]
+                                            },
+                                            {
+                                                name: "Property", type: "column", data: [...summary.map((s) => {
+                                                    return s.property_analysis.property_details[0].amount + s.property_analysis.property_details[1].amount
+                                                })],
+                                                color: "pink"
                                             },
 
                                             {
                                                 name: "Liabilities",
                                                 type: "line",
                                                 step: "left",
-                                                data: [...nominalSummary.map((s) => {
+                                                data: [...summary.map((s) => {
                                                     return s.assets_and_liabilities_analysis.total_mortgages * -1 +
                                                         s.assets_and_liabilities_analysis.total_other_loans * -1 +
                                                         s.assets_and_liabilities_analysis.credit_card * -1
@@ -321,8 +335,9 @@ const AssetsAndLiabilities = () => {
                                                 },
                                                 pointPlacement: -0.5,
                                                 lineWidth: 3,
+                                                color : "black"
                                             },
-                                        ]
+                                        ],
                                     });
                                 } else {
                                     setSummary(realSummary)
@@ -330,26 +345,32 @@ const AssetsAndLiabilities = () => {
                                         ...assetsAndLiabilityChartOptions,
                                         series: [
                                             {
-                                                name: "Pension Plans", type: "column", data: [...realSummary.map((s) => {
+                                                name: "Pension Plans", type: "column", data: [...summary.map((s) => {
                                                     return s.assets_and_liabilities_analysis.total_pension_plans
                                                 })]
                                             },
                                             {
-                                                name: "Savings and Investments", type: "column", data: [...realSummary.map((s) => {
+                                                name: "Savings and Investments", type: "column", data: [...summary.map((s) => {
                                                     return s.assets_and_liabilities_analysis.total_savings_and_investments
                                                 })]
                                             },
                                             {
-                                                name: "Aggregated Bank Accounts", type: "column", data: [...realSummary.map((s) => {
+                                                name: "Aggregated Bank Accounts", type: "column", data: [...summary.map((s) => {
                                                     return s.assets_and_liabilities_analysis.aggregated_bank_accounts
                                                 })]
+                                            },
+                                            {
+                                                name: "Property", type: "column", data: [...summary.map((s) => {
+                                                    return s.property_analysis.property_details[0].amount + s.property_analysis.property_details[1].amount
+                                                })],
+                                                color: "pink"
                                             },
 
                                             {
                                                 name: "Liabilities",
                                                 type: "line",
                                                 step: "left",
-                                                data: [...realSummary.map((s) => {
+                                                data: [...summary.map((s) => {
                                                     return s.assets_and_liabilities_analysis.total_mortgages * -1 +
                                                         s.assets_and_liabilities_analysis.total_other_loans * -1 +
                                                         s.assets_and_liabilities_analysis.credit_card * -1
@@ -359,8 +380,9 @@ const AssetsAndLiabilities = () => {
                                                 },
                                                 pointPlacement: -0.5,
                                                 lineWidth: 3,
+                                                color : "black"
                                             },
-                                        ]
+                                        ],
                                     });
                                 }
                             }}

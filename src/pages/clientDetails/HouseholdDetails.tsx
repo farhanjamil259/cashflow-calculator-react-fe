@@ -839,7 +839,7 @@ const HouseholdDetails = () => {
                                                             <Row justify="space-around">
                                                                 <Text  className="liability-heading"> Liabilities</Text>
                                                                 <Text className="liability-amount">
-                                                                    {pound}{numberFormat(totalLiabilities, 0, ".", ",")}
+                                                                    -{pound}{numberFormat(totalLiabilities, 0, ".", ",")}
                                                                 </Text>
                                                             </Row>
                                                         </Col>
@@ -900,7 +900,7 @@ const HouseholdDetails = () => {
                                                             <Row justify="space-around">
                                                                 <Text  className="expense-heading"> Expenses</Text>
                                                                 <Text className="expense-amount">
-                                                                    {pound}{numberFormat(totalExpenses, 0, ".", ",")}
+                                                                    -{pound}{numberFormat(totalExpenses, 0, ".", ",")}
                                                                 </Text>
                                                             </Row>
                                                         </Col>

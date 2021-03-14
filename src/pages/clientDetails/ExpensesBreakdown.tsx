@@ -257,7 +257,7 @@ const ExpensesBreakdown = () => {
 
       <Layout style={{backgroundColor: "white"}}>
         <Card
-            title="Cashflow"
+            title="Expenses"
             style={{margin: "16px"}}
             bordered={false}
             extra={
