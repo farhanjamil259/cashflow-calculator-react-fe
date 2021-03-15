@@ -8,25 +8,19 @@ import Text from "antd/lib/typography/Text";
 import CurrencyFormat from "react-currency-format";
 import { AlertAction } from "../../../../redux/general/alert";
 import { LoadingAction } from "../../../../redux/general/loading";
-import {
-  firstColumnWidth,
-  secondColumnWidth,
-  thirdColumnWidth,
-} from "../../CommonVariable";
+import { firstColumnWidth, secondColumnWidth, thirdColumnWidth } from "../../CommonVariable";
 import ViewButton from "../sharedComponents/ViewButton";
-import {pound} from "../../../../components/currencySumbol";
-import {numberFormat} from "highcharts";
+import { pound } from "../../../../components/currencySumbol";
+import { numberFormat } from "highcharts";
 
 const { useForm } = Form;
 
 const SAI = () => {
   const dispatch = useDispatch();
-  const inputs: IInputs = useSelector(
-    (state: RootStateOrAny) => state.currentInputSetReducer
-  );
+  const inputs: IInputs = useSelector((state: RootStateOrAny) => state.currentInputSetReducer);
 
   const [isModelVisible, setIsModelVisible] = useState(false);
-    const [isModelVisible2, setIsModelVisible2] = useState(false);
+  const [isModelVisible2, setIsModelVisible2] = useState(false);
 
   const [activeItemIndex, setActiveItemIndex] = useState(0);
 
@@ -36,11 +30,9 @@ const SAI = () => {
     JSON.parse(JSON.stringify(inputs.assets.savings_and_investments.individual_savings_account))
   );
 
-    const [gia, setGia] = useState(
-        JSON.parse(JSON.stringify(inputs.assets.savings_and_investments.general_investment_account))
-    );
-
-  const [editMode, setEditMode] = useState(false);
+  const [gia, setGia] = useState(
+    JSON.parse(JSON.stringify(inputs.assets.savings_and_investments.general_investment_account))
+  );
 
   const columns: any = [
     {
@@ -53,7 +45,8 @@ const SAI = () => {
       align: "right",
       render: (text: any) => (
         <Text>
-            {pound}{numberFormat(text, 0, ".", ",")}
+          {pound}
+          {numberFormat(text, 0, ".", ",")}
         </Text>
       ),
     },
@@ -64,34 +57,34 @@ const SAI = () => {
     },
   ];
 
-    const columns2: any = [
-        {
-            dataIndex: "name",
-            width: firstColumnWidth,
-        },
-        {
-            dataIndex: "original_balance",
-            width: secondColumnWidth,
-            align: "right",
-            render: (text: any) => (
-                <Text>
-                    {pound}{numberFormat(text, 0, ".", ",")}
-                </Text>
-            ),
-        },
-        {
-            dataIndex: "action",
-            width: thirdColumnWidth,
-            render: () => <ViewButton onClick={() => setIsModelVisible2(true)} />,
-        },
-    ];
+  const columns2: any = [
+    {
+      dataIndex: "name",
+      width: firstColumnWidth,
+    },
+    {
+      dataIndex: "original_balance",
+      width: secondColumnWidth,
+      align: "right",
+      render: (text: any) => (
+        <Text>
+          {pound}
+          {numberFormat(text, 0, ".", ",")}
+        </Text>
+      ),
+    },
+    {
+      dataIndex: "action",
+      width: thirdColumnWidth,
+      render: () => <ViewButton onClick={() => setIsModelVisible2(true)} />,
+    },
+  ];
 
   const data = inputs.assets.savings_and_investments.individual_savings_account;
   const data2 = inputs.assets.savings_and_investments.general_investment_account;
 
   return (
     <div>
-
       <Text strong> Individual Savings Accounts </Text>
       <Table
         size="small"
@@ -104,113 +97,63 @@ const SAI = () => {
           return {
             onClick: () => {
               setActiveItemIndex(rowIndex!);
+              setIsModelVisible(true);
+            },
+            hidden: record.original_balance > 0 ? false : true,
+            style: {
+              cursor: "pointer",
             },
           };
         }}
       />
       <Text strong> General Investment Accounts </Text>
       <Table
-          size="small"
-          columns={columns2}
-          dataSource={data2}
-          showHeader={false}
-          pagination={false}
-          bordered={false}
-          onRow={(record, rowIndex) => {
-            return {
-              onClick: () => {
-                setActiveItemIndex(rowIndex!);
-              },
-            };
-          }}
+        size="small"
+        columns={columns2}
+        dataSource={data2}
+        showHeader={false}
+        pagination={false}
+        bordered={false}
+        onRow={(record, rowIndex) => {
+          return {
+            onClick: () => {
+              setActiveItemIndex(rowIndex!);
+              setIsModelVisible2(true);
+            },
+            hidden: record.original_balance > 0 ? false : true,
+            style: {
+              cursor: "pointer",
+            },
+          };
+        }}
       />
       <Modal
         title="Individual Savings Account"
         visible={isModelVisible}
-        okText={editMode ? "Update" : "Ok"}
+        okText="Ok"
         cancelText="Close"
-        okButtonProps={{ hidden: !editMode }}
-        onOk={async () => {
-          form
-            .validateFields()
-            .then(async () => {
-              try {
-                dispatch(AlertAction("This feature will be soon", "success"));
-                dispatch(LoadingAction(false));
-                setIsModelVisible(false);
-                setEditMode(false);
-              } catch (err) {
-                console.log(err.message);
-                dispatch(AlertAction("Something went wrong", "error"));
-                dispatch(LoadingAction(false));
-              }
-            })
-            .catch((info) => console.log("Validation failed", info));
-        }}
+        onOk={() => setIsModelVisible(false)}
         onCancel={() => setIsModelVisible(false)}
       >
-        <Row justify="end" style={{ marginBottom: "16px" }}>
-          <Col>
-            <Switch
-              unCheckedChildren="Edit"
-              checkedChildren="Editing"
-              onChange={(e) => {
-                setEditMode(e);
-              }}
-            />
-          </Col>
-        </Row>
-
-        <Form
-          form={form}
-          labelAlign="left"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-        >
+        <Form form={form} labelAlign="left" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
           <Form.Item label="Name of:">
-            {editMode ? (
-              <Input
-                value={sai[activeItemIndex].name}
-                onChange={(e) => {
-                  const clone = JSON.parse(JSON.stringify(sai));
-                  clone[activeItemIndex].name = e;
-                  setSai(clone);
-                }}
-              />
-            ) : (
-              <Text>
-                {inputs.assets.savings_and_investments.individual_savings_account[activeItemIndex].name}
-              </Text>
-            )}
+            <Text>
+              {inputs.assets.savings_and_investments.individual_savings_account[activeItemIndex].name}
+            </Text>
           </Form.Item>
-          <Form.Item
-            label="Original Balance"
-            rules={[{ required: true, message: "This is required" }]}
-          >
-            {editMode ? (
-              <InputNumber
-                value={sai[activeItemIndex].original_balance}
-                style={{ width: "100%" }}
-                onChange={(e) => {
-                  const clone = JSON.parse(JSON.stringify(sai));
-                  clone[activeItemIndex].original_price = +e!;
-                  setSai(clone);
-                }}
+          <Form.Item label="Original Balance" rules={[{ required: true, message: "This is required" }]}>
+            <Text>
+              <CurrencyFormat
+                value={
+                  inputs.assets.savings_and_investments.individual_savings_account[activeItemIndex]
+                    .original_balance
+                }
+                displayType={"text"}
+                thousandSeparator={true}
+                decimalScale={2}
+                prefix={"£ "}
               />
-            ) : (
-              <Text>
-                <CurrencyFormat
-                  value={
-                    inputs.assets.savings_and_investments.individual_savings_account[activeItemIndex]
-                      .original_balance
-                  }
-                  displayType={"text"}
-                  thousandSeparator={true}
-                  decimalScale={2}
-                  prefix={"£ "}
-                />
-              </Text>
-            )}
+            </Text>
           </Form.Item>
           <Form.Item label="Growth Rate">
             <Text>
@@ -225,23 +168,12 @@ const SAI = () => {
             </Text>
           </Form.Item>
           <Form.Item label="Annual Contribution">
-            {editMode ? (
-              <Input
-                value={sai[activeItemIndex].annual_contribution}
-                onChange={(e) => {
-                  const clone = JSON.parse(JSON.stringify(sai));
-                  clone[activeItemIndex].name = e;
-                  setSai(clone);
-                }}
-              />
-            ) : (
-              <Text>
-                {
-                  inputs.assets.savings_and_investments.individual_savings_account[activeItemIndex]
-                    .annual_contribution
-                }
-              </Text>
-            )}
+            <Text>
+              {
+                inputs.assets.savings_and_investments.individual_savings_account[activeItemIndex]
+                  .annual_contribution
+              }
+            </Text>
           </Form.Item>
           <Form.Item label="Contribution start year">
             <Text>
@@ -262,144 +194,72 @@ const SAI = () => {
         </Form>
       </Modal>
 
-
-        <Modal
-            title="General Investment Accounts"
-            visible={isModelVisible2}
-            okText={editMode ? "Update" : "Ok"}
-            cancelText="Close"
-            okButtonProps={{ hidden: !editMode }}
-            onOk={async () => {
-                form
-                    .validateFields()
-                    .then(async () => {
-                        try {
-                            dispatch(AlertAction("This feature will be soon", "success"));
-                            dispatch(LoadingAction(false));
-                            setIsModelVisible2(false);
-                            setEditMode(false);
-                        } catch (err) {
-                            console.log(err.message);
-                            dispatch(AlertAction("Something went wrong", "error"));
-                            dispatch(LoadingAction(false));
-                        }
-                    })
-                    .catch((info) => console.log("Validation failed", info));
-            }}
-            onCancel={() => setIsModelVisible2(false)}
-        >
-            <Row justify="end" style={{ marginBottom: "16px" }}>
-                <Col>
-                    <Switch
-                        unCheckedChildren="Edit"
-                        checkedChildren="Editing"
-                        onChange={(e) => {
-                            setEditMode(e);
-                        }}
-                    />
-                </Col>
-            </Row>
-
-            <Form
-                form={form}
-                labelAlign="left"
-                labelCol={{ span: 8 }}
-                wrapperCol={{ span: 16 }}
-            >
-                <Form.Item label="Name of:">
-                    {editMode ? (
-                        <Input
-                            value={gia[activeItemIndex].name}
-                            onChange={(e) => {
-                                const clone = JSON.parse(JSON.stringify(gia));
-                                clone[activeItemIndex].name = e;
-                                setSai(clone);
-                            }}
-                        />
-                    ) : (
-                        <Text>
-                            {inputs.assets.savings_and_investments.general_investment_account[activeItemIndex].name}
-                        </Text>
-                    )}
-                </Form.Item>
-                <Form.Item
-                    label="Original Balance"
-                    rules={[{ required: true, message: "This is required" }]}
-                >
-                    {editMode ? (
-                        <InputNumber
-                            value={gia[activeItemIndex].original_balance}
-                            style={{ width: "100%" }}
-                            onChange={(e) => {
-                                const clone = JSON.parse(JSON.stringify(gia));
-                                clone[activeItemIndex].original_price = +e!;
-                                setSai(clone);
-                            }}
-                        />
-                    ) : (
-                        <Text>
-                            <CurrencyFormat
-                                value={
-                                    inputs.assets.savings_and_investments.general_investment_account[activeItemIndex]
-                                        .original_balance
-                                }
-                                displayType={"text"}
-                                thousandSeparator={true}
-                                decimalScale={2}
-                                prefix={"£ "}
-                            />
-                        </Text>
-                    )}
-                </Form.Item>
-                <Form.Item label="Growth Rate">
-                    <Text>
-                        <CurrencyFormat
-                            value={
-                                inputs.assets.savings_and_investments.general_investment_account[activeItemIndex]
-                                    .growth_rate * 100
-                            }
-                            displayType={"text"}
-                            suffix={"%"}
-                        />
-                    </Text>
-                </Form.Item>
-                <Form.Item label="Annual Contribution">
-                    {editMode ? (
-                        <Input
-                            value={gia[activeItemIndex].annual_contribution}
-                            onChange={(e) => {
-                                const clone = JSON.parse(JSON.stringify(gia));
-                                clone[activeItemIndex].name = e;
-                                setSai(clone);
-                            }}
-                        />
-                    ) : (
-                        <Text>
-                            {
-                                inputs.assets.savings_and_investments.general_investment_account[activeItemIndex]
-                                    .annual_contribution
-                            }
-                        </Text>
-                    )}
-                </Form.Item>
-                <Form.Item label="Contribution start year">
-                    <Text>
-                        {
-                            inputs.assets.savings_and_investments.general_investment_account[activeItemIndex]
-                                .contribution_start_year
-                        }
-                    </Text>
-                </Form.Item>
-                <Form.Item label="Contribution end year">
-                    <Text>
-                        {
-                            inputs.assets.savings_and_investments.general_investment_account[activeItemIndex]
-                                .contribution_end_year
-                        }
-                    </Text>
-                </Form.Item>
-            </Form>
-        </Modal>
+      <Modal
+        title="General Investment Accounts"
+        visible={isModelVisible2}
+        okText="Ok"
+        cancelText="Close"
+        onOk={() => setIsModelVisible(false)}
+        onCancel={() => setIsModelVisible2(false)}
+      >
+        <Form form={form} labelAlign="left" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
+          <Form.Item label="Name of:">
+            <Text>
+              {inputs.assets.savings_and_investments.general_investment_account[activeItemIndex].name}
+            </Text>
+          </Form.Item>
+          <Form.Item label="Original Balance" rules={[{ required: true, message: "This is required" }]}>
+            <Text>
+              <CurrencyFormat
+                value={
+                  inputs.assets.savings_and_investments.general_investment_account[activeItemIndex]
+                    .original_balance
+                }
+                displayType={"text"}
+                thousandSeparator={true}
+                decimalScale={2}
+                prefix={"£ "}
+              />
+            </Text>
+          </Form.Item>
+          <Form.Item label="Growth Rate">
+            <Text>
+              <CurrencyFormat
+                value={
+                  inputs.assets.savings_and_investments.general_investment_account[activeItemIndex]
+                    .growth_rate * 100
+                }
+                displayType={"text"}
+                suffix={"%"}
+              />
+            </Text>
+          </Form.Item>
+          <Form.Item label="Annual Contribution">
+            <Text>
+              {
+                inputs.assets.savings_and_investments.general_investment_account[activeItemIndex]
+                  .annual_contribution
+              }
+            </Text>
+          </Form.Item>
+          <Form.Item label="Contribution start year">
+            <Text>
+              {
+                inputs.assets.savings_and_investments.general_investment_account[activeItemIndex]
+                  .contribution_start_year
+              }
+            </Text>
+          </Form.Item>
+          <Form.Item label="Contribution end year">
+            <Text>
+              {
+                inputs.assets.savings_and_investments.general_investment_account[activeItemIndex]
+                  .contribution_end_year
+              }
+            </Text>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };

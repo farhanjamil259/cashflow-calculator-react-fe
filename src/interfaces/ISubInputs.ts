@@ -23,7 +23,7 @@ export interface IProperty {
   start_year: number;
   sell_in_future: boolean;
   end_year: number;
-  type_of_property: "Main Home"|"Second Property";
+  type_of_property: "Main Home" | "Second Property";
   on_mortgage: boolean;
   mortgage_rate: number;
 }
@@ -33,21 +33,20 @@ export interface IBankAccount {
   minimum_cash_balance_acceptable: number;
 }
 
-export interface IIndividualSavingsAccounts{
+export interface IIndividualSavingsAccounts {
   original_balance: number;
   annual_contribution: number;
 }
 
-export interface IGeneralInvestmentAccount{
+export interface IGeneralInvestmentAccount {
   original_balance: number;
   annual_contribution: number;
 }
 
 export interface ISavingsAndInvestments {
-  individual_savings_account : Array<IIndividualSavingsAccounts>;
-  general_investment_account : Array<IGeneralInvestmentAccount>
+  individual_savings_account: Array<IIndividualSavingsAccounts>;
+  general_investment_account: Array<IGeneralInvestmentAccount>;
 }
-
 
 export interface INonEmploymentDefinedContributionPensionPlan {
   original_balance: number;
@@ -109,24 +108,20 @@ export interface IDrawdowns {
   end_year: number;
 }
 
-
-export interface IIndividualSavingAccountDrawdowns{
+export interface IIndividualSavingAccountDrawdowns {
   owner_name: string;
   drawdowns: Array<IDrawdowns>;
 }
 
-export interface IGeneralInvestmentAccountDrawdowns{
+export interface IGeneralInvestmentAccountDrawdowns {
   owner_name: string;
   drawdowns: Array<IDrawdowns>;
 }
 
-export interface ISavingsAndInvestmentSDrawdowns{
+export interface ISavingsAndInvestmentSDrawdowns {
   individual_savings_accounts: Array<IIndividualSavingAccountDrawdowns>;
-  general_investment_accounts: Array<IGeneralInvestmentAccountDrawdowns>
-
+  general_investment_accounts: Array<IGeneralInvestmentAccountDrawdowns>;
 }
-
-
 
 export interface IPensionIncomeDefinedBenifitPensionPlan {
   option_taken: "Lump Sum" | "Annual";

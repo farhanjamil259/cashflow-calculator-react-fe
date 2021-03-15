@@ -1,22 +1,18 @@
-import { Col, DatePicker, Form, Input, InputNumber, Modal, Row, Select, Switch, Table } from "antd";
+import { Form, Modal, Table } from "antd";
 import React, { Fragment, useState } from "react";
 import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import IInputs from "../../../../interfaces/IInputs";
-import { LoadingAction } from "../../../../redux/general/loading";
-import { AlertAction } from "../../../../redux/general/alert";
 import Text from "antd/lib/typography/Text";
 // @ts-ignore
 import CurrencyFormat from "react-currency-format";
 import { firstColumnWidth, secondColumnWidth, thirdColumnWidth } from "../../CommonVariable";
-import ViewButton from "../sharedComponents/ViewButton";
 import { numberFormat } from "highcharts";
 import { pound } from "../../../../components/currencySumbol";
+import ViewButton from "../sharedComponents/ViewButton";
 
 const { useForm } = Form;
-const { Option } = Select;
 
-const Properties = (props: any) => {
-  const dispatch = useDispatch();
+const Properties = () => {
   const inputs: IInputs = useSelector((state: RootStateOrAny) => state.currentInputSetReducer);
 
   const [isModelVisible, setIsModelVisible] = useState(false);
@@ -43,17 +39,15 @@ const Properties = (props: any) => {
         </Text>
       ),
     },
+
     {
       dataIndex: "action",
-      key: "action",
       width: thirdColumnWidth,
-      render: (text: any, record: any) => <ViewButton onClick={() => setIsModelVisible(true)} />,
+      render: () => <ViewButton onClick={() => setIsModelVisible(true)} />,
     },
   ];
 
   const data: any = inputs.assets.properties;
-
-  const [properties, setProperties] = useState(JSON.parse(JSON.stringify(inputs.assets.properties)));
 
   return (
     <Fragment>
@@ -66,9 +60,18 @@ const Properties = (props: any) => {
         bordered={false}
         onRow={(record, rowIndex) => {
           return {
-            onClick: (event) => {
+            onClick: () => {
+              console.log(record);
+
               setActiveItemIndex(rowIndex!);
-              // console.log(properties[activeItemIndex]);
+              setIsModelVisible(true);
+            },
+            hidden:
+              inputs.current_year <= record.end_year && inputs.current_year >= record.start_year
+                ? false
+                : true,
+            style: {
+              cursor: "pointer",
             },
           };
         }}
