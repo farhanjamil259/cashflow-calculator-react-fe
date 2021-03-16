@@ -1,22 +1,18 @@
-import { Col, Form, Input, InputNumber, Modal, Row, Switch, Table } from "antd";
+import {  Form,   Modal,   Table } from "antd";
 import React, { useState } from "react";
 import IInputs from "../../../../interfaces/IInputs";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny,  useSelector } from "react-redux";
 import { useForm } from "antd/lib/form/Form";
 import ViewButton from "../sharedComponents/ViewButton";
-import { AlertAction } from "../../../../redux/general/alert";
-import { LoadingAction } from "../../../../redux/general/loading";
+
 import Text from "antd/lib/typography/Text";
 
-const Children = (props: any) => {
-  const dispatch = useDispatch();
+const Children = () => {
   const inputs: IInputs = useSelector((state: RootStateOrAny) => state.currentInputSetReducer);
 
   const [isModelVisible, setIsModelVisible] = useState(false);
 
   const [activeItemIndex, setActiveItemIndex] = useState(0);
-
-  const [ownerDetails, setOwnerDetails] = useState(JSON.parse(JSON.stringify(inputs.children)));
 
   const [form] = useForm();
 
@@ -40,11 +36,11 @@ const Children = (props: any) => {
       title: "Action",
       dataIndex: "action",
       key: "action",
-      render: (text: any, record: any) => <ViewButton onClick={() => setIsModelVisible(true)} />,
+      render: () => <ViewButton onClick={() => setIsModelVisible(true)} />,
     },
   ];
 
-  const data = children.map((child: any, i: number) => {
+  const data = children.map((child: any) => {
     const {
       name,
       birth_year,
@@ -81,9 +77,9 @@ const Children = (props: any) => {
         bordered={false}
         onRow={(record, rowIndex) => {
           return {
-            onClick: (event) => {
+            onClick: () => {
               setActiveItemIndex(rowIndex!);
-              // console.log(properties[activeItemIndex]);
+
             },
           };
         }}

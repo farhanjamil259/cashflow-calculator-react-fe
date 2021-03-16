@@ -43,7 +43,7 @@ const Cashflow = () => {
         step: 4,
       },
       categories: [
-        ...summary.map((s, i) => {
+        ...summary.map((s) => {
           return `<b>${s.year}</b> <br> ${
             s.ages.owner_ages[0].age <= 100 ? s.ages.owner_ages[0].age : "-"
           }<br>${s.ages.owner_ages[1].age <= 100 ? s.ages.owner_ages[1].age : "-"}`;
@@ -61,7 +61,7 @@ const Cashflow = () => {
             align: "right",
           },
           events: {
-            click: (e) => {
+            click: () => {
               setSliderValue([summary[0].year, summary[0].retirement_ages[0]]);
 
               setCashFlowChartOptions({

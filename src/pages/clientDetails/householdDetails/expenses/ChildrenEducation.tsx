@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { Col, Form, InputNumber, Modal, Row, Switch, Table, Typography } from "antd";
+import {  Form,  Modal,   Table, Typography } from "antd";
 // @ts-ignore
 import CurrencyFormat from "react-currency-format";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny,  useSelector } from "react-redux";
 import IInputs from "../../../../interfaces/IInputs";
-import { AlertAction } from "../../../../redux/general/alert";
-import { LoadingAction } from "../../../../redux/general/loading";
 import { firstColumnWidth, secondColumnWidth, thirdColumnWidth } from "../../CommonVariable";
 import ViewButton from "../sharedComponents/ViewButton";
 import { pound } from "../../../../components/currencySumbol";
@@ -15,7 +13,7 @@ const { Text } = Typography;
 const { useForm } = Form;
 
 const ChildrenEducation = () => {
-  const dispatch = useDispatch();
+
   const inputs: IInputs = useSelector((state: RootStateOrAny) => state.currentInputSetReducer);
 
   const [isModelVisiblePrimary, setIsModelVisiblePrimary] = useState(false);
@@ -23,16 +21,6 @@ const ChildrenEducation = () => {
   const [isModelVisibleUniversity, setIsModelVisibleUniversity] = useState(false);
 
   const [form] = useForm();
-
-  const [primarySchool, setPrimarySchool] = useState(
-    JSON.parse(JSON.stringify(inputs.household_expenses.children_education_expenses.primary_school_fees))
-  );
-  const [secondarySchool, setSecondarySchool] = useState(
-    JSON.parse(JSON.stringify(inputs.household_expenses.children_education_expenses.seconday_school_fees))
-  );
-  const [university, setUniversity] = useState(
-    JSON.parse(JSON.stringify(inputs.household_expenses.children_education_expenses.university_fees))
-  );
 
   const columns: any = [
     {
@@ -43,7 +31,7 @@ const ChildrenEducation = () => {
       dataIndex: "annual_expense",
       width: secondColumnWidth,
       align: "right",
-      render: (text: any, record: any, index: any) => (
+      render: (text: any) => (
         <Text>
           {pound}
           {inputs.children[0].primary_school_year >= inputs.current_year &&
@@ -110,7 +98,7 @@ const ChildrenEducation = () => {
         showHeader={false}
         pagination={false}
         bordered={false}
-        onRow={(record, rowIndex) => {
+        onRow={(record) => {
           return {
             onClick: () => {
               console.log(record);

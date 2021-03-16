@@ -887,7 +887,7 @@ const Expenses = (props: any) => {
         <Col lg={6} md={6} sm={24} xs={24} className="custom-input-fields">
           <Form.Item label=" ">
             <Text>
-              Family Income Benifit <Text strong>{owners[0].name}</Text>
+              Family Income Benefit <Text strong>{owners[0].name}</Text>
             </Text>
           </Form.Item>
         </Col>
@@ -948,7 +948,7 @@ const Expenses = (props: any) => {
           <Col lg={6} md={6} sm={24} xs={24} className="custom-input-fields">
             <Form.Item label=" ">
               <Text>
-                Family Income Benifit <Text strong>{owners[1].name}</Text>
+                Family Income Benefit <Text strong>{owners[1].name}</Text>
               </Text>
             </Form.Item>
           </Col>
@@ -1135,7 +1135,7 @@ const Expenses = (props: any) => {
       <Row>
         <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
           <Form.Item label=" ">
-            <Text>Seconday School Fee</Text>
+            <Text>Secondary School Fee</Text>
           </Form.Item>
         </Col>
         <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">

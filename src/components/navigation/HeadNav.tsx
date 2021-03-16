@@ -1,14 +1,13 @@
 import {Button, Col, Image, Menu, Row, Dropdown, Divider, Avatar} from "antd";
-import {Link, Route, useLocation} from "react-router-dom";
+import {Link, Route} from "react-router-dom";
 
 import Logo from "../../assets/logo_light.png";
 import {RootStateOrAny, useSelector} from "react-redux";
-import {LeftOutlined, SettingFilled, UserOutlined} from "@ant-design/icons";
+import {UserOutlined} from "@ant-design/icons";
 import IInputs from "../../interfaces/IInputs";
 import React from "react";
 
 const HeadNav = () => {
-    const location = useLocation();
     const user = useSelector((state: RootStateOrAny) => state.userReducer)
     const currentInputSet: IInputs = useSelector(
         (state: RootStateOrAny) => state.currentInputSetReducer

@@ -29,7 +29,7 @@ const DividendTax = () => {
             width: secondColumnWidth,
 
             align: "right" as "right",
-            render: (text: any, record: any) => {
+            render: (text: any) => {
                 return (
                     <Text>
                         {pound} {numberFormat(text, 0, ".", ",")}
@@ -42,7 +42,7 @@ const DividendTax = () => {
             dataIndex: "rate",
             width: thirdColumnWidth,
             align: "right" as "right",
-            render: (text: any, record: any) => {
+            render: (text: any) => {
                 return (
                     <Text>
                         <CurrencyFormat

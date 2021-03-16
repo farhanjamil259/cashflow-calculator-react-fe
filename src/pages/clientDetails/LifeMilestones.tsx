@@ -16,7 +16,7 @@ import {
 
 import Highcharts, {numberFormat} from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import React, {useEffect} from "react";
+import React, {useEffect, useMemo} from "react";
 import IInputs from "../../interfaces/IInputs";
 import {RootStateOrAny, useSelector} from "react-redux";
 import {useState} from "react";
@@ -61,7 +61,7 @@ function LifeMilestones() {
     };
 
     const lifeGoals: ILifeGoals[] = [
-        ...inputs.household_expenses.one_off_expenses.map((g, i) => {
+        ...inputs.household_expenses.one_off_expenses.map((g) => {
             return {
                 name: g.name,
                 start_year: g.start_year,
@@ -73,61 +73,67 @@ function LifeMilestones() {
     ];
 
     const planColor : string ="#424242"
-    const ownerColors : string[] = ["#81d4fa", "#a5d6a7"]
-    const childrenCOlors : string[] = ["#7e57c2", "#9575cd", "#b39ddb", "#d1c4e9", "#ede7f6"]
+    const ownerColors : string[] = useMemo(()=>{
+        return ["#81d4fa", "#a5d6a7"]
+    }, [])
+    const childrenColors : string[] = useMemo(()=>{
+        return ["#7e57c2", "#9575cd", "#b39ddb", "#d1c4e9", "#ede7f6"]
+    }, [])
 
-    const lifeEvents: IEvents[] = [
-        {
-            name: "Plan Start",
-            year: inputs.current_year,
-            owner: "",
-            icon: startIcon(planColor),
-        },
-        {
-            name: "Plan End",
-            year:
-                inputs.household_owners.length > 1
-                    ? Math.max(
-                    inputs.household_owners[0].end_of_forecast_year - 1,
-                    inputs.household_owners[1].end_of_forecast_year - 1
-                    )
-                    : inputs.household_owners[0].end_of_forecast_year - 1,
-            owner: "",
-            icon: endIcon(planColor),
-        },
-        ...inputs.household_owners.map((o, i) => {
-            return {
-                name: "Retirement " + o.name,
-                year: inputs.household_owners[i].retirement_year,
-                owner: o.name,
-                icon: umbrellaIcon(ownerColors[i]),
-            };
-        }),
-        ...inputs.children.map((c, i) => {
-            return {
-                name: c.name + " " + "born",
-                year: c.birth_year,
-                owner: c.name,
-                icon: bottleIcon(childrenCOlors[i]),
-            };
-        }),
-        ...inputs.children.map((c, i) => {
-            return {
-                name: "School " + c.name,
-                year: c.primary_school_year,
-                owner: c.name,
-                icon: bookIcon(childrenCOlors[i]),
-            };
-        }),
-        ...inputs.children.map((c, i) => {
-            return {
-                name: "Graduation " + c.name,
-                year: c.graduation_year,
-                owner: c.name,
-                icon: hatIcon(childrenCOlors[i]),
-            };
-        }),
-    ];
+    const lifeEvents: IEvents[] = useMemo(()=>{
+        return [
+            {
+                name: "Plan Start",
+                year: inputs.current_year,
+                owner: "",
+                icon: startIcon(planColor),
+            },
+            {
+                name: "Plan End",
+                year:
+                    inputs.household_owners.length > 1
+                        ? Math.max(
+                        inputs.household_owners[0].end_of_forecast_year - 1,
+                        inputs.household_owners[1].end_of_forecast_year - 1
+                        )
+                        : inputs.household_owners[0].end_of_forecast_year - 1,
+                owner: "",
+                icon: endIcon(planColor),
+            },
+            ...inputs.household_owners.map((o, i) => {
+                return {
+                    name: "Retirement " + o.name,
+                    year: inputs.household_owners[i].retirement_year,
+                    owner: o.name,
+                    icon: umbrellaIcon(ownerColors[i]),
+                };
+            }),
+            ...inputs.children.map((c, i) => {
+                return {
+                    name: c.name +  " born",
+                    year: c.birth_year,
+                    owner: c.name,
+                    icon: bottleIcon(childrenColors[i]),
+                };
+            }),
+            ...inputs.children.map((c, i) => {
+                return {
+                    name: "School " + c.name,
+                    year: c.primary_school_year,
+                    owner: c.name,
+                    icon: bookIcon(childrenColors[i]),
+                };
+            }),
+            ...inputs.children.map((c, i) => {
+                return {
+                    name: "Graduation " + c.name,
+                    year: c.graduation_year,
+                    owner: c.name,
+                    icon: hatIcon(childrenColors[i]),
+                };
+            }),
+        ];
+    }, [childrenColors, inputs.children, inputs.household_owners, ownerColors, inputs.current_year])
 
 
     const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
@@ -146,7 +152,7 @@ function LifeMilestones() {
                 let tooltip_html = this.x.toString();
                 tooltip_html += "<table>";
 
-                this.points!.forEach(function (entry: any, index) {
+                this.points!.forEach(function (entry: any) {
                     if (entry.y > 0) {
 
                             tooltip_html +=
@@ -173,7 +179,7 @@ function LifeMilestones() {
         },
         xAxis: {
             categories: [
-                ...summary.map((s, i) => {
+                ...summary.map((s) => {
                     return `<b>${s.year}</b> <br> ${s.ages.owner_ages[0].age <= 100 ? s.ages.owner_ages[0].age : "-"}<br>${
                         s.ages.owner_ages[1].age <= 100 ? s.ages.owner_ages[1].age : "-"
                     }`;
@@ -203,14 +209,6 @@ function LifeMilestones() {
         },
         plotOptions: {
             series: {
-                events: {
-                    mouseOver: function (e : any) {
-                        var chart = this.chart;
-                        // console.log(chart.series)
-
-
-                    }
-                },
                 dataGrouping: {
                     enabled: true,
                 },
@@ -234,7 +232,7 @@ function LifeMilestones() {
             newSeries.push({
                 type: "lollipop",
                 data: [
-                    ...summary.map((s) => {
+                    ...summary.map(() => {
                         return -1;
                     }),
                 ],
@@ -246,6 +244,7 @@ function LifeMilestones() {
                 },
 
             });
+            return null
         });
 
         const clone = {...chartOptions};
@@ -258,7 +257,9 @@ function LifeMilestones() {
                 if (s.year === goal.year) {
                     newClone.series[i].data[index] = 1;
                 }
+                return null
             });
+            return null
         });
 
         // summary.map((s, index) => {
@@ -274,17 +275,19 @@ function LifeMilestones() {
         let tempArray: number[] = [];
         let range = 2
 
-        newClone.series.map((s: any, index: number)=>{
+        newClone.series.map((s: any)=>{
             s.data.map((d: any, i: number)=>{
                 if(d >0){
                     tempArray.push(i)
                 }
+                return null
             })
+            return null
         })
         tempArray.map((num, i)=>{
             if(i>0){
-                let perviousNum = tempArray[i-1];
-                let diff = num - perviousNum
+                let previousNum = tempArray[i-1];
+                let diff = num - previousNum
 
                 if(diff <= range){
 
@@ -292,6 +295,7 @@ function LifeMilestones() {
                     newClone.series[i].zIndex = -1
                 }
             }
+            return null
         })
 
         setChartOptions(newClone);

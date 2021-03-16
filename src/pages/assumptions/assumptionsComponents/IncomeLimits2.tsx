@@ -3,8 +3,6 @@ import React from "react";
 import IAssumptions from "../../../interfaces/IAssumptions";
 import { RootStateOrAny, useSelector } from "react-redux";
 
-// @ts-ignore
-import CurrencyFormat from "react-currency-format";
 import { Fragment } from "react";
 import {firstColumnWidth, secondColumnWidth, thirdColumnWidth} from "../AssumptionsCommonVariable";
 import {pound} from "../../../components/currencySumbol";
@@ -29,7 +27,7 @@ const IncomeLimits2 = () => {
             dataIndex: "threshold",
             width: secondColumnWidth,
             align: "right" as "right",
-            render: (text: any, record: any) => {
+            render: (text: any) => {
                 return (
                     <Text>
                         {pound} {numberFormat(text, 0, ".", ",")}

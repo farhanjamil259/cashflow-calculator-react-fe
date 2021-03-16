@@ -1,6 +1,6 @@
 import { Form, Modal, Table } from "antd";
 import React, { Fragment, useState } from "react";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny,  useSelector } from "react-redux";
 import IInputs from "../../../../interfaces/IInputs";
 import Text from "antd/lib/typography/Text";
 // @ts-ignore
@@ -67,9 +67,7 @@ const Properties = () => {
               setIsModelVisible(true);
             },
             hidden:
-              inputs.current_year <= record.end_year && inputs.current_year >= record.start_year
-                ? false
-                : true,
+              !(inputs.current_year <= record.end_year && inputs.current_year >= record.start_year),
             style: {
               cursor: "pointer",
             },

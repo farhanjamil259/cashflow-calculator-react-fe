@@ -1,18 +1,12 @@
-import React, {useEffect, useState} from "react";
+import React, { useState} from "react";
 import Layout from "antd/lib/layout/layout";
-import {Button, Card, Col, Collapse, Popover, Row, Slider, Switch, Table, Typography} from "antd";
+import {Button, Card, Col,   Row, Slider, Switch} from "antd";
 
 import IForecastSummary from "../../interfaces/IForecastSummary";
 import {RootStateOrAny, useSelector} from "react-redux";
 import highcharts, {numberFormat} from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import {SettingFilled} from "@ant-design/icons/lib/icons";
 import YearBreakdownTabs from "../../components/YearBreakdownTabs";
-
-const {Text} = Typography
-const {Panel} = Collapse;
-
-
 const AssetsAndLiabilities = () => {
     const nominalSummary: IForecastSummary[] = useSelector(
         (state: RootStateOrAny) => state.summaryReducer
@@ -63,7 +57,7 @@ const AssetsAndLiabilities = () => {
                 step: 4,
             },
             categories: [
-                ...summary.map((s, i) => {
+                ...summary.map((s) => {
                     return `<b>${s.year}</b> <br> ${s.ages.owner_ages[0].age <= 100 ? s.ages.owner_ages[0].age : "-"}<br>${
                         s.ages.owner_ages[1].age <= 100 ? s.ages.owner_ages[1].age : "-"
                     }`;
@@ -81,7 +75,7 @@ const AssetsAndLiabilities = () => {
                         align: "right",
                     },
                     events: {
-                        click: (e) => {
+                        click: () => {
                             setSliderValue([summary[0].year, summary[0].retirement_ages[0]]);
 
                             setAssetsAndLiabilityChartOptions({
@@ -105,7 +99,7 @@ const AssetsAndLiabilities = () => {
                         text: "",
                     },
                     events: {
-                        click: (e) => {
+                        click: () => {
                             setSliderValue([
                                 summary[0].retirement_ages[0],
                                 summary[summary.length - 1].year,
@@ -151,7 +145,7 @@ const AssetsAndLiabilities = () => {
                 let tooltip_html = this.x.toString();
                 tooltip_html += "<table>";
 
-                this.points!.forEach(function (entry: any, index) {
+                this.points!.forEach(function (entry: any) {
                     if (entry.y > 0) {
                         if (entry.series.name === "Total Expenses") {
                             tooltip_html +=
@@ -204,7 +198,7 @@ const AssetsAndLiabilities = () => {
                 groupPadding: 0,
                 pointRange: 1,
                 events: {
-                    click: (e) => {
+                    click: () => {
                         // console.log(e.point.x)
                     },
                 },
@@ -433,7 +427,7 @@ const AssetsAndLiabilities = () => {
                         </Col>
                         <Col>
                             <Button
-                                onClick={(e) => {
+                                onClick={() => {
                                     setSliderValue([
                                         summary[0].year,
                                         summary[summary.length - 1].year,

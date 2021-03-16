@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import { Col, Form, Input, InputNumber, Modal, Row, Switch, Table } from "antd";
+import {  Form,   Modal,   Table } from "antd";
 // @ts-ignore
 import CurrencyFormat from "react-currency-format";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny,  useSelector } from "react-redux";
 import IInputs from "../../../../interfaces/IInputs";
 import Text from "antd/lib/typography/Text";
-import { AlertAction } from "../../../../redux/general/alert";
-import { LoadingAction } from "../../../../redux/general/loading";
 import { firstColumnWidth, secondColumnWidth } from "../../CommonVariable";
 import ViewButton from "../sharedComponents/ViewButton";
 import { pound } from "../../../../components/currencySumbol";
@@ -15,7 +13,6 @@ import { numberFormat } from "highcharts";
 const { useForm } = Form;
 
 const PensionPlan = () => {
-  const dispatch = useDispatch();
   const inputs: IInputs = useSelector((state: RootStateOrAny) => state.currentInputSetReducer);
 
   const [isModelVisible, setIsModelVisible] = useState(false);
@@ -48,10 +45,6 @@ const PensionPlan = () => {
 
   const data = inputs.assets.non_employment_defined_contribution_pension_plans;
 
-  const [pensionPlan, setPensionPlan] = useState(
-    JSON.parse(JSON.stringify(inputs.assets.non_employment_defined_contribution_pension_plans))
-  );
-
   return (
     <div>
       <Table
@@ -68,10 +61,8 @@ const PensionPlan = () => {
               setIsModelVisible(true);
             },
             hidden:
-              inputs.current_year <= record.contribution_end_year &&
-              inputs.current_year >= record.contribution_start_year
-                ? false
-                : true,
+              !(inputs.current_year <= record.contribution_end_year &&
+                  inputs.current_year >= record.contribution_start_year),
           };
         }}
       />

@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-import { Col, Form, Input, InputNumber, Modal, Row, Switch, Table } from "antd";
+import {  Form,   Modal,   Table } from "antd";
 import IInputs from "../../../../interfaces/IInputs";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny,  useSelector } from "react-redux";
 import Text from "antd/lib/typography/Text";
 
 // @ts-ignore
 import CurrencyFormat from "react-currency-format";
-import { AlertAction } from "../../../../redux/general/alert";
-import { LoadingAction } from "../../../../redux/general/loading";
 import { firstColumnWidth, secondColumnWidth, thirdColumnWidth } from "../../CommonVariable";
 import ViewButton from "../sharedComponents/ViewButton";
 import { pound } from "../../../../components/currencySumbol";
@@ -16,7 +14,6 @@ import { numberFormat } from "highcharts";
 const { useForm } = Form;
 
 const SAI = () => {
-  const dispatch = useDispatch();
   const inputs: IInputs = useSelector((state: RootStateOrAny) => state.currentInputSetReducer);
 
   const [isModelVisible, setIsModelVisible] = useState(false);
@@ -25,14 +22,6 @@ const SAI = () => {
   const [activeItemIndex, setActiveItemIndex] = useState(0);
 
   const [form] = useForm();
-
-  const [sai, setSai] = useState(
-    JSON.parse(JSON.stringify(inputs.assets.savings_and_investments.individual_savings_account))
-  );
-
-  const [gia, setGia] = useState(
-    JSON.parse(JSON.stringify(inputs.assets.savings_and_investments.general_investment_account))
-  );
 
   const columns: any = [
     {
@@ -99,7 +88,7 @@ const SAI = () => {
               setActiveItemIndex(rowIndex!);
               setIsModelVisible(true);
             },
-            hidden: record.original_balance > 0 ? false : true,
+            hidden: record.original_balance <= 0,
             style: {
               cursor: "pointer",
             },
@@ -120,7 +109,7 @@ const SAI = () => {
               setActiveItemIndex(rowIndex!);
               setIsModelVisible2(true);
             },
-            hidden: record.original_balance > 0 ? false : true,
+            hidden: record.original_balance <= 0,
             style: {
               cursor: "pointer",
             },

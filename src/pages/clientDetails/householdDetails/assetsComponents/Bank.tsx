@@ -75,7 +75,7 @@ const Bank = () => {
               setActiveItemIndex(rowIndex!);
               setIsModalVisible(true);
             },
-            hidden: record.original_balance > 0 ? false : true,
+            hidden: record.original_balance <= 0,
             style: {
               cursor: "pointer",
             },
