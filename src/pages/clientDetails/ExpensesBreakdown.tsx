@@ -1,18 +1,14 @@
-import { useRef } from "react";
-import React, {useEffect, useState} from "react";
+import React, { useState} from "react";
 import Layout from "antd/lib/layout/layout";
-import {Button, Card, Col, Collapse, Popover, Row, Slider, Switch, Table, Typography} from "antd";
+import {Button, Card, Col,   Row, Slider, Switch,  } from "antd";
 import IForecastSummary from "../../interfaces/IForecastSummary";
 
 import {RootStateOrAny, useSelector} from "react-redux";
 
 import highcharts, {numberFormat} from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import {SettingFilled} from "@ant-design/icons/lib/icons";
 import YearBreakdownTabs from "../../components/YearBreakdownTabs";
 
-const {Text} = Typography
-const {Panel} = Collapse;
 
 const ExpensesBreakdown = () => {
 
@@ -251,8 +247,6 @@ const ExpensesBreakdown = () => {
   });
 
   const [some, setSome] = useState(0);
-  const [some2, setSome2] = useState(some)
-
   return (
 
       <Layout style={{backgroundColor: "white"}}>

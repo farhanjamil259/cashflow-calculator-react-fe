@@ -1,11 +1,10 @@
 import React, { Fragment, useState } from "react";
-import { Col, Form, Input, InputNumber, Modal, Row, Switch, Table } from "antd";
+import {  Form,   Modal,   Table } from "antd";
 // @ts-ignore
 import CurrencyFormat from "react-currency-format";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny,  useSelector } from "react-redux";
 import IInputs from "../../../../interfaces/IInputs";
-import { AlertAction } from "../../../../redux/general/alert";
-import { LoadingAction } from "../../../../redux/general/loading";
+
 import Text from "antd/lib/typography/Text";
 import { firstColumnWidth, secondColumnWidth } from "../../CommonVariable";
 import ViewButton from "../sharedComponents/ViewButton";
@@ -15,7 +14,6 @@ import { numberFormat } from "highcharts";
 const { useForm } = Form;
 
 const SelfEmployment = () => {
-  const dispatch = useDispatch();
   const inputs: IInputs = useSelector((state: RootStateOrAny) => state.currentInputSetReducer);
 
   const [isModelVisible, setIsModelVisible] = useState(false);
@@ -24,9 +22,6 @@ const SelfEmployment = () => {
 
   const [form] = useForm();
 
-  const [selfEmployment, setSelfEmployment] = useState(
-    JSON.parse(JSON.stringify(inputs.household_income.self_employment_income))
-  );
 
   const columns: any = [
     {
@@ -70,7 +65,7 @@ const SelfEmployment = () => {
               setIsModelVisible(true);
               // console.log(selfEmployment[activeItemIndex]);
             },
-            hidden: record.gross_anual_amount > 0 ? false : true,
+            hidden: record.gross_anual_amount <= 0,
             style: {
               cursor: "pointer",
             },

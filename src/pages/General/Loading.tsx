@@ -10,7 +10,7 @@ const Loading = () => {
 
     useEffect(() => {
         const getAsm = async () => {
-            await dispatch(getAssumptionsAction())
+           
 
 
 

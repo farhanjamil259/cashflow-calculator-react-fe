@@ -1,22 +1,19 @@
 import React, { Fragment, useState } from "react";
-import { Col, Form, Input, InputNumber, Modal, Row, Select, Switch, Table } from "antd";
+import {  Form,   Modal,    Table } from "antd";
 import { firstColumnWidth, secondColumnWidth, thirdColumnWidth } from "../../CommonVariable";
 import Text from "antd/lib/typography/Text";
 // @ts-ignore
 import CurrencyFormat from "react-currency-format";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny,  useSelector } from "react-redux";
 import IInputs from "../../../../interfaces/IInputs";
 import ViewButton from "../sharedComponents/ViewButton";
-import { AlertAction } from "../../../../redux/general/alert";
-import { LoadingAction } from "../../../../redux/general/loading";
+
 import { pound } from "../../../../components/currencySumbol";
 import { numberFormat } from "highcharts";
 
 const { useForm } = Form;
-const { Option } = Select;
 
 const Pension = () => {
-  const dispatch = useDispatch();
   const inputs: IInputs = useSelector((state: RootStateOrAny) => state.currentInputSetReducer);
 
   const [statePensionModel, setStatePensionModel] = useState(false);
@@ -27,15 +24,7 @@ const Pension = () => {
 
   const [form] = useForm();
 
-  const [statePension, setStatePension] = useState(
-    JSON.parse(JSON.stringify(inputs.household_income.pension_income.state_pension))
-  );
-  const [definedBenifit, setDefinedBenifit] = useState(
-    JSON.parse(JSON.stringify(inputs.household_income.pension_income.defined_benifit_pension_plans))
-  );
-  const [definedContribution, setDefinedContribution] = useState(
-    JSON.parse(JSON.stringify(inputs.household_income.pension_income.defined_contribution_pension_plans))
-  );
+
 
   // State Pension
   const columnsStatePension: any = [
@@ -141,9 +130,7 @@ const Pension = () => {
               // console.log(properties[activeItemIndex]);
             },
             hidden:
-              inputs.current_year <= record.end_year && inputs.current_year >= record.start_year
-                ? false
-                : true,
+              !(inputs.current_year <= record.end_year && inputs.current_year >= record.start_year),
             style: { cursor: "pointer" },
           };
         }}
@@ -212,9 +199,7 @@ const Pension = () => {
               // console.log(properties[activeItemIndex]);
             },
             hidden:
-              inputs.current_year <= record.end_year && inputs.current_year >= record.start_year
-                ? false
-                : true,
+              !(inputs.current_year <= record.end_year && inputs.current_year >= record.start_year),
             style: { cursor: "pointer" },
           };
         }}
@@ -306,13 +291,11 @@ const Pension = () => {
           return {
             onClick: (event) => {
               setActiveItemIndex(rowIndex!);
-              setDefinedContribution(true);
+
               // console.log(properties[activeItemIndex]);
             },
             hidden:
-              inputs.current_year <= record.end_year && inputs.current_year >= record.start_year
-                ? false
-                : true,
+              !(inputs.current_year <= record.end_year && inputs.current_year >= record.start_year),
             style: { cursor: "pointer" },
           };
         }}

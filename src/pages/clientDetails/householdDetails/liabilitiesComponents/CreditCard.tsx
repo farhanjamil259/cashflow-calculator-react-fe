@@ -1,12 +1,11 @@
 import React, { Fragment, useState } from "react";
-import { Col, Form, Input, InputNumber, Modal, Row, Switch, Table } from "antd";
+import {  Form,   Modal,   Table } from "antd";
 
 // @ts-ignore
 import CurrencyFormat from "react-currency-format";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny,  useSelector } from "react-redux";
 import IInputs from "../../../../interfaces/IInputs";
-import { AlertAction } from "../../../../redux/general/alert";
-import { LoadingAction } from "../../../../redux/general/loading";
+
 import Text from "antd/lib/typography/Text";
 import { firstColumnWidth, secondColumnWidth, thirdColumnWidth } from "../../CommonVariable";
 import ViewButton from "../sharedComponents/ViewButton";
@@ -14,16 +13,13 @@ import ViewButton from "../sharedComponents/ViewButton";
 const { useForm } = Form;
 
 const CreditCard = () => {
-  const dispatch = useDispatch();
   const inputs: IInputs = useSelector((state: RootStateOrAny) => state.currentInputSetReducer);
 
   const [isModelVisible, setIsModelVisible] = useState(false);
 
-  const [activeItemIndex, setActiveItemIndex] = useState(0);
 
   const [form] = useForm();
 
-  const [creditCard, setCreditCard] = useState(JSON.parse(JSON.stringify(inputs.liabilities.credit_card)));
 
   const columns: any = [
     {
@@ -66,11 +62,11 @@ const CreditCard = () => {
         onRow={(record, rowIndex) => {
           return {
             onClick: (event) => {
-              setActiveItemIndex(rowIndex!);
+
               setIsModelVisible(true);
               // console.log(properties[activeItemIndex]);
             },
-            hidden: record.original_balance > 0 ? false : true,
+            hidden: record.original_balance <= 0,
           };
         }}
       />

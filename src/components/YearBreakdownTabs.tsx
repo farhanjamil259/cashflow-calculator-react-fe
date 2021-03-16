@@ -75,8 +75,8 @@ const YearBreakdownTabs = (props: any) => {
           ]}
           dataSource={[
             {
-              name: "Employment Income",
-              category: "Employment",
+              name: "Employment",
+              category: "Employment Income",
               owner: (
                 <span>
                   <svg
@@ -576,7 +576,7 @@ const YearBreakdownTabs = (props: any) => {
 
             tableData.map(({ value }: any) => {
               total += value;
-              return null
+              return null;
             });
 
             return (

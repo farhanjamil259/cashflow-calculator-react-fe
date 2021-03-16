@@ -1,12 +1,11 @@
 import React, { Fragment, useState } from "react";
-import { Col, DatePicker, Form, Input, InputNumber, Modal, Row, Select, Switch, Table } from "antd";
+import {   Form,   Modal,    Table } from "antd";
 
 // @ts-ignore
 import CurrencyFormat from "react-currency-format";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny,  useSelector } from "react-redux";
 import IInputs from "../../../../interfaces/IInputs";
-import { AlertAction } from "../../../../redux/general/alert";
-import { LoadingAction } from "../../../../redux/general/loading";
+
 import Text from "antd/lib/typography/Text";
 import { firstColumnWidth, secondColumnWidth } from "../../CommonVariable";
 import ViewButton from "../sharedComponents/ViewButton";
@@ -14,10 +13,9 @@ import { pound } from "../../../../components/currencySumbol";
 import { numberFormat } from "highcharts";
 
 const { useForm } = Form;
-const { Option } = Select;
+
 
 const OtherLoan = () => {
-  const dispatch = useDispatch();
   const inputs: IInputs = useSelector((state: RootStateOrAny) => state.currentInputSetReducer);
 
   const [isModelVisible, setIsModelVisible] = useState(false);
@@ -25,8 +23,6 @@ const OtherLoan = () => {
   const [activeItemIndex, setActiveItemIndex] = useState(0);
 
   const [form] = useForm();
-
-  const [otherLoan, setOtherLoan] = useState(JSON.parse(JSON.stringify(inputs.liabilities.other_loans)));
 
   const columns: any = [
     {
@@ -71,9 +67,7 @@ const OtherLoan = () => {
               // console.log(properties[activeItemIndex]);
             },
             hidden:
-              inputs.current_year <= record.end_year && inputs.current_year >= record.start_year
-                ? false
-                : true,
+              !(inputs.current_year <= record.end_year && inputs.current_year >= record.start_year),
             style: {
               cursor: "pointer",
             },

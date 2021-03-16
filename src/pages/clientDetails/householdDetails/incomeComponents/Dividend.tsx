@@ -1,11 +1,9 @@
 import React, { Fragment, useState } from "react";
-import { Col, DatePicker, Form, Input, Modal, Row, Switch, Table, Typography } from "antd";
+import {   Form,  Modal,   Table, Typography } from "antd";
 // @ts-ignore
 import CurrencyFormat from "react-currency-format";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny,  useSelector } from "react-redux";
 import IInputs from "../../../../interfaces/IInputs";
-import { AlertAction } from "../../../../redux/general/alert";
-import { LoadingAction } from "../../../../redux/general/loading";
 import { firstColumnWidth, secondColumnWidth } from "../../CommonVariable";
 import ViewButton from "../sharedComponents/ViewButton";
 import { numberFormat } from "highcharts";
@@ -15,7 +13,6 @@ const { Text } = Typography;
 const { useForm } = Form;
 
 const Dividend = () => {
-  const dispatch = useDispatch();
   const inputs: IInputs = useSelector((state: RootStateOrAny) => state.currentInputSetReducer);
 
   const [isModelVisible, setIsModelVisible] = useState(false);
@@ -23,10 +20,6 @@ const Dividend = () => {
   const [activeItemIndex, setActiveItemIndex] = useState(0);
 
   const [form] = useForm();
-
-  const [incomeDetails, setIncomeDetails] = useState(
-    JSON.parse(JSON.stringify(inputs.household_income.dividend_income))
-  );
 
   const columns: any = [
     {
@@ -70,7 +63,7 @@ const Dividend = () => {
               setIsModelVisible(true);
               // console.log(properties[activeItemIndex]);
             },
-            hidden: record.anual_amount > 0 ? false : true,
+            hidden: record.anual_amount <= 0,
             style: {
               cursor: "pointer",
             },
