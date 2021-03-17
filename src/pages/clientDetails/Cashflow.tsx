@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Layout from "antd/lib/layout/layout";
 import { Card, Button, Row, Col, Switch, Slider } from "antd";
 
@@ -21,6 +21,26 @@ const Cashflow = () => {
   const [selectedSummaryAtIndexNumber, setSelectedSummaryAtIndexNumber] = useState(0);
 
   const [selectedSummaryAtIndex, setSelectedSummaryAtIndex] = useState(summary[0]);
+
+  const [totalIncome, setTotalIncome] = useState<number[]>([0]);
+
+  useEffect(() => {
+    let tempTotalIncome: number[] = [];
+    summary.map((s) => {
+      let t =
+        s.income_analysis.total_other_income +
+        // s.income_analysis.total_residential_sale_proceeds +
+        s.income_analysis.total_pension_income +
+        s.income_analysis.total_savings_and_investments_drawdowns +
+        s.income_analysis.total_dividend_income +
+        s.income_analysis.total_rental_income +
+        s.income_analysis.total_self_employment_income +
+        s.income_analysis.total_employment_income;
+
+      tempTotalIncome.push(t);
+    });
+    setTotalIncome(tempTotalIncome);
+  }, []);
 
   const [cashFlowChartOptions, setCashFlowChartOptions] = useState<highcharts.Options>({
     chart: {
@@ -189,18 +209,8 @@ const Cashflow = () => {
         },
       },
     },
+    colors: ["#5c6bc0", "#ab47bc", "#7e57c2", "#26a69a", "#9ccc65", "#ffee58", "#ffa726"],
 
-    colors: [
-      "#81d4fa",
-      "#4fc3f7",
-      "#29b6f6",
-      "#03a9f4",
-      "#039be5",
-      "#0288d1",
-      "#0277bd",
-      "#01579b",
-      "#d32f2f",
-    ],
     series: [
       {
         name: "Shortfall",
@@ -217,6 +227,40 @@ const Cashflow = () => {
       {
         name: "Other",
         type: "column",
+        events: {
+          legendItemClick: (e) => {
+            if (e.target.visible) {
+              const clone: any = { ...cashFlowChartOptions };
+
+              clone.series[0].data = [
+                ...summary.map((s) => {
+                  return (
+                    s.expense_analysis.total_expenses -
+                    s.income_analysis.total_dividend_income -
+                    s.income_analysis.total_pension_income -
+                    s.income_analysis.total_rental_income -
+                    s.income_analysis.total_residential_sale_proceeds -
+                    s.income_analysis.total_savings_and_investments_drawdowns -
+                    s.income_analysis.total_self_employment_income -
+                    s.income_analysis.total_employment_income
+                  );
+                }),
+              ];
+
+              setCashFlowChartOptions(clone);
+            } else {
+              const clone: any = { ...cashFlowChartOptions };
+
+              clone.series[0].data = [
+                ...summary.map((s) => {
+                  return s.expense_analysis.total_expenses - s.income_analysis.total_income;
+                }),
+              ];
+
+              setCashFlowChartOptions(clone);
+            }
+          },
+        },
         data: [
           ...summary.map((s) => {
             return s.income_analysis.total_other_income;
@@ -228,6 +272,41 @@ const Cashflow = () => {
         name: "Property Sale",
         visible: false,
         type: "column",
+
+        events: {
+          legendItemClick: (e) => {
+            if (e.target.visible) {
+              const clone: any = { ...cashFlowChartOptions };
+
+              clone.series[0].data = [
+                ...summary.map((s) => {
+                  return (
+                    s.expense_analysis.total_expenses -
+                    s.income_analysis.total_dividend_income -
+                    s.income_analysis.total_other_income -
+                    s.income_analysis.total_pension_income -
+                    s.income_analysis.total_rental_income -
+                    s.income_analysis.total_savings_and_investments_drawdowns -
+                    s.income_analysis.total_self_employment_income -
+                    s.income_analysis.total_employment_income
+                  );
+                }),
+              ];
+
+              setCashFlowChartOptions(clone);
+            } else {
+              const clone: any = { ...cashFlowChartOptions };
+
+              clone.series[0].data = [
+                ...summary.map((s) => {
+                  return s.expense_analysis.total_expenses - s.income_analysis.total_income;
+                }),
+              ];
+
+              setCashFlowChartOptions(clone);
+            }
+          },
+        },
         data: [
           ...summary.map((s) => {
             return s.income_analysis.total_residential_sale_proceeds;
@@ -238,6 +317,40 @@ const Cashflow = () => {
       {
         name: "Pension",
         type: "column",
+        events: {
+          legendItemClick: (e) => {
+            if (e.target.visible) {
+              const clone: any = { ...cashFlowChartOptions };
+
+              clone.series[0].data = [
+                ...summary.map((s) => {
+                  return (
+                    s.expense_analysis.total_expenses -
+                    s.income_analysis.total_dividend_income -
+                    s.income_analysis.total_other_income -
+                    s.income_analysis.total_rental_income -
+                    s.income_analysis.total_residential_sale_proceeds -
+                    s.income_analysis.total_savings_and_investments_drawdowns -
+                    s.income_analysis.total_self_employment_income -
+                    s.income_analysis.total_employment_income
+                  );
+                }),
+              ];
+
+              setCashFlowChartOptions(clone);
+            } else {
+              const clone: any = { ...cashFlowChartOptions };
+
+              clone.series[0].data = [
+                ...summary.map((s) => {
+                  return s.expense_analysis.total_expenses - s.income_analysis.total_income;
+                }),
+              ];
+
+              setCashFlowChartOptions(clone);
+            }
+          },
+        },
         data: [
           ...summary.map((s) => {
             return s.income_analysis.total_pension_income;
@@ -248,6 +361,40 @@ const Cashflow = () => {
       {
         name: "Savings and Investments",
         type: "column",
+        events: {
+          legendItemClick: (e) => {
+            if (e.target.visible) {
+              const clone: any = { ...cashFlowChartOptions };
+
+              clone.series[0].data = [
+                ...summary.map((s) => {
+                  return (
+                    s.expense_analysis.total_expenses -
+                    s.income_analysis.total_dividend_income -
+                    s.income_analysis.total_other_income -
+                    s.income_analysis.total_pension_income -
+                    s.income_analysis.total_rental_income -
+                    s.income_analysis.total_residential_sale_proceeds -
+                    s.income_analysis.total_self_employment_income -
+                    s.income_analysis.total_employment_income
+                  );
+                }),
+              ];
+
+              setCashFlowChartOptions(clone);
+            } else {
+              const clone: any = { ...cashFlowChartOptions };
+
+              clone.series[0].data = [
+                ...summary.map((s) => {
+                  return s.expense_analysis.total_expenses - s.income_analysis.total_income;
+                }),
+              ];
+
+              setCashFlowChartOptions(clone);
+            }
+          },
+        },
         data: [
           ...summary.map((s) => {
             return s.income_analysis.total_savings_and_investments_drawdowns;
@@ -258,6 +405,40 @@ const Cashflow = () => {
       {
         name: "Dividend",
         type: "column",
+        events: {
+          legendItemClick: (e) => {
+            if (e.target.visible) {
+              const clone: any = { ...cashFlowChartOptions };
+
+              clone.series[0].data = [
+                ...summary.map((s) => {
+                  return (
+                    s.expense_analysis.total_expenses -
+                    s.income_analysis.total_other_income -
+                    s.income_analysis.total_pension_income -
+                    s.income_analysis.total_rental_income -
+                    s.income_analysis.total_residential_sale_proceeds -
+                    s.income_analysis.total_savings_and_investments_drawdowns -
+                    s.income_analysis.total_self_employment_income -
+                    s.income_analysis.total_employment_income
+                  );
+                }),
+              ];
+
+              setCashFlowChartOptions(clone);
+            } else {
+              const clone: any = { ...cashFlowChartOptions };
+
+              clone.series[0].data = [
+                ...summary.map((s) => {
+                  return s.expense_analysis.total_expenses - s.income_analysis.total_income;
+                }),
+              ];
+
+              setCashFlowChartOptions(clone);
+            }
+          },
+        },
         data: [
           ...summary.map((s) => {
             return s.income_analysis.total_dividend_income;
@@ -268,6 +449,40 @@ const Cashflow = () => {
       {
         name: "Rental",
         type: "column",
+        events: {
+          legendItemClick: (e) => {
+            if (e.target.visible) {
+              const clone: any = { ...cashFlowChartOptions };
+
+              clone.series[0].data = [
+                ...summary.map((s) => {
+                  return (
+                    s.expense_analysis.total_expenses -
+                    s.income_analysis.total_dividend_income -
+                    s.income_analysis.total_other_income -
+                    s.income_analysis.total_pension_income -
+                    s.income_analysis.total_residential_sale_proceeds -
+                    s.income_analysis.total_savings_and_investments_drawdowns -
+                    s.income_analysis.total_self_employment_income -
+                    s.income_analysis.total_employment_income
+                  );
+                }),
+              ];
+
+              setCashFlowChartOptions(clone);
+            } else {
+              const clone: any = { ...cashFlowChartOptions };
+
+              clone.series[0].data = [
+                ...summary.map((s) => {
+                  return s.expense_analysis.total_expenses - s.income_analysis.total_income;
+                }),
+              ];
+
+              setCashFlowChartOptions(clone);
+            }
+          },
+        },
         data: [
           ...summary.map((s) => {
             return s.income_analysis.total_rental_income;
@@ -279,6 +494,40 @@ const Cashflow = () => {
       {
         name: "Self-Employment",
         type: "column",
+        events: {
+          legendItemClick: (e) => {
+            if (e.target.visible) {
+              const clone: any = { ...cashFlowChartOptions };
+
+              clone.series[0].data = [
+                ...summary.map((s) => {
+                  return (
+                    s.expense_analysis.total_expenses -
+                    s.income_analysis.total_dividend_income -
+                    s.income_analysis.total_other_income -
+                    s.income_analysis.total_pension_income -
+                    s.income_analysis.total_rental_income -
+                    s.income_analysis.total_residential_sale_proceeds -
+                    s.income_analysis.total_savings_and_investments_drawdowns -
+                    s.income_analysis.total_employment_income
+                  );
+                }),
+              ];
+
+              setCashFlowChartOptions(clone);
+            } else {
+              const clone: any = { ...cashFlowChartOptions };
+
+              clone.series[0].data = [
+                ...summary.map((s) => {
+                  return s.expense_analysis.total_expenses - s.income_analysis.total_income;
+                }),
+              ];
+
+              setCashFlowChartOptions(clone);
+            }
+          },
+        },
         data: [
           ...summary.map((s) => {
             return s.income_analysis.total_self_employment_income;
@@ -289,6 +538,40 @@ const Cashflow = () => {
       {
         name: "Employment",
         type: "column",
+        events: {
+          legendItemClick: (e) => {
+            if (e.target.visible) {
+              const clone: any = { ...cashFlowChartOptions };
+
+              clone.series[0].data = [
+                ...summary.map((s) => {
+                  return (
+                    s.expense_analysis.total_expenses -
+                    s.income_analysis.total_dividend_income -
+                    s.income_analysis.total_other_income -
+                    s.income_analysis.total_pension_income -
+                    s.income_analysis.total_rental_income -
+                    s.income_analysis.total_residential_sale_proceeds -
+                    s.income_analysis.total_savings_and_investments_drawdowns -
+                    s.income_analysis.total_self_employment_income
+                  );
+                }),
+              ];
+
+              setCashFlowChartOptions(clone);
+            } else {
+              const clone: any = { ...cashFlowChartOptions };
+
+              clone.series[0].data = [
+                ...summary.map((s) => {
+                  return s.expense_analysis.total_expenses - s.income_analysis.total_income;
+                }),
+              ];
+
+              setCashFlowChartOptions(clone);
+            }
+          },
+        },
         data: [
           ...summary.map((s) => {
             return s.income_analysis.total_employment_income;
@@ -335,6 +618,187 @@ const Cashflow = () => {
         bordered={false}
         extra={
           <div>
+            <Switch
+              style={{ marginRight: "16px" }}
+              checkedChildren="Detailed"
+              unCheckedChildren="Detailed"
+              defaultChecked={false}
+              onChange={(e) => {
+                !e
+                  ? setCashFlowChartOptions({
+                      ...cashFlowChartOptions,
+                      series: [
+                        {
+                          name: "Shortfall",
+                          type: "column",
+                          data: [
+                            ...summary.map((s) => {
+                              return s.expense_analysis.total_expenses - s.income_analysis.total_income;
+                            }),
+                          ],
+                          color: "#d32f2f",
+                          legendIndex: 9,
+                        },
+
+                        {
+                          name: "Other",
+                          type: "column",
+                          data: [
+                            ...summary.map((s) => {
+                              return s.income_analysis.total_other_income;
+                            }),
+                          ],
+                          legendIndex: 7,
+                        },
+                        {
+                          name: "Property Sale",
+                          visible: false,
+                          type: "column",
+                          data: [
+                            ...summary.map((s) => {
+                              return s.income_analysis.total_residential_sale_proceeds;
+                            }),
+                          ],
+                          legendIndex: 6.5,
+                        },
+                        {
+                          name: "Pension",
+                          type: "column",
+                          data: [
+                            ...summary.map((s) => {
+                              return s.income_analysis.total_pension_income;
+                            }),
+                          ],
+                          legendIndex: 6,
+                        },
+                        {
+                          name: "Savings and Investments",
+                          type: "column",
+                          data: [
+                            ...summary.map((s) => {
+                              return s.income_analysis.total_savings_and_investments_drawdowns;
+                            }),
+                          ],
+                          legendIndex: 5,
+                        },
+                        {
+                          name: "Dividend",
+                          type: "column",
+                          data: [
+                            ...summary.map((s) => {
+                              return s.income_analysis.total_dividend_income;
+                            }),
+                          ],
+                          legendIndex: 4,
+                        },
+                        {
+                          name: "Rental",
+                          type: "column",
+                          data: [
+                            ...summary.map((s) => {
+                              return s.income_analysis.total_rental_income;
+                            }),
+                          ],
+                          legendIndex: 3,
+                        },
+
+                        {
+                          name: "Self-Employment",
+                          type: "column",
+                          data: [
+                            ...summary.map((s) => {
+                              return s.income_analysis.total_self_employment_income;
+                            }),
+                          ],
+                          legendIndex: 2,
+                        },
+                        {
+                          name: "Employment",
+                          type: "column",
+                          data: [
+                            ...summary.map((s) => {
+                              return s.income_analysis.total_employment_income;
+                            }),
+                          ],
+                          legendIndex: 1,
+                        },
+
+                        {
+                          type: "line",
+                          name: "Total Expenses",
+                          step: "left",
+                          data: [
+                            ...summary.map((s) => {
+                              return s.expense_analysis.total_expenses;
+                            }),
+                          ],
+                          color: "#212121",
+                          marker: {
+                            enabled: false,
+                          },
+                          pointPlacement: -0.5,
+                          lineWidth: 3,
+                          legendIndex: 8,
+                        },
+                      ],
+                      colors: ["#5c6bc0", "#ab47bc", "#7e57c2", "#26a69a", "#9ccc65", "#ffee58", "#ffa726"],
+                    })
+                  : setCashFlowChartOptions({
+                      ...cashFlowChartOptions,
+                      series: [
+                        {
+                          name: "Shortfall",
+                          type: "column",
+                          data: [
+                            ...summary.map((s) => {
+                              return s.expense_analysis.total_expenses - s.income_analysis.total_income;
+                            }),
+                          ],
+                          color: "#d32f2f",
+                          legendIndex: 9,
+                        },
+
+                        {
+                          name: "Inflow",
+                          type: "column",
+                          data: [
+                            ...summary.map((s) => {
+                              return (
+                                s.income_analysis.total_other_income +
+                                // s.income_analysis.total_residential_sale_proceeds +
+                                s.income_analysis.total_pension_income +
+                                s.income_analysis.total_savings_and_investments_drawdowns +
+                                s.income_analysis.total_dividend_income +
+                                s.income_analysis.total_rental_income +
+                                s.income_analysis.total_self_employment_income +
+                                s.income_analysis.total_employment_income
+                              );
+                            }),
+                          ],
+                          legendIndex: 7,
+                        },
+                        {
+                          type: "line",
+                          visible: true,
+                          name: "Total Expenses",
+                          step: "left",
+                          data: [
+                            ...summary.map((s) => {
+                              return s.expense_analysis.total_expenses;
+                            }),
+                          ],
+                          color: "#212121",
+                          marker: {
+                            enabled: false,
+                          },
+                          pointPlacement: -0.5,
+                          lineWidth: 3,
+                          legendIndex: 8,
+                        },
+                      ],
+                    });
+              }}
+            />
             <Switch
               style={{ marginRight: "16px" }}
               checkedChildren="Zoom"
@@ -643,7 +1107,7 @@ const Cashflow = () => {
           </Row>
         )}
 
-        <Row >
+        <Row>
           <Col span={24}>
             <HighchartsReact
               highcharts={highcharts}
@@ -653,7 +1117,6 @@ const Cashflow = () => {
                 setSome(chart.yAxis[0].max);
               }}
             />
-
           </Col>
           {chartControls.zoomable && (
             <Col style={{ paddingBottom: "80px", paddingTop: "20px" }}>
@@ -676,6 +1139,7 @@ const Cashflow = () => {
             </Col>
           )}
         </Row>
+
         <Row style={{ marginTop: "16px" }}>
           <Col span={24}>
             <YearBreakdownTabs
