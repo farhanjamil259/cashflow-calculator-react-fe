@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import Layout from "antd/lib/layout/layout";
 import { Card, Button, Row, Col, Switch, Slider } from "antd";
 
@@ -24,11 +24,15 @@ const Cashflow = () => {
 
   const [selectedSummaryAtIndex, setSelectedSummaryAtIndex] = useState(summary[0]);
 
-  const [shortfall, setShortfall] = useState<number[]>([
-    ...summary.map((s) => {
-      return s.expense_analysis.total_expenses - s.income_analysis.total_income;
-    }),
-  ]);
+  const preShortfall: number[] = useMemo(() => {
+    return [
+      ...summary.map((s) => {
+        return s.expense_analysis.total_expenses - s.income_analysis.total_income;
+      }),
+    ];
+  }, []);
+
+  const [shortfall, setShortfall] = useState<number[]>(JSON.parse(JSON.stringify(preShortfall)));
 
   const [cashFlowChartOptions, setCashFlowChartOptions] = useState<highcharts.Options>({
     chart: {
@@ -198,310 +202,31 @@ const Cashflow = () => {
       },
     },
     colors: ["#5c6bc0", "#ab47bc", "#7e57c2", "#26a69a", "#9ccc65", "#ffee58", "#ffa726"],
-    series: [
-      {
-        name: "Shortfall",
-        type: "column",
-        data: shortfall,
-        color: "#d32f2f",
-        legendIndex: 10,
-      },
-      {
-        name: "Other",
-        type: "column",
-        events: {
-          legendItemClick: (e) => {
-            if (!e.target.visible) {
-              const clone: any = { ...cashFlowChartOptions };
-              const clone2 = { ...summary };
-              clone.series![0].data = [...shortfall].map((s, i) => {
-                return s - clone2[i].income_analysis.total_other_income;
-              });
-              setCashFlowChartOptions(clone);
-            } else {
-              const clone: any = { ...cashFlowChartOptions };
-              const clone2 = { ...summary };
-              clone.series![0].data = [...shortfall].map((s, i) => {
-                return s + clone2[i].income_analysis.total_other_income;
-              });
-              setCashFlowChartOptions(clone);
-            }
-          },
-        },
-
-        data: [
-          ...summary.map((s) => {
-            return s.income_analysis.total_other_income;
-          }),
-        ],
-        legendIndex: 8,
-      },
-      {
-        name: "Property Sale",
-        visible: false,
-        type: "column",
-        events: {
-          legendItemClick: (e) => {
-            if (!e.target.visible) {
-              const clone: any = { ...cashFlowChartOptions };
-              const clone2 = { ...summary };
-              clone.series![0].data = [...shortfall].map((s, i) => {
-                return s - clone2[i].income_analysis.total_residential_sale_proceeds;
-              });
-              // setCashFlowChartOptions(clone);
-            } else {
-              const clone: any = { ...cashFlowChartOptions };
-              const clone2 = { ...summary };
-              clone.series![0].data = [...shortfall].map((s, i) => {
-                return s + clone2[i].income_analysis.total_residential_sale_proceeds;
-              });
-              // setCashFlowChartOptions(clone);
-            }
-          },
-        },
-
-        data: [
-          ...summary.map((s) => {
-            return s.income_analysis.total_residential_sale_proceeds;
-          }),
-        ],
-        legendIndex: 7,
-      },
-      {
-        name: "Pension",
-        type: "column",
-        events: {
-          legendItemClick: (e) => {
-            if (!e.target.visible) {
-              const clone: any = { ...cashFlowChartOptions };
-              const clone2 = { ...summary };
-              clone.series![0].data = [...shortfall].map((s, i) => {
-                return s - clone2[i].income_analysis.total_pension_income;
-              });
-              setCashFlowChartOptions(clone);
-            } else {
-              const clone: any = { ...cashFlowChartOptions };
-              const clone2 = { ...summary };
-              clone.series![0].data = [...shortfall].map((s, i) => {
-                return s + clone2[i].income_analysis.total_pension_income;
-              });
-              setCashFlowChartOptions(clone);
-            }
-          },
-        },
-
-        data: [
-          ...summary.map((s) => {
-            return s.income_analysis.total_pension_income;
-          }),
-        ],
-        legendIndex: 6,
-      },
-      {
-        name: "Savings and Investments",
-        type: "column",
-        events: {
-          legendItemClick: (e) => {
-            if (!e.target.visible) {
-              const clone: any = { ...cashFlowChartOptions };
-              const clone2 = { ...summary };
-              clone.series![0].data = [...shortfall].map((s, i) => {
-                return s - clone2[i].income_analysis.total_savings_and_investments_drawdowns;
-              });
-              setCashFlowChartOptions(clone);
-            } else {
-              const clone: any = { ...cashFlowChartOptions };
-              const clone2 = { ...summary };
-              clone.series![0].data = [...shortfall].map((s, i) => {
-                return s + clone2[i].income_analysis.total_savings_and_investments_drawdowns;
-              });
-              setCashFlowChartOptions(clone);
-            }
-          },
-        },
-        data: [
-          ...summary.map((s) => {
-            return s.income_analysis.total_savings_and_investments_drawdowns;
-          }),
-        ],
-        legendIndex: 5,
-      },
-      {
-        name: "Dividend",
-        type: "column",
-        events: {
-          legendItemClick: (e) => {
-            if (!e.target.visible) {
-              const clone: any = { ...cashFlowChartOptions };
-              const clone2 = { ...summary };
-              clone.series![0].data = [...shortfall].map((s, i) => {
-                return s - clone2[i].income_analysis.total_dividend_income;
-              });
-              setCashFlowChartOptions(clone);
-            } else {
-              const clone: any = { ...cashFlowChartOptions };
-              const clone2 = { ...summary };
-              clone.series![0].data = [...shortfall].map((s, i) => {
-                return s + clone2[i].income_analysis.total_dividend_income;
-              });
-              setCashFlowChartOptions(clone);
-            }
-          },
-        },
-
-        data: [
-          ...summary.map((s) => {
-            return s.income_analysis.total_dividend_income;
-          }),
-        ],
-        legendIndex: 4,
-      },
-      {
-        name: "Rental",
-        type: "column",
-        events: {
-          legendItemClick: (e) => {
-            if (!e.target.visible) {
-              const clone: any = { ...cashFlowChartOptions };
-              const clone2 = { ...summary };
-              clone.series![0].data = [...shortfall].map((s, i) => {
-                return s - clone2[i].income_analysis.total_rental_income;
-              });
-              setCashFlowChartOptions(clone);
-            } else {
-              const clone: any = { ...cashFlowChartOptions };
-              const clone2 = { ...summary };
-              clone.series![0].data = [...shortfall].map((s, i) => {
-                return s + clone2[i].income_analysis.total_rental_income;
-              });
-              setCashFlowChartOptions(clone);
-            }
-          },
-        },
-
-        data: [
-          ...summary.map((s) => {
-            return s.income_analysis.total_rental_income;
-          }),
-        ],
-        legendIndex: 3,
-      },
-      {
-        name: "Self-Employment",
-        type: "column",
-        events: {
-          legendItemClick: (e) => {
-            if (!e.target.visible) {
-              const clone: any = { ...cashFlowChartOptions };
-              const clone2 = { ...summary };
-              clone.series![0].data = [...shortfall].map((s, i) => {
-                return s - clone2[i].income_analysis.total_self_employment_income;
-              });
-              setCashFlowChartOptions(clone);
-            } else {
-              const clone: any = { ...cashFlowChartOptions };
-              const clone2 = { ...summary };
-              clone.series![0].data = [...shortfall].map((s, i) => {
-                return s + clone2[i].income_analysis.total_self_employment_income;
-              });
-              setCashFlowChartOptions(clone);
-            }
-          },
-        },
-
-        data: [
-          ...summary.map((s) => {
-            return s.income_analysis.total_self_employment_income;
-          }),
-        ],
-        legendIndex: 2,
-      },
-      {
-        name: "Employment",
-        type: "column",
-        events: {
-          legendItemClick: (e) => {
-            if (!e.target.visible) {
-              const clone: any = { ...cashFlowChartOptions };
-              const clone2 = { ...summary };
-              clone.series![0].data = [...shortfall].map((s, i) => {
-                return s - clone2[i].income_analysis.total_employment_income;
-              });
-              setCashFlowChartOptions(clone);
-            } else {
-              const clone: any = { ...cashFlowChartOptions };
-              const clone2 = { ...summary };
-              clone.series![0].data = [...shortfall].map((s, i) => {
-                return s + clone2[i].income_analysis.total_employment_income;
-              });
-              setCashFlowChartOptions(clone);
-            }
-          },
-        },
-        data: [
-          ...summary.map((s) => {
-            return s.income_analysis.total_employment_income;
-          }),
-        ],
-        legendIndex: 1,
-      },
-
-      {
-        type: "line",
-        name: "Total Expenses",
-        step: "left",
-        data: [
-          ...summary.map((s) => {
-            return s.expense_analysis.total_expenses;
-          }),
-        ],
-        color: "#212121",
-        marker: {
-          enabled: false,
-        },
-        pointPlacement: -0.5,
-        lineWidth: 3,
-        legendIndex: 9,
-      },
-    ],
   });
 
   let chartRef: any = React.useRef(null);
+
+  const [detailedView, setDetailedVliew] = useState<boolean>(true);
 
   useEffect(() => {
     setCashFlowChartOptions({
       ...cashFlowChartOptions,
       series: [
         {
+          visible: true,
+          showInLegend: true,
           name: "Shortfall",
           type: "column",
           data: shortfall,
           color: "#d32f2f",
           legendIndex: 10,
         },
+
         {
+          visible: detailedView,
+          showInLegend: detailedView,
           name: "Other",
           type: "column",
-          events: {
-            legendItemClick: (e) => {
-              if (!e.target.visible) {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s - clone2[i].income_analysis.total_other_income;
-                });
-                setCashFlowChartOptions(clone);
-              } else {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s + clone2[i].income_analysis.total_other_income;
-                });
-                setCashFlowChartOptions(clone);
-              }
-            },
-          },
-
           data: [
             ...summary.map((s) => {
               return s.income_analysis.total_other_income;
@@ -510,29 +235,10 @@ const Cashflow = () => {
           legendIndex: 8,
         },
         {
-          name: "Property Sale",
           visible: false,
+          showInLegend: detailedView,
+          name: "Property Sale",
           type: "column",
-          events: {
-            legendItemClick: (e) => {
-              if (!e.target.visible) {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s - clone2[i].income_analysis.total_residential_sale_proceeds;
-                });
-                // setCashFlowChartOptions(clone);
-              } else {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s + clone2[i].income_analysis.total_residential_sale_proceeds;
-                });
-                // setCashFlowChartOptions(clone);
-              }
-            },
-          },
-
           data: [
             ...summary.map((s) => {
               return s.income_analysis.total_residential_sale_proceeds;
@@ -541,27 +247,10 @@ const Cashflow = () => {
           legendIndex: 7,
         },
         {
+          visible: detailedView,
+          showInLegend: detailedView,
           name: "Pension",
           type: "column",
-          events: {
-            legendItemClick: (e) => {
-              if (!e.target.visible) {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s - clone2[i].income_analysis.total_pension_income;
-                });
-                setCashFlowChartOptions(clone);
-              } else {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s + clone2[i].income_analysis.total_pension_income;
-                });
-                setCashFlowChartOptions(clone);
-              }
-            },
-          },
 
           data: [
             ...summary.map((s) => {
@@ -571,27 +260,11 @@ const Cashflow = () => {
           legendIndex: 6,
         },
         {
+          visible: detailedView,
+          showInLegend: detailedView,
           name: "Savings and Investments",
           type: "column",
-          events: {
-            legendItemClick: (e) => {
-              if (!e.target.visible) {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s - clone2[i].income_analysis.total_savings_and_investments_drawdowns;
-                });
-                setCashFlowChartOptions(clone);
-              } else {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s + clone2[i].income_analysis.total_savings_and_investments_drawdowns;
-                });
-                setCashFlowChartOptions(clone);
-              }
-            },
-          },
+
           data: [
             ...summary.map((s) => {
               return s.income_analysis.total_savings_and_investments_drawdowns;
@@ -600,27 +273,10 @@ const Cashflow = () => {
           legendIndex: 5,
         },
         {
+          visible: detailedView,
+          showInLegend: detailedView,
           name: "Dividend",
           type: "column",
-          events: {
-            legendItemClick: (e) => {
-              if (!e.target.visible) {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s - clone2[i].income_analysis.total_dividend_income;
-                });
-                setCashFlowChartOptions(clone);
-              } else {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s + clone2[i].income_analysis.total_dividend_income;
-                });
-                setCashFlowChartOptions(clone);
-              }
-            },
-          },
 
           data: [
             ...summary.map((s) => {
@@ -630,27 +286,10 @@ const Cashflow = () => {
           legendIndex: 4,
         },
         {
+          visible: detailedView,
+          showInLegend: detailedView,
           name: "Rental",
           type: "column",
-          events: {
-            legendItemClick: (e) => {
-              if (!e.target.visible) {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s - clone2[i].income_analysis.total_rental_income;
-                });
-                setCashFlowChartOptions(clone);
-              } else {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s + clone2[i].income_analysis.total_rental_income;
-                });
-                setCashFlowChartOptions(clone);
-              }
-            },
-          },
 
           data: [
             ...summary.map((s) => {
@@ -660,27 +299,10 @@ const Cashflow = () => {
           legendIndex: 3,
         },
         {
+          visible: detailedView,
+          showInLegend: detailedView,
           name: "Self-Employment",
           type: "column",
-          events: {
-            legendItemClick: (e) => {
-              if (!e.target.visible) {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s - clone2[i].income_analysis.total_self_employment_income;
-                });
-                setCashFlowChartOptions(clone);
-              } else {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s + clone2[i].income_analysis.total_self_employment_income;
-                });
-                setCashFlowChartOptions(clone);
-              }
-            },
-          },
 
           data: [
             ...summary.map((s) => {
@@ -690,27 +312,11 @@ const Cashflow = () => {
           legendIndex: 2,
         },
         {
+          visible: detailedView,
+          showInLegend: detailedView,
           name: "Employment",
           type: "column",
-          events: {
-            legendItemClick: (e) => {
-              if (!e.target.visible) {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s - clone2[i].income_analysis.total_employment_income;
-                });
-                setCashFlowChartOptions(clone);
-              } else {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s + clone2[i].income_analysis.total_employment_income;
-                });
-                setCashFlowChartOptions(clone);
-              }
-            },
-          },
+
           data: [
             ...summary.map((s) => {
               return s.income_analysis.total_employment_income;
@@ -718,11 +324,25 @@ const Cashflow = () => {
           ],
           legendIndex: 1,
         },
-
         {
+          visible: !detailedView,
+          showInLegend: !detailedView,
+          name: "Inflow",
+          type: "column",
+          color: "#5c6bc0",
+          data: [
+            ...summary.map((s) => {
+              return s.income_analysis.total_income;
+            }),
+          ],
+        },
+        {
+          zIndex: 99,
+          visible: true,
+          showInLegend: true,
           type: "line",
           name: "Total Expenses",
-          step: "left",
+          step: "center",
           data: [
             ...summary.map((s) => {
               return s.expense_analysis.total_expenses;
@@ -732,105 +352,49 @@ const Cashflow = () => {
           marker: {
             enabled: false,
           },
-          pointPlacement: -0.5,
+          // pointPlacement: -0.5,
+
           lineWidth: 3,
           legendIndex: 9,
         },
       ],
     });
-  }, [summary]);
-
-  const [detailedView, setDetailedVliew] = useState<boolean>(false);
+  }, [summary, detailedView]);
 
   useEffect(() => {
-    if (detailedView) {
-      const clone = { ...cashFlowChartOptions };
-      clone.series = [
+    setCashFlowChartOptions({
+      ...cashFlowChartOptions,
+      series: [
         {
-          name: "Shortfall",
-          type: "column",
-          data: [
-            ...summary.map((s) => {
-              return s.expense_analysis.total_expenses - s.income_analysis.total_income;
-            }),
-          ],
-          color: "#d32f2f",
-          legendIndex: 21,
-        },
-        {
-          name: "Inflow",
-          type: "column",
-          data: [
-            ...summary.map((s) => {
-              return (
-                s.income_analysis.total_other_income +
-                // s.income_analysis.total_residential_sale_proceeds +
-                s.income_analysis.total_pension_income +
-                s.income_analysis.total_savings_and_investments_drawdowns +
-                s.income_analysis.total_dividend_income +
-                s.income_analysis.total_rental_income +
-                s.income_analysis.total_self_employment_income +
-                s.income_analysis.total_employment_income
-              );
-            }),
-          ],
-
-          legendIndex: 22,
-        },
-        {
-          type: "line",
           visible: true,
-          name: "Total Expenses",
-          step: "left",
-          data: [
-            ...summary.map((s) => {
-              return s.expense_analysis.total_expenses;
-            }),
-          ],
-          color: "#212121",
-          marker: {
-            enabled: false,
-          },
-          pointPlacement: -0.5,
-          lineWidth: 3,
-          legendIndex: 23,
-        },
-      ];
-      setCashFlowChartOptions(clone);
-    } else {
-      const clone = { ...cashFlowChartOptions };
-
-      clone.series = [
-        {
+          showInLegend: true,
           name: "Shortfall",
           type: "column",
           data: shortfall,
           color: "#d32f2f",
           legendIndex: 10,
         },
+
         {
           name: "Other",
           type: "column",
           events: {
             legendItemClick: (e) => {
               if (!e.target.visible) {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s - clone2[i].income_analysis.total_other_income;
-                });
-                setCashFlowChartOptions(clone);
+                setShortfall([
+                  ...summary.map((s, i) => {
+                    return shortfall[i] - s.income_analysis.total_other_income;
+                  }),
+                ]);
               } else {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s + clone2[i].income_analysis.total_other_income;
-                });
-                setCashFlowChartOptions(clone);
+                setShortfall([
+                  ...summary.map((s, i) => {
+                    return shortfall[i] + s.income_analysis.total_other_income;
+                  }),
+                ]);
               }
             },
           },
-
           data: [
             ...summary.map((s) => {
               return s.income_analysis.total_other_income;
@@ -839,28 +403,10 @@ const Cashflow = () => {
           legendIndex: 8,
         },
         {
-          name: "Property Sale",
           visible: false,
+          showInLegend: detailedView,
+          name: "Property Sale",
           type: "column",
-          events: {
-            legendItemClick: (e) => {
-              if (!e.target.visible) {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s - clone2[i].income_analysis.total_residential_sale_proceeds;
-                });
-                // setCashFlowChartOptions(clone);
-              } else {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s + clone2[i].income_analysis.total_residential_sale_proceeds;
-                });
-                // setCashFlowChartOptions(clone);
-              }
-            },
-          },
 
           data: [
             ...summary.map((s) => {
@@ -875,23 +421,20 @@ const Cashflow = () => {
           events: {
             legendItemClick: (e) => {
               if (!e.target.visible) {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s - clone2[i].income_analysis.total_pension_income;
-                });
-                setCashFlowChartOptions(clone);
+                setShortfall([
+                  ...summary.map((s, i) => {
+                    return shortfall[i] - s.income_analysis.total_pension_income;
+                  }),
+                ]);
               } else {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s + clone2[i].income_analysis.total_pension_income;
-                });
-                setCashFlowChartOptions(clone);
+                setShortfall([
+                  ...summary.map((s, i) => {
+                    return shortfall[i] + s.income_analysis.total_pension_income;
+                  }),
+                ]);
               }
             },
           },
-
           data: [
             ...summary.map((s) => {
               return s.income_analysis.total_pension_income;
@@ -905,19 +448,17 @@ const Cashflow = () => {
           events: {
             legendItemClick: (e) => {
               if (!e.target.visible) {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s - clone2[i].income_analysis.total_savings_and_investments_drawdowns;
-                });
-                setCashFlowChartOptions(clone);
+                setShortfall([
+                  ...summary.map((s, i) => {
+                    return shortfall[i] - s.income_analysis.total_savings_and_investments_drawdowns;
+                  }),
+                ]);
               } else {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s + clone2[i].income_analysis.total_savings_and_investments_drawdowns;
-                });
-                setCashFlowChartOptions(clone);
+                setShortfall([
+                  ...summary.map((s, i) => {
+                    return shortfall[i] + s.income_analysis.total_savings_and_investments_drawdowns;
+                  }),
+                ]);
               }
             },
           },
@@ -934,23 +475,20 @@ const Cashflow = () => {
           events: {
             legendItemClick: (e) => {
               if (!e.target.visible) {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s - clone2[i].income_analysis.total_dividend_income;
-                });
-                setCashFlowChartOptions(clone);
+                setShortfall([
+                  ...summary.map((s, i) => {
+                    return shortfall[i] - s.income_analysis.total_dividend_income;
+                  }),
+                ]);
               } else {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s + clone2[i].income_analysis.total_dividend_income;
-                });
-                setCashFlowChartOptions(clone);
+                setShortfall([
+                  ...summary.map((s, i) => {
+                    return shortfall[i] + s.income_analysis.total_dividend_income;
+                  }),
+                ]);
               }
             },
           },
-
           data: [
             ...summary.map((s) => {
               return s.income_analysis.total_dividend_income;
@@ -964,23 +502,20 @@ const Cashflow = () => {
           events: {
             legendItemClick: (e) => {
               if (!e.target.visible) {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s - clone2[i].income_analysis.total_rental_income;
-                });
-                setCashFlowChartOptions(clone);
+                setShortfall([
+                  ...summary.map((s, i) => {
+                    return shortfall[i] - s.income_analysis.total_rental_income;
+                  }),
+                ]);
               } else {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s + clone2[i].income_analysis.total_rental_income;
-                });
-                setCashFlowChartOptions(clone);
+                setShortfall([
+                  ...summary.map((s, i) => {
+                    return shortfall[i] + s.income_analysis.total_rental_income;
+                  }),
+                ]);
               }
             },
           },
-
           data: [
             ...summary.map((s) => {
               return s.income_analysis.total_rental_income;
@@ -994,23 +529,20 @@ const Cashflow = () => {
           events: {
             legendItemClick: (e) => {
               if (!e.target.visible) {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s - clone2[i].income_analysis.total_self_employment_income;
-                });
-                setCashFlowChartOptions(clone);
+                setShortfall([
+                  ...summary.map((s, i) => {
+                    return shortfall[i] - s.income_analysis.total_self_employment_income;
+                  }),
+                ]);
               } else {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s + clone2[i].income_analysis.total_self_employment_income;
-                });
-                setCashFlowChartOptions(clone);
+                setShortfall([
+                  ...summary.map((s, i) => {
+                    return shortfall[i] + s.income_analysis.total_self_employment_income;
+                  }),
+                ]);
               }
             },
           },
-
           data: [
             ...summary.map((s) => {
               return s.income_analysis.total_self_employment_income;
@@ -1024,19 +556,17 @@ const Cashflow = () => {
           events: {
             legendItemClick: (e) => {
               if (!e.target.visible) {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s - clone2[i].income_analysis.total_employment_income;
-                });
-                setCashFlowChartOptions(clone);
+                setShortfall([
+                  ...summary.map((s, i) => {
+                    return shortfall[i] - s.income_analysis.total_employment_income;
+                  }),
+                ]);
               } else {
-                const clone: any = { ...cashFlowChartOptions };
-                const clone2 = { ...summary };
-                clone.series![0].data = [...shortfall].map((s, i) => {
-                  return s + clone2[i].income_analysis.total_employment_income;
-                });
-                setCashFlowChartOptions(clone);
+                setShortfall([
+                  ...summary.map((s, i) => {
+                    return shortfall[i] + s.income_analysis.total_employment_income;
+                  }),
+                ]);
               }
             },
           },
@@ -1047,11 +577,25 @@ const Cashflow = () => {
           ],
           legendIndex: 1,
         },
-
         {
+          visible: !detailedView,
+          showInLegend: !detailedView,
+          name: "Inflow",
+          type: "column",
+          color: "#5c6bc0",
+          data: [
+            ...summary.map((s) => {
+              return s.income_analysis.total_income;
+            }),
+          ],
+        },
+        {
+          zIndex: 99,
+          visible: true,
+          showInLegend: true,
           type: "line",
           name: "Total Expenses",
-          step: "left",
+          step: "center",
           data: [
             ...summary.map((s) => {
               return s.expense_analysis.total_expenses;
@@ -1061,14 +605,14 @@ const Cashflow = () => {
           marker: {
             enabled: false,
           },
-          pointPlacement: -0.5,
+          // pointPlacement: -0.5,
+
           lineWidth: 3,
           legendIndex: 9,
         },
-      ];
-      setCashFlowChartOptions(clone);
-    }
-  }, [detailedView]);
+      ],
+    });
+  }, [shortfall]);
 
   const [chartControls, setChartControls] = useState({
     label: "years",
@@ -1091,6 +635,7 @@ const Cashflow = () => {
               unCheckedChildren="Detailed"
               defaultChecked={true}
               onChange={(e) => {
+                setShortfall(preShortfall);
                 setDetailedVliew(e);
               }}
             />
@@ -1101,11 +646,7 @@ const Cashflow = () => {
               unCheckedChildren="Real"
               defaultChecked
               onChange={(e) => {
-                if (e) {
-                  setSummary(nominalSummary);
-                } else {
-                  setSummary(realSummary);
-                }
+                e ? setSummary(nominalSummary) : setSummary(realSummary);
               }}
             />
             <Switch
