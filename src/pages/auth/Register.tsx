@@ -11,6 +11,7 @@ import {
 
 import { Content } from "antd/lib/layout/layout";
 
+//@ts-ignore
 import Logo from "../../assets/logo.png";
 import Title from "antd/lib/typography/Title";
 import { useDispatch, useSelector, RootStateOrAny } from "react-redux";
@@ -43,7 +44,7 @@ const Register = () => {
   };
 
   return (
-    <Layout className="layout" style={{backgroundColor: "white"}}>
+    <Layout className="layout" style={{ backgroundColor: "white" }}>
       <Content>
         <Row justify="center">
           <Card style={{ marginTop: "10%", width: "500px" }} bordered={false}>

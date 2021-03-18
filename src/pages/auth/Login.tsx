@@ -5,6 +5,7 @@ import { EyeInvisibleOutlined, EyeTwoTone, LockOutlined, UserOutlined } from "@a
 
 import { Content } from "antd/lib/layout/layout";
 
+//@ts-ignore
 import Logo from "../../assets/logo.png";
 import Title from "antd/lib/typography/Title";
 import { Link, useHistory } from "react-router-dom";

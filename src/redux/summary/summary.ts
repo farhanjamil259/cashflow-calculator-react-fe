@@ -1,14 +1,12 @@
 import IForecastSummary from "../../interfaces/IForecastSummary";
 
-export const setSummaryAction = (summary: IForecastSummary) => (dispatch: any) => {
-
+export const setSummaryAction = (summary: IForecastSummary[]) => (dispatch: any) => {
   dispatch({
     type: "SET_SUMMARY",
     payload: {
       data: summary,
     },
   });
-
 };
 
 export const summaryReducer = (state = [], action: any) => {

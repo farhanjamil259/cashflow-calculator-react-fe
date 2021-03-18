@@ -8,11 +8,13 @@ import HighchartsReact from "highcharts-react-official";
 import "rc-slider/assets/index.css";
 import { useState } from "react";
 import IForecastSummary from "../../interfaces/IForecastSummary";
-import { RootStateOrAny, useSelector } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 
 import YearBreakdownTabs from "../../components/YearBreakdownTabs";
+import { setSummaryAction } from "../../redux/summary/summary";
 
 const Cashflow = () => {
+  const dispatch = useDispatch();
   const nominalSummary: IForecastSummary[] = useSelector((state: RootStateOrAny) => state.summaryReducer);
   const realSummary: IForecastSummary[] = useSelector((state: RootStateOrAny) => state.realSummaryReducer);
   const [summary, setSummary] = useState<IForecastSummary[]>(nominalSummary);
@@ -22,25 +24,11 @@ const Cashflow = () => {
 
   const [selectedSummaryAtIndex, setSelectedSummaryAtIndex] = useState(summary[0]);
 
-  const [totalIncome, setTotalIncome] = useState<number[]>([0]);
-
-  useEffect(() => {
-    let tempTotalIncome: number[] = [];
-    summary.map((s) => {
-      let t =
-        s.income_analysis.total_other_income +
-        // s.income_analysis.total_residential_sale_proceeds +
-        s.income_analysis.total_pension_income +
-        s.income_analysis.total_savings_and_investments_drawdowns +
-        s.income_analysis.total_dividend_income +
-        s.income_analysis.total_rental_income +
-        s.income_analysis.total_self_employment_income +
-        s.income_analysis.total_employment_income;
-
-      tempTotalIncome.push(t);
-    });
-    setTotalIncome(tempTotalIncome);
-  }, []);
+  const [shortfall, setShortfall] = useState<number[]>([
+    ...summary.map((s) => {
+      return s.expense_analysis.total_expenses - s.income_analysis.total_income;
+    }),
+  ]);
 
   const [cashFlowChartOptions, setCashFlowChartOptions] = useState<highcharts.Options>({
     chart: {
@@ -210,147 +198,98 @@ const Cashflow = () => {
       },
     },
     colors: ["#5c6bc0", "#ab47bc", "#7e57c2", "#26a69a", "#9ccc65", "#ffee58", "#ffa726"],
-
     series: [
       {
         name: "Shortfall",
         type: "column",
-        data: [
-          ...summary.map((s) => {
-            return s.expense_analysis.total_expenses - s.income_analysis.total_income;
-          }),
-        ],
+        data: shortfall,
         color: "#d32f2f",
-        legendIndex: 9,
+        legendIndex: 10,
       },
-
       {
         name: "Other",
         type: "column",
         events: {
           legendItemClick: (e) => {
-            if (e.target.visible) {
+            if (!e.target.visible) {
               const clone: any = { ...cashFlowChartOptions };
-
-              clone.series[0].data = [
-                ...summary.map((s) => {
-                  return (
-                    s.expense_analysis.total_expenses -
-                    s.income_analysis.total_dividend_income -
-                    s.income_analysis.total_pension_income -
-                    s.income_analysis.total_rental_income -
-                    s.income_analysis.total_residential_sale_proceeds -
-                    s.income_analysis.total_savings_and_investments_drawdowns -
-                    s.income_analysis.total_self_employment_income -
-                    s.income_analysis.total_employment_income
-                  );
-                }),
-              ];
-
+              const clone2 = { ...summary };
+              clone.series![0].data = [...shortfall].map((s, i) => {
+                return s - clone2[i].income_analysis.total_other_income;
+              });
               setCashFlowChartOptions(clone);
             } else {
               const clone: any = { ...cashFlowChartOptions };
-
-              clone.series[0].data = [
-                ...summary.map((s) => {
-                  return s.expense_analysis.total_expenses - s.income_analysis.total_income;
-                }),
-              ];
-
+              const clone2 = { ...summary };
+              clone.series![0].data = [...shortfall].map((s, i) => {
+                return s + clone2[i].income_analysis.total_other_income;
+              });
               setCashFlowChartOptions(clone);
             }
           },
         },
+
         data: [
           ...summary.map((s) => {
             return s.income_analysis.total_other_income;
           }),
         ],
-        legendIndex: 7,
+        legendIndex: 8,
       },
       {
         name: "Property Sale",
         visible: false,
         type: "column",
-
         events: {
           legendItemClick: (e) => {
-            if (e.target.visible) {
+            if (!e.target.visible) {
               const clone: any = { ...cashFlowChartOptions };
-
-              clone.series[0].data = [
-                ...summary.map((s) => {
-                  return (
-                    s.expense_analysis.total_expenses -
-                    s.income_analysis.total_dividend_income -
-                    s.income_analysis.total_other_income -
-                    s.income_analysis.total_pension_income -
-                    s.income_analysis.total_rental_income -
-                    s.income_analysis.total_savings_and_investments_drawdowns -
-                    s.income_analysis.total_self_employment_income -
-                    s.income_analysis.total_employment_income
-                  );
-                }),
-              ];
-
-              setCashFlowChartOptions(clone);
+              const clone2 = { ...summary };
+              clone.series![0].data = [...shortfall].map((s, i) => {
+                return s - clone2[i].income_analysis.total_residential_sale_proceeds;
+              });
+              // setCashFlowChartOptions(clone);
             } else {
               const clone: any = { ...cashFlowChartOptions };
-
-              clone.series[0].data = [
-                ...summary.map((s) => {
-                  return s.expense_analysis.total_expenses - s.income_analysis.total_income;
-                }),
-              ];
-
-              setCashFlowChartOptions(clone);
+              const clone2 = { ...summary };
+              clone.series![0].data = [...shortfall].map((s, i) => {
+                return s + clone2[i].income_analysis.total_residential_sale_proceeds;
+              });
+              // setCashFlowChartOptions(clone);
             }
           },
         },
+
         data: [
           ...summary.map((s) => {
             return s.income_analysis.total_residential_sale_proceeds;
           }),
         ],
-        legendIndex: 6.5,
+        legendIndex: 7,
       },
       {
         name: "Pension",
         type: "column",
         events: {
           legendItemClick: (e) => {
-            if (e.target.visible) {
+            if (!e.target.visible) {
               const clone: any = { ...cashFlowChartOptions };
-
-              clone.series[0].data = [
-                ...summary.map((s) => {
-                  return (
-                    s.expense_analysis.total_expenses -
-                    s.income_analysis.total_dividend_income -
-                    s.income_analysis.total_other_income -
-                    s.income_analysis.total_rental_income -
-                    s.income_analysis.total_residential_sale_proceeds -
-                    s.income_analysis.total_savings_and_investments_drawdowns -
-                    s.income_analysis.total_self_employment_income -
-                    s.income_analysis.total_employment_income
-                  );
-                }),
-              ];
-
+              const clone2 = { ...summary };
+              clone.series![0].data = [...shortfall].map((s, i) => {
+                return s - clone2[i].income_analysis.total_pension_income;
+              });
               setCashFlowChartOptions(clone);
             } else {
               const clone: any = { ...cashFlowChartOptions };
-
-              clone.series[0].data = [
-                ...summary.map((s) => {
-                  return s.expense_analysis.total_expenses - s.income_analysis.total_income;
-                }),
-              ];
-
+              const clone2 = { ...summary };
+              clone.series![0].data = [...shortfall].map((s, i) => {
+                return s + clone2[i].income_analysis.total_pension_income;
+              });
               setCashFlowChartOptions(clone);
             }
           },
         },
+
         data: [
           ...summary.map((s) => {
             return s.income_analysis.total_pension_income;
@@ -363,34 +302,19 @@ const Cashflow = () => {
         type: "column",
         events: {
           legendItemClick: (e) => {
-            if (e.target.visible) {
+            if (!e.target.visible) {
               const clone: any = { ...cashFlowChartOptions };
-
-              clone.series[0].data = [
-                ...summary.map((s) => {
-                  return (
-                    s.expense_analysis.total_expenses -
-                    s.income_analysis.total_dividend_income -
-                    s.income_analysis.total_other_income -
-                    s.income_analysis.total_pension_income -
-                    s.income_analysis.total_rental_income -
-                    s.income_analysis.total_residential_sale_proceeds -
-                    s.income_analysis.total_self_employment_income -
-                    s.income_analysis.total_employment_income
-                  );
-                }),
-              ];
-
+              const clone2 = { ...summary };
+              clone.series![0].data = [...shortfall].map((s, i) => {
+                return s - clone2[i].income_analysis.total_savings_and_investments_drawdowns;
+              });
               setCashFlowChartOptions(clone);
             } else {
               const clone: any = { ...cashFlowChartOptions };
-
-              clone.series[0].data = [
-                ...summary.map((s) => {
-                  return s.expense_analysis.total_expenses - s.income_analysis.total_income;
-                }),
-              ];
-
+              const clone2 = { ...summary };
+              clone.series![0].data = [...shortfall].map((s, i) => {
+                return s + clone2[i].income_analysis.total_savings_and_investments_drawdowns;
+              });
               setCashFlowChartOptions(clone);
             }
           },
@@ -407,38 +331,24 @@ const Cashflow = () => {
         type: "column",
         events: {
           legendItemClick: (e) => {
-            if (e.target.visible) {
+            if (!e.target.visible) {
               const clone: any = { ...cashFlowChartOptions };
-
-              clone.series[0].data = [
-                ...summary.map((s) => {
-                  return (
-                    s.expense_analysis.total_expenses -
-                    s.income_analysis.total_other_income -
-                    s.income_analysis.total_pension_income -
-                    s.income_analysis.total_rental_income -
-                    s.income_analysis.total_residential_sale_proceeds -
-                    s.income_analysis.total_savings_and_investments_drawdowns -
-                    s.income_analysis.total_self_employment_income -
-                    s.income_analysis.total_employment_income
-                  );
-                }),
-              ];
-
+              const clone2 = { ...summary };
+              clone.series![0].data = [...shortfall].map((s, i) => {
+                return s - clone2[i].income_analysis.total_dividend_income;
+              });
               setCashFlowChartOptions(clone);
             } else {
               const clone: any = { ...cashFlowChartOptions };
-
-              clone.series[0].data = [
-                ...summary.map((s) => {
-                  return s.expense_analysis.total_expenses - s.income_analysis.total_income;
-                }),
-              ];
-
+              const clone2 = { ...summary };
+              clone.series![0].data = [...shortfall].map((s, i) => {
+                return s + clone2[i].income_analysis.total_dividend_income;
+              });
               setCashFlowChartOptions(clone);
             }
           },
         },
+
         data: [
           ...summary.map((s) => {
             return s.income_analysis.total_dividend_income;
@@ -451,38 +361,24 @@ const Cashflow = () => {
         type: "column",
         events: {
           legendItemClick: (e) => {
-            if (e.target.visible) {
+            if (!e.target.visible) {
               const clone: any = { ...cashFlowChartOptions };
-
-              clone.series[0].data = [
-                ...summary.map((s) => {
-                  return (
-                    s.expense_analysis.total_expenses -
-                    s.income_analysis.total_dividend_income -
-                    s.income_analysis.total_other_income -
-                    s.income_analysis.total_pension_income -
-                    s.income_analysis.total_residential_sale_proceeds -
-                    s.income_analysis.total_savings_and_investments_drawdowns -
-                    s.income_analysis.total_self_employment_income -
-                    s.income_analysis.total_employment_income
-                  );
-                }),
-              ];
-
+              const clone2 = { ...summary };
+              clone.series![0].data = [...shortfall].map((s, i) => {
+                return s - clone2[i].income_analysis.total_rental_income;
+              });
               setCashFlowChartOptions(clone);
             } else {
               const clone: any = { ...cashFlowChartOptions };
-
-              clone.series[0].data = [
-                ...summary.map((s) => {
-                  return s.expense_analysis.total_expenses - s.income_analysis.total_income;
-                }),
-              ];
-
+              const clone2 = { ...summary };
+              clone.series![0].data = [...shortfall].map((s, i) => {
+                return s + clone2[i].income_analysis.total_rental_income;
+              });
               setCashFlowChartOptions(clone);
             }
           },
         },
+
         data: [
           ...summary.map((s) => {
             return s.income_analysis.total_rental_income;
@@ -490,44 +386,29 @@ const Cashflow = () => {
         ],
         legendIndex: 3,
       },
-
       {
         name: "Self-Employment",
         type: "column",
         events: {
           legendItemClick: (e) => {
-            if (e.target.visible) {
+            if (!e.target.visible) {
               const clone: any = { ...cashFlowChartOptions };
-
-              clone.series[0].data = [
-                ...summary.map((s) => {
-                  return (
-                    s.expense_analysis.total_expenses -
-                    s.income_analysis.total_dividend_income -
-                    s.income_analysis.total_other_income -
-                    s.income_analysis.total_pension_income -
-                    s.income_analysis.total_rental_income -
-                    s.income_analysis.total_residential_sale_proceeds -
-                    s.income_analysis.total_savings_and_investments_drawdowns -
-                    s.income_analysis.total_employment_income
-                  );
-                }),
-              ];
-
+              const clone2 = { ...summary };
+              clone.series![0].data = [...shortfall].map((s, i) => {
+                return s - clone2[i].income_analysis.total_self_employment_income;
+              });
               setCashFlowChartOptions(clone);
             } else {
               const clone: any = { ...cashFlowChartOptions };
-
-              clone.series[0].data = [
-                ...summary.map((s) => {
-                  return s.expense_analysis.total_expenses - s.income_analysis.total_income;
-                }),
-              ];
-
+              const clone2 = { ...summary };
+              clone.series![0].data = [...shortfall].map((s, i) => {
+                return s + clone2[i].income_analysis.total_self_employment_income;
+              });
               setCashFlowChartOptions(clone);
             }
           },
         },
+
         data: [
           ...summary.map((s) => {
             return s.income_analysis.total_self_employment_income;
@@ -540,34 +421,19 @@ const Cashflow = () => {
         type: "column",
         events: {
           legendItemClick: (e) => {
-            if (e.target.visible) {
+            if (!e.target.visible) {
               const clone: any = { ...cashFlowChartOptions };
-
-              clone.series[0].data = [
-                ...summary.map((s) => {
-                  return (
-                    s.expense_analysis.total_expenses -
-                    s.income_analysis.total_dividend_income -
-                    s.income_analysis.total_other_income -
-                    s.income_analysis.total_pension_income -
-                    s.income_analysis.total_rental_income -
-                    s.income_analysis.total_residential_sale_proceeds -
-                    s.income_analysis.total_savings_and_investments_drawdowns -
-                    s.income_analysis.total_self_employment_income
-                  );
-                }),
-              ];
-
+              const clone2 = { ...summary };
+              clone.series![0].data = [...shortfall].map((s, i) => {
+                return s - clone2[i].income_analysis.total_employment_income;
+              });
               setCashFlowChartOptions(clone);
             } else {
               const clone: any = { ...cashFlowChartOptions };
-
-              clone.series[0].data = [
-                ...summary.map((s) => {
-                  return s.expense_analysis.total_expenses - s.income_analysis.total_income;
-                }),
-              ];
-
+              const clone2 = { ...summary };
+              clone.series![0].data = [...shortfall].map((s, i) => {
+                return s + clone2[i].income_analysis.total_employment_income;
+              });
               setCashFlowChartOptions(clone);
             }
           },
@@ -595,12 +461,614 @@ const Cashflow = () => {
         },
         pointPlacement: -0.5,
         lineWidth: 3,
-        legendIndex: 8,
+        legendIndex: 9,
       },
     ],
   });
 
   let chartRef: any = React.useRef(null);
+
+  useEffect(() => {
+    setCashFlowChartOptions({
+      ...cashFlowChartOptions,
+      series: [
+        {
+          name: "Shortfall",
+          type: "column",
+          data: shortfall,
+          color: "#d32f2f",
+          legendIndex: 10,
+        },
+        {
+          name: "Other",
+          type: "column",
+          events: {
+            legendItemClick: (e) => {
+              if (!e.target.visible) {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s - clone2[i].income_analysis.total_other_income;
+                });
+                setCashFlowChartOptions(clone);
+              } else {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s + clone2[i].income_analysis.total_other_income;
+                });
+                setCashFlowChartOptions(clone);
+              }
+            },
+          },
+
+          data: [
+            ...summary.map((s) => {
+              return s.income_analysis.total_other_income;
+            }),
+          ],
+          legendIndex: 8,
+        },
+        {
+          name: "Property Sale",
+          visible: false,
+          type: "column",
+          events: {
+            legendItemClick: (e) => {
+              if (!e.target.visible) {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s - clone2[i].income_analysis.total_residential_sale_proceeds;
+                });
+                // setCashFlowChartOptions(clone);
+              } else {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s + clone2[i].income_analysis.total_residential_sale_proceeds;
+                });
+                // setCashFlowChartOptions(clone);
+              }
+            },
+          },
+
+          data: [
+            ...summary.map((s) => {
+              return s.income_analysis.total_residential_sale_proceeds;
+            }),
+          ],
+          legendIndex: 7,
+        },
+        {
+          name: "Pension",
+          type: "column",
+          events: {
+            legendItemClick: (e) => {
+              if (!e.target.visible) {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s - clone2[i].income_analysis.total_pension_income;
+                });
+                setCashFlowChartOptions(clone);
+              } else {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s + clone2[i].income_analysis.total_pension_income;
+                });
+                setCashFlowChartOptions(clone);
+              }
+            },
+          },
+
+          data: [
+            ...summary.map((s) => {
+              return s.income_analysis.total_pension_income;
+            }),
+          ],
+          legendIndex: 6,
+        },
+        {
+          name: "Savings and Investments",
+          type: "column",
+          events: {
+            legendItemClick: (e) => {
+              if (!e.target.visible) {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s - clone2[i].income_analysis.total_savings_and_investments_drawdowns;
+                });
+                setCashFlowChartOptions(clone);
+              } else {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s + clone2[i].income_analysis.total_savings_and_investments_drawdowns;
+                });
+                setCashFlowChartOptions(clone);
+              }
+            },
+          },
+          data: [
+            ...summary.map((s) => {
+              return s.income_analysis.total_savings_and_investments_drawdowns;
+            }),
+          ],
+          legendIndex: 5,
+        },
+        {
+          name: "Dividend",
+          type: "column",
+          events: {
+            legendItemClick: (e) => {
+              if (!e.target.visible) {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s - clone2[i].income_analysis.total_dividend_income;
+                });
+                setCashFlowChartOptions(clone);
+              } else {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s + clone2[i].income_analysis.total_dividend_income;
+                });
+                setCashFlowChartOptions(clone);
+              }
+            },
+          },
+
+          data: [
+            ...summary.map((s) => {
+              return s.income_analysis.total_dividend_income;
+            }),
+          ],
+          legendIndex: 4,
+        },
+        {
+          name: "Rental",
+          type: "column",
+          events: {
+            legendItemClick: (e) => {
+              if (!e.target.visible) {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s - clone2[i].income_analysis.total_rental_income;
+                });
+                setCashFlowChartOptions(clone);
+              } else {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s + clone2[i].income_analysis.total_rental_income;
+                });
+                setCashFlowChartOptions(clone);
+              }
+            },
+          },
+
+          data: [
+            ...summary.map((s) => {
+              return s.income_analysis.total_rental_income;
+            }),
+          ],
+          legendIndex: 3,
+        },
+        {
+          name: "Self-Employment",
+          type: "column",
+          events: {
+            legendItemClick: (e) => {
+              if (!e.target.visible) {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s - clone2[i].income_analysis.total_self_employment_income;
+                });
+                setCashFlowChartOptions(clone);
+              } else {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s + clone2[i].income_analysis.total_self_employment_income;
+                });
+                setCashFlowChartOptions(clone);
+              }
+            },
+          },
+
+          data: [
+            ...summary.map((s) => {
+              return s.income_analysis.total_self_employment_income;
+            }),
+          ],
+          legendIndex: 2,
+        },
+        {
+          name: "Employment",
+          type: "column",
+          events: {
+            legendItemClick: (e) => {
+              if (!e.target.visible) {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s - clone2[i].income_analysis.total_employment_income;
+                });
+                setCashFlowChartOptions(clone);
+              } else {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s + clone2[i].income_analysis.total_employment_income;
+                });
+                setCashFlowChartOptions(clone);
+              }
+            },
+          },
+          data: [
+            ...summary.map((s) => {
+              return s.income_analysis.total_employment_income;
+            }),
+          ],
+          legendIndex: 1,
+        },
+
+        {
+          type: "line",
+          name: "Total Expenses",
+          step: "left",
+          data: [
+            ...summary.map((s) => {
+              return s.expense_analysis.total_expenses;
+            }),
+          ],
+          color: "#212121",
+          marker: {
+            enabled: false,
+          },
+          pointPlacement: -0.5,
+          lineWidth: 3,
+          legendIndex: 9,
+        },
+      ],
+    });
+  }, [summary]);
+
+  const [detailedView, setDetailedVliew] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (detailedView) {
+      const clone = { ...cashFlowChartOptions };
+      clone.series = [
+        {
+          name: "Shortfall",
+          type: "column",
+          data: [
+            ...summary.map((s) => {
+              return s.expense_analysis.total_expenses - s.income_analysis.total_income;
+            }),
+          ],
+          color: "#d32f2f",
+          legendIndex: 21,
+        },
+        {
+          name: "Inflow",
+          type: "column",
+          data: [
+            ...summary.map((s) => {
+              return (
+                s.income_analysis.total_other_income +
+                // s.income_analysis.total_residential_sale_proceeds +
+                s.income_analysis.total_pension_income +
+                s.income_analysis.total_savings_and_investments_drawdowns +
+                s.income_analysis.total_dividend_income +
+                s.income_analysis.total_rental_income +
+                s.income_analysis.total_self_employment_income +
+                s.income_analysis.total_employment_income
+              );
+            }),
+          ],
+
+          legendIndex: 22,
+        },
+        {
+          type: "line",
+          visible: true,
+          name: "Total Expenses",
+          step: "left",
+          data: [
+            ...summary.map((s) => {
+              return s.expense_analysis.total_expenses;
+            }),
+          ],
+          color: "#212121",
+          marker: {
+            enabled: false,
+          },
+          pointPlacement: -0.5,
+          lineWidth: 3,
+          legendIndex: 23,
+        },
+      ];
+      setCashFlowChartOptions(clone);
+    } else {
+      const clone = { ...cashFlowChartOptions };
+
+      clone.series = [
+        {
+          name: "Shortfall",
+          type: "column",
+          data: shortfall,
+          color: "#d32f2f",
+          legendIndex: 10,
+        },
+        {
+          name: "Other",
+          type: "column",
+          events: {
+            legendItemClick: (e) => {
+              if (!e.target.visible) {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s - clone2[i].income_analysis.total_other_income;
+                });
+                setCashFlowChartOptions(clone);
+              } else {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s + clone2[i].income_analysis.total_other_income;
+                });
+                setCashFlowChartOptions(clone);
+              }
+            },
+          },
+
+          data: [
+            ...summary.map((s) => {
+              return s.income_analysis.total_other_income;
+            }),
+          ],
+          legendIndex: 8,
+        },
+        {
+          name: "Property Sale",
+          visible: false,
+          type: "column",
+          events: {
+            legendItemClick: (e) => {
+              if (!e.target.visible) {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s - clone2[i].income_analysis.total_residential_sale_proceeds;
+                });
+                // setCashFlowChartOptions(clone);
+              } else {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s + clone2[i].income_analysis.total_residential_sale_proceeds;
+                });
+                // setCashFlowChartOptions(clone);
+              }
+            },
+          },
+
+          data: [
+            ...summary.map((s) => {
+              return s.income_analysis.total_residential_sale_proceeds;
+            }),
+          ],
+          legendIndex: 7,
+        },
+        {
+          name: "Pension",
+          type: "column",
+          events: {
+            legendItemClick: (e) => {
+              if (!e.target.visible) {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s - clone2[i].income_analysis.total_pension_income;
+                });
+                setCashFlowChartOptions(clone);
+              } else {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s + clone2[i].income_analysis.total_pension_income;
+                });
+                setCashFlowChartOptions(clone);
+              }
+            },
+          },
+
+          data: [
+            ...summary.map((s) => {
+              return s.income_analysis.total_pension_income;
+            }),
+          ],
+          legendIndex: 6,
+        },
+        {
+          name: "Savings and Investments",
+          type: "column",
+          events: {
+            legendItemClick: (e) => {
+              if (!e.target.visible) {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s - clone2[i].income_analysis.total_savings_and_investments_drawdowns;
+                });
+                setCashFlowChartOptions(clone);
+              } else {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s + clone2[i].income_analysis.total_savings_and_investments_drawdowns;
+                });
+                setCashFlowChartOptions(clone);
+              }
+            },
+          },
+          data: [
+            ...summary.map((s) => {
+              return s.income_analysis.total_savings_and_investments_drawdowns;
+            }),
+          ],
+          legendIndex: 5,
+        },
+        {
+          name: "Dividend",
+          type: "column",
+          events: {
+            legendItemClick: (e) => {
+              if (!e.target.visible) {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s - clone2[i].income_analysis.total_dividend_income;
+                });
+                setCashFlowChartOptions(clone);
+              } else {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s + clone2[i].income_analysis.total_dividend_income;
+                });
+                setCashFlowChartOptions(clone);
+              }
+            },
+          },
+
+          data: [
+            ...summary.map((s) => {
+              return s.income_analysis.total_dividend_income;
+            }),
+          ],
+          legendIndex: 4,
+        },
+        {
+          name: "Rental",
+          type: "column",
+          events: {
+            legendItemClick: (e) => {
+              if (!e.target.visible) {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s - clone2[i].income_analysis.total_rental_income;
+                });
+                setCashFlowChartOptions(clone);
+              } else {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s + clone2[i].income_analysis.total_rental_income;
+                });
+                setCashFlowChartOptions(clone);
+              }
+            },
+          },
+
+          data: [
+            ...summary.map((s) => {
+              return s.income_analysis.total_rental_income;
+            }),
+          ],
+          legendIndex: 3,
+        },
+        {
+          name: "Self-Employment",
+          type: "column",
+          events: {
+            legendItemClick: (e) => {
+              if (!e.target.visible) {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s - clone2[i].income_analysis.total_self_employment_income;
+                });
+                setCashFlowChartOptions(clone);
+              } else {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s + clone2[i].income_analysis.total_self_employment_income;
+                });
+                setCashFlowChartOptions(clone);
+              }
+            },
+          },
+
+          data: [
+            ...summary.map((s) => {
+              return s.income_analysis.total_self_employment_income;
+            }),
+          ],
+          legendIndex: 2,
+        },
+        {
+          name: "Employment",
+          type: "column",
+          events: {
+            legendItemClick: (e) => {
+              if (!e.target.visible) {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s - clone2[i].income_analysis.total_employment_income;
+                });
+                setCashFlowChartOptions(clone);
+              } else {
+                const clone: any = { ...cashFlowChartOptions };
+                const clone2 = { ...summary };
+                clone.series![0].data = [...shortfall].map((s, i) => {
+                  return s + clone2[i].income_analysis.total_employment_income;
+                });
+                setCashFlowChartOptions(clone);
+              }
+            },
+          },
+          data: [
+            ...summary.map((s) => {
+              return s.income_analysis.total_employment_income;
+            }),
+          ],
+          legendIndex: 1,
+        },
+
+        {
+          type: "line",
+          name: "Total Expenses",
+          step: "left",
+          data: [
+            ...summary.map((s) => {
+              return s.expense_analysis.total_expenses;
+            }),
+          ],
+          color: "#212121",
+          marker: {
+            enabled: false,
+          },
+          pointPlacement: -0.5,
+          lineWidth: 3,
+          legendIndex: 9,
+        },
+      ];
+      setCashFlowChartOptions(clone);
+    }
+  }, [detailedView]);
 
   const [chartControls, setChartControls] = useState({
     label: "years",
@@ -609,7 +1077,6 @@ const Cashflow = () => {
 
   const [some, setSome] = useState(0);
 
-  // @ts-ignore
   return (
     <Layout style={{ backgroundColor: "white" }}>
       <Card
@@ -622,181 +1089,23 @@ const Cashflow = () => {
               style={{ marginRight: "16px" }}
               checkedChildren="Detailed"
               unCheckedChildren="Detailed"
-              defaultChecked={false}
+              defaultChecked={true}
               onChange={(e) => {
-                !e
-                  ? setCashFlowChartOptions({
-                      ...cashFlowChartOptions,
-                      series: [
-                        {
-                          name: "Shortfall",
-                          type: "column",
-                          data: [
-                            ...summary.map((s) => {
-                              return s.expense_analysis.total_expenses - s.income_analysis.total_income;
-                            }),
-                          ],
-                          color: "#d32f2f",
-                          legendIndex: 9,
-                        },
+                setDetailedVliew(e);
+              }}
+            />
 
-                        {
-                          name: "Other",
-                          type: "column",
-                          data: [
-                            ...summary.map((s) => {
-                              return s.income_analysis.total_other_income;
-                            }),
-                          ],
-                          legendIndex: 7,
-                        },
-                        {
-                          name: "Property Sale",
-                          visible: false,
-                          type: "column",
-                          data: [
-                            ...summary.map((s) => {
-                              return s.income_analysis.total_residential_sale_proceeds;
-                            }),
-                          ],
-                          legendIndex: 6.5,
-                        },
-                        {
-                          name: "Pension",
-                          type: "column",
-                          data: [
-                            ...summary.map((s) => {
-                              return s.income_analysis.total_pension_income;
-                            }),
-                          ],
-                          legendIndex: 6,
-                        },
-                        {
-                          name: "Savings and Investments",
-                          type: "column",
-                          data: [
-                            ...summary.map((s) => {
-                              return s.income_analysis.total_savings_and_investments_drawdowns;
-                            }),
-                          ],
-                          legendIndex: 5,
-                        },
-                        {
-                          name: "Dividend",
-                          type: "column",
-                          data: [
-                            ...summary.map((s) => {
-                              return s.income_analysis.total_dividend_income;
-                            }),
-                          ],
-                          legendIndex: 4,
-                        },
-                        {
-                          name: "Rental",
-                          type: "column",
-                          data: [
-                            ...summary.map((s) => {
-                              return s.income_analysis.total_rental_income;
-                            }),
-                          ],
-                          legendIndex: 3,
-                        },
-
-                        {
-                          name: "Self-Employment",
-                          type: "column",
-                          data: [
-                            ...summary.map((s) => {
-                              return s.income_analysis.total_self_employment_income;
-                            }),
-                          ],
-                          legendIndex: 2,
-                        },
-                        {
-                          name: "Employment",
-                          type: "column",
-                          data: [
-                            ...summary.map((s) => {
-                              return s.income_analysis.total_employment_income;
-                            }),
-                          ],
-                          legendIndex: 1,
-                        },
-
-                        {
-                          type: "line",
-                          name: "Total Expenses",
-                          step: "left",
-                          data: [
-                            ...summary.map((s) => {
-                              return s.expense_analysis.total_expenses;
-                            }),
-                          ],
-                          color: "#212121",
-                          marker: {
-                            enabled: false,
-                          },
-                          pointPlacement: -0.5,
-                          lineWidth: 3,
-                          legendIndex: 8,
-                        },
-                      ],
-                      colors: ["#5c6bc0", "#ab47bc", "#7e57c2", "#26a69a", "#9ccc65", "#ffee58", "#ffa726"],
-                    })
-                  : setCashFlowChartOptions({
-                      ...cashFlowChartOptions,
-                      series: [
-                        {
-                          name: "Shortfall",
-                          type: "column",
-                          data: [
-                            ...summary.map((s) => {
-                              return s.expense_analysis.total_expenses - s.income_analysis.total_income;
-                            }),
-                          ],
-                          color: "#d32f2f",
-                          legendIndex: 9,
-                        },
-
-                        {
-                          name: "Inflow",
-                          type: "column",
-                          data: [
-                            ...summary.map((s) => {
-                              return (
-                                s.income_analysis.total_other_income +
-                                // s.income_analysis.total_residential_sale_proceeds +
-                                s.income_analysis.total_pension_income +
-                                s.income_analysis.total_savings_and_investments_drawdowns +
-                                s.income_analysis.total_dividend_income +
-                                s.income_analysis.total_rental_income +
-                                s.income_analysis.total_self_employment_income +
-                                s.income_analysis.total_employment_income
-                              );
-                            }),
-                          ],
-                          legendIndex: 7,
-                        },
-                        {
-                          type: "line",
-                          visible: true,
-                          name: "Total Expenses",
-                          step: "left",
-                          data: [
-                            ...summary.map((s) => {
-                              return s.expense_analysis.total_expenses;
-                            }),
-                          ],
-                          color: "#212121",
-                          marker: {
-                            enabled: false,
-                          },
-                          pointPlacement: -0.5,
-                          lineWidth: 3,
-                          legendIndex: 8,
-                        },
-                      ],
-                    });
+            <Switch
+              style={{ marginRight: "16px" }}
+              checkedChildren="Nominal"
+              unCheckedChildren="Real"
+              defaultChecked
+              onChange={(e) => {
+                if (e) {
+                  setSummary(nominalSummary);
+                } else {
+                  setSummary(realSummary);
+                }
               }}
             />
             <Switch
@@ -806,247 +1115,6 @@ const Cashflow = () => {
               defaultChecked={false}
               onChange={(e) => {
                 setChartControls({ ...chartControls, zoomable: e });
-              }}
-            />
-            <Switch
-              style={{ marginRight: "16px" }}
-              checkedChildren="Nominal"
-              unCheckedChildren="Real"
-              defaultChecked
-              onChange={(e) => {
-                if (e) {
-                  setSummary(nominalSummary);
-                  setCashFlowChartOptions({
-                    ...cashFlowChartOptions,
-                    series: [
-                      {
-                        name: "Shortfall",
-                        type: "column",
-                        data: [
-                          ...nominalSummary.map((s) => {
-                            return s.expense_analysis.total_expenses - s.income_analysis.total_income;
-                          }),
-                        ],
-                        color: "#d32f2f",
-                        legendIndex: 9,
-                      },
-                      {
-                        name: "Other",
-                        type: "column",
-                        data: [
-                          ...nominalSummary.map((s) => {
-                            return s.income_analysis.total_other_income;
-                          }),
-                        ],
-                        legendIndex: 7,
-                      },
-                      {
-                        name: "Property Sale",
-                        type: "column",
-                        data: [
-                          ...summary.map((s) => {
-                            return s.income_analysis.total_residential_sale_proceeds;
-                          }),
-                        ],
-                        legendIndex: 6.5,
-                      },
-                      {
-                        name: "Pension",
-                        type: "column",
-                        data: [
-                          ...nominalSummary.map((s) => {
-                            return s.income_analysis.total_pension_income;
-                          }),
-                        ],
-                        legendIndex: 6,
-                      },
-                      {
-                        name: "Savings and Investments",
-                        type: "column",
-                        data: [
-                          ...nominalSummary.map((s) => {
-                            return s.income_analysis.total_savings_and_investments_drawdowns;
-                          }),
-                        ],
-                        legendIndex: 5,
-                      },
-                      {
-                        name: "Dividend",
-                        type: "column",
-                        data: [
-                          ...nominalSummary.map((s) => {
-                            return s.income_analysis.total_dividend_income;
-                          }),
-                        ],
-                        legendIndex: 4,
-                      },
-                      {
-                        name: "Rental",
-                        type: "column",
-                        data: [
-                          ...nominalSummary.map((s) => {
-                            return s.income_analysis.total_rental_income;
-                          }),
-                        ],
-                        legendIndex: 3,
-                      },
-
-                      {
-                        name: "Self-Employment",
-                        type: "column",
-                        data: [
-                          ...nominalSummary.map((s) => {
-                            return s.income_analysis.total_self_employment_income;
-                          }),
-                        ],
-                        legendIndex: 2,
-                      },
-                      {
-                        name: "Employment",
-                        type: "column",
-                        data: [
-                          ...nominalSummary.map((s) => {
-                            return s.income_analysis.total_employment_income;
-                          }),
-                        ],
-                        legendIndex: 1,
-                      },
-                      {
-                        type: "line",
-                        name: "Total Expenses",
-                        step: "left",
-                        data: [
-                          ...nominalSummary.map((s) => {
-                            return s.expense_analysis.total_expenses;
-                          }),
-                        ],
-                        color: "#212121",
-                        marker: {
-                          enabled: false,
-                        },
-                        pointPlacement: -0.5,
-                        lineWidth: 3,
-                        legendIndex: 8,
-                      },
-                    ],
-                  });
-                } else {
-                  setSummary(realSummary);
-                  setCashFlowChartOptions({
-                    ...cashFlowChartOptions,
-                    series: [
-                      {
-                        name: "Shortfall",
-                        type: "column",
-                        data: [
-                          ...realSummary.map((s) => {
-                            return s.expense_analysis.total_expenses - s.income_analysis.total_income;
-                          }),
-                        ],
-                        color: "#d32f2f",
-                        legendIndex: 9,
-                      },
-                      {
-                        name: "Other",
-                        type: "column",
-                        data: [
-                          ...realSummary.map((s) => {
-                            return s.income_analysis.total_other_income;
-                          }),
-                        ],
-                        legendIndex: 7,
-                      },
-                      {
-                        name: "Property Sale",
-                        type: "column",
-                        data: [
-                          ...summary.map((s) => {
-                            return s.income_analysis.total_residential_sale_proceeds;
-                          }),
-                        ],
-                        legendIndex: 6.5,
-                      },
-                      {
-                        name: "Pension",
-                        type: "column",
-                        data: [
-                          ...realSummary.map((s) => {
-                            return s.income_analysis.total_pension_income;
-                          }),
-                        ],
-                        legendIndex: 6,
-                      },
-                      {
-                        name: "Savings and Investments",
-                        type: "column",
-                        data: [
-                          ...realSummary.map((s) => {
-                            return s.income_analysis.total_savings_and_investments_drawdowns;
-                          }),
-                        ],
-                        legendIndex: 5,
-                      },
-                      {
-                        name: "Dividend",
-                        type: "column",
-                        data: [
-                          ...realSummary.map((s) => {
-                            return s.income_analysis.total_dividend_income;
-                          }),
-                        ],
-                        legendIndex: 4,
-                      },
-                      {
-                        name: "Rental",
-                        type: "column",
-                        data: [
-                          ...realSummary.map((s) => {
-                            return s.income_analysis.total_rental_income;
-                          }),
-                        ],
-                        legendIndex: 3,
-                      },
-
-                      {
-                        name: "Self-Employment",
-                        type: "column",
-                        data: [
-                          ...realSummary.map((s) => {
-                            return s.income_analysis.total_self_employment_income;
-                          }),
-                        ],
-                        legendIndex: 2,
-                      },
-                      {
-                        name: "Employment",
-                        type: "column",
-                        data: [
-                          ...realSummary.map((s) => {
-                            return s.income_analysis.total_employment_income;
-                          }),
-                        ],
-                        legendIndex: 1,
-                      },
-                      {
-                        type: "line",
-                        name: "Total Expenses",
-                        step: "left",
-                        data: [
-                          ...realSummary.map((s) => {
-                            return s.expense_analysis.total_expenses;
-                          }),
-                        ],
-                        color: "#212121",
-                        marker: {
-                          enabled: false,
-                        },
-                        pointPlacement: -0.5,
-                        lineWidth: 3,
-                        legendIndex: 8,
-                      },
-                    ],
-                  });
-                }
               }}
             />
           </div>
@@ -1140,6 +1208,7 @@ const Cashflow = () => {
           )}
         </Row>
 
+        {/* Table */}
         <Row style={{ marginTop: "16px" }}>
           <Col span={24}>
             <YearBreakdownTabs
