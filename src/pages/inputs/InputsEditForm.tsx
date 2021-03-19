@@ -17,7 +17,7 @@ const { Option } = Select;
 
 const { Link } = Anchor;
 
-const InputsForm = () => {
+const InputsEditForm = () => {
   const [targetOffset, setTargetOffset] = useState<number | undefined>(undefined);
 
   useEffect(() => {
@@ -290,7 +290,7 @@ const InputsForm = () => {
   const handleFinish = async () => {};
 
   return (
-    <Layout style={{ backgroundColor: "white" }}>
+    <Layout style={{ marginTop: "16px" }}>
       <Form layout="vertical" size="middle" onFinish={handleFinish}>
         <Row>
           <Col xl={4} lg={0} md={0} sm={0} xs={0}>
@@ -345,48 +345,32 @@ const InputsForm = () => {
               <div id="owners" />
               <Divider orientation="left">
                 Owners
-                <Button
-                  type="link"
-                  onClick={() => {
-                    const clone = { ...initialInputs };
-                    initialInputs.household_owners.push({
-                      id: uuid(),
-                      name: "",
-                      birth_year: 1993,
-                      retirement_age: 65,
-                    });
-                    setInitialInputs(clone);
-                  }}
-                >
+                <Button type="link">
                   <PlusCircleOutlined />
                 </Button>
               </Divider>
-              {initialInputs.household_owners.map((o) => {
-                return (
-                  <Row>
-                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                      <Form.Item label="Owner Name">
-                        <TextInput />
-                      </Form.Item>
-                    </Col>
-                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                      <Form.Item label="Birth Year">
-                        <DateInput />
-                      </Form.Item>
-                    </Col>
-                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                      <Form.Item label="Retirement Age">
-                        <InputNumber
-                          className="custom-input-fields"
-                          placeholder="65"
-                          name="retirement_age"
-                          onBlur={(e) => {}}
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                );
-              })}
+              <Row>
+                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                  <Form.Item label="Owner Name">
+                    <TextInput />
+                  </Form.Item>
+                </Col>
+                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                  <Form.Item label="Birth Year">
+                    <DateInput />
+                  </Form.Item>
+                </Col>
+                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                  <Form.Item label="Retirement Age">
+                    <InputNumber
+                      className="custom-input-fields"
+                      placeholder="65"
+                      name="retirement_age"
+                      onBlur={(e) => {}}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
 
               {/* Children */}
               <div id="children" />
@@ -1432,4 +1416,4 @@ const InputsForm = () => {
   );
 };
 
-export default InputsForm;
+export default InputsEditForm;
