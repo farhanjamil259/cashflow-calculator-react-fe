@@ -355,6 +355,13 @@ const InputsForm = () => {
                       birth_year: 1993,
                       retirement_age: 65,
                     });
+                    initialInputs.household_income.employment_income.push({
+                      gross_anual_amount: 0,
+                    });
+                    initialInputs.assets.savings_and_investments.individual_savings_account.push({
+                      original_balance: 0,
+                      annual_contribution: 0,
+                    });
                     setInitialInputs(clone);
                   }}
                 >
@@ -496,26 +503,30 @@ const InputsForm = () => {
                   </Form.Item>
                 </Col>
               </Row>
-              {/* Savings and Investments */}
+              {/* Savings and Investments  */}
               <div id="savings-and-investments" />
               <Divider orientation="left">Savings and Investments</Divider>
-              <Row>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label=" ">
-                    <Text strong>asd</Text>
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Original Balance">
-                    <MoneyInput />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Annual Contributions">
-                    <MoneyInput />
-                  </Form.Item>
-                </Col>
-              </Row>
+              {initialInputs.assets.savings_and_investments.individual_savings_account.map((o, i) => {
+                return (
+                  <Row>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label=" ">
+                        <Text strong>Owner Name</Text>
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Original Balance">
+                        <MoneyInput />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Annual Contributions">
+                        <MoneyInput />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                );
+              })}
 
               {/*  Defined Contribution Pension Plans */}
               <div id="defined-contribution-pension-plans" />
@@ -661,18 +672,22 @@ const InputsForm = () => {
               <div id="employment-income" />
               <Divider orientation="left">Employment Income</Divider>
 
-              <Row>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label=" ">
-                    <Text strong>Employmen Income</Text>
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Gross annual amount:">
-                    <MoneyInput />
-                  </Form.Item>
-                </Col>
-              </Row>
+              {initialInputs.household_income.employment_income.map((o, i) => {
+                return (
+                  <Row>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label=" ">
+                        <Text strong>{initialInputs.household_owners[i].name}</Text>
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Gross annual amount:">
+                        <MoneyInput />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                );
+              })}
 
               {/* Self-Employment Income */}
               <div id="self-employment-income" />

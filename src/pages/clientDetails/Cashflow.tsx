@@ -24,15 +24,16 @@ const Cashflow = () => {
 
   const [selectedSummaryAtIndex, setSelectedSummaryAtIndex] = useState(summary[0]);
 
-  const preShortfall: number[] = useMemo(() => {
-    return [
-      ...summary.map((s) => {
-        return s.expense_analysis.total_expenses - s.income_analysis.total_income;
-      }),
-    ];
-  }, []);
+  const [shortfall, setShortfall] = useState<number[]>([
+    ...summary.map((s) => {
+      return s.expense_analysis.total_expenses - s.income_analysis.total_income;
+    }),
+  ]);
 
-  const [shortfall, setShortfall] = useState<number[]>(JSON.parse(JSON.stringify(preShortfall)));
+  const [incomeState, setIncomeState] = useState({
+    employmentState: false,
+    selfEmploymentState: false,
+  });
 
   const [cashFlowChartOptions, setCashFlowChartOptions] = useState<highcharts.Options>({
     chart: {
@@ -210,7 +211,6 @@ const Cashflow = () => {
 
   useEffect(() => {
     setCashFlowChartOptions({
-      ...cashFlowChartOptions,
       series: [
         {
           visible: true,
@@ -227,6 +227,25 @@ const Cashflow = () => {
           showInLegend: detailedView,
           name: "Other",
           type: "column",
+          events: detailedView
+            ? {
+                legendItemClick: (e) => {
+                  if (!e.target.visible) {
+                    setShortfall(
+                      summary.map((s, i) => {
+                        return shortfall[i] - s.income_analysis.total_other_income;
+                      })
+                    );
+                  } else {
+                    setShortfall(
+                      summary.map((s, i) => {
+                        return shortfall[i] + s.income_analysis.total_other_income;
+                      })
+                    );
+                  }
+                },
+              }
+            : {},
           data: [
             ...summary.map((s) => {
               return s.income_analysis.total_other_income;
@@ -251,7 +270,25 @@ const Cashflow = () => {
           showInLegend: detailedView,
           name: "Pension",
           type: "column",
-
+          events: detailedView
+            ? {
+                legendItemClick: (e) => {
+                  if (!e.target.visible) {
+                    setShortfall([
+                      ...summary.map((s, i) => {
+                        return shortfall[i] - s.income_analysis.total_pension_income;
+                      }),
+                    ]);
+                  } else {
+                    setShortfall([
+                      ...summary.map((s, i) => {
+                        return shortfall[i] + s.income_analysis.total_pension_income;
+                      }),
+                    ]);
+                  }
+                },
+              }
+            : {},
           data: [
             ...summary.map((s) => {
               return s.income_analysis.total_pension_income;
@@ -264,7 +301,25 @@ const Cashflow = () => {
           showInLegend: detailedView,
           name: "Savings and Investments",
           type: "column",
-
+          events: detailedView
+            ? {
+                legendItemClick: (e) => {
+                  if (!e.target.visible) {
+                    setShortfall([
+                      ...summary.map((s, i) => {
+                        return shortfall[i] - s.income_analysis.total_savings_and_investments_drawdowns;
+                      }),
+                    ]);
+                  } else {
+                    setShortfall([
+                      ...summary.map((s, i) => {
+                        return shortfall[i] + s.income_analysis.total_savings_and_investments_drawdowns;
+                      }),
+                    ]);
+                  }
+                },
+              }
+            : {},
           data: [
             ...summary.map((s) => {
               return s.income_analysis.total_savings_and_investments_drawdowns;
@@ -277,7 +332,25 @@ const Cashflow = () => {
           showInLegend: detailedView,
           name: "Dividend",
           type: "column",
-
+          events: detailedView
+            ? {
+                legendItemClick: (e) => {
+                  if (!e.target.visible) {
+                    setShortfall([
+                      ...summary.map((s, i) => {
+                        return shortfall[i] - s.income_analysis.total_dividend_income;
+                      }),
+                    ]);
+                  } else {
+                    setShortfall([
+                      ...summary.map((s, i) => {
+                        return shortfall[i] + s.income_analysis.total_dividend_income;
+                      }),
+                    ]);
+                  }
+                },
+              }
+            : {},
           data: [
             ...summary.map((s) => {
               return s.income_analysis.total_dividend_income;
@@ -290,7 +363,25 @@ const Cashflow = () => {
           showInLegend: detailedView,
           name: "Rental",
           type: "column",
-
+          events: detailedView
+            ? {
+                legendItemClick: (e) => {
+                  if (!e.target.visible) {
+                    setShortfall([
+                      ...summary.map((s, i) => {
+                        return shortfall[i] - s.income_analysis.total_rental_income;
+                      }),
+                    ]);
+                  } else {
+                    setShortfall([
+                      ...summary.map((s, i) => {
+                        return shortfall[i] + s.income_analysis.total_rental_income;
+                      }),
+                    ]);
+                  }
+                },
+              }
+            : {},
           data: [
             ...summary.map((s) => {
               return s.income_analysis.total_rental_income;
@@ -303,7 +394,25 @@ const Cashflow = () => {
           showInLegend: detailedView,
           name: "Self-Employment",
           type: "column",
-
+          events: detailedView
+            ? {
+                legendItemClick: (e) => {
+                  if (!e.target.visible) {
+                    setShortfall([
+                      ...summary.map((s, i) => {
+                        return shortfall[i] - s.income_analysis.total_self_employment_income;
+                      }),
+                    ]);
+                  } else {
+                    setShortfall([
+                      ...summary.map((s, i) => {
+                        return shortfall[i] + s.income_analysis.total_self_employment_income;
+                      }),
+                    ]);
+                  }
+                },
+              }
+            : {},
           data: [
             ...summary.map((s) => {
               return s.income_analysis.total_self_employment_income;
@@ -312,17 +421,42 @@ const Cashflow = () => {
           legendIndex: 2,
         },
         {
-          visible: detailedView,
+          // visible: !detailedView && false  ,
           showInLegend: detailedView,
           name: "Employment",
           type: "column",
-
+          events: detailedView
+            ? {
+                legendItemClick: (e) => {
+                  // setIncomeState({ employmentState: e.target.visible });
+                  if (!e.target.visible) {
+                    setShortfall([
+                      ...summary.map((s, i) => {
+                        return shortfall[i] - s.income_analysis.total_employment_income;
+                      }),
+                    ]);
+                  } else {
+                    setShortfall([
+                      ...summary.map((s, i) => {
+                        return shortfall[i] + s.income_analysis.total_employment_income;
+                      }),
+                    ]);
+                  }
+                },
+              }
+            : {},
           data: [
             ...summary.map((s) => {
               return s.income_analysis.total_employment_income;
             }),
           ],
           legendIndex: 1,
+
+          // ...(!detailedView
+          //   ? {
+          //       visible: false,
+          //     }
+          //   : { visible: true }),
         },
         {
           visible: !detailedView,
@@ -359,260 +493,20 @@ const Cashflow = () => {
         },
       ],
     });
-  }, [summary, detailedView]);
+  }, [summary, detailedView, shortfall]);
 
   useEffect(() => {
-    setCashFlowChartOptions({
-      ...cashFlowChartOptions,
-      series: [
-        {
-          visible: true,
-          showInLegend: true,
-          name: "Shortfall",
-          type: "column",
-          data: shortfall,
-          color: "#d32f2f",
-          legendIndex: 10,
-        },
-
-        {
-          name: "Other",
-          type: "column",
-          events: {
-            legendItemClick: (e) => {
-              if (!e.target.visible) {
-                setShortfall([
-                  ...summary.map((s, i) => {
-                    return shortfall[i] - s.income_analysis.total_other_income;
-                  }),
-                ]);
-              } else {
-                setShortfall([
-                  ...summary.map((s, i) => {
-                    return shortfall[i] + s.income_analysis.total_other_income;
-                  }),
-                ]);
-              }
-            },
-          },
-          data: [
-            ...summary.map((s) => {
-              return s.income_analysis.total_other_income;
-            }),
-          ],
-          legendIndex: 8,
-        },
-        {
-          visible: false,
-          showInLegend: detailedView,
-          name: "Property Sale",
-          type: "column",
-
-          data: [
-            ...summary.map((s) => {
-              return s.income_analysis.total_residential_sale_proceeds;
-            }),
-          ],
-          legendIndex: 7,
-        },
-        {
-          name: "Pension",
-          type: "column",
-          events: {
-            legendItemClick: (e) => {
-              if (!e.target.visible) {
-                setShortfall([
-                  ...summary.map((s, i) => {
-                    return shortfall[i] - s.income_analysis.total_pension_income;
-                  }),
-                ]);
-              } else {
-                setShortfall([
-                  ...summary.map((s, i) => {
-                    return shortfall[i] + s.income_analysis.total_pension_income;
-                  }),
-                ]);
-              }
-            },
-          },
-          data: [
-            ...summary.map((s) => {
-              return s.income_analysis.total_pension_income;
-            }),
-          ],
-          legendIndex: 6,
-        },
-        {
-          name: "Savings and Investments",
-          type: "column",
-          events: {
-            legendItemClick: (e) => {
-              if (!e.target.visible) {
-                setShortfall([
-                  ...summary.map((s, i) => {
-                    return shortfall[i] - s.income_analysis.total_savings_and_investments_drawdowns;
-                  }),
-                ]);
-              } else {
-                setShortfall([
-                  ...summary.map((s, i) => {
-                    return shortfall[i] + s.income_analysis.total_savings_and_investments_drawdowns;
-                  }),
-                ]);
-              }
-            },
-          },
-          data: [
-            ...summary.map((s) => {
-              return s.income_analysis.total_savings_and_investments_drawdowns;
-            }),
-          ],
-          legendIndex: 5,
-        },
-        {
-          name: "Dividend",
-          type: "column",
-          events: {
-            legendItemClick: (e) => {
-              if (!e.target.visible) {
-                setShortfall([
-                  ...summary.map((s, i) => {
-                    return shortfall[i] - s.income_analysis.total_dividend_income;
-                  }),
-                ]);
-              } else {
-                setShortfall([
-                  ...summary.map((s, i) => {
-                    return shortfall[i] + s.income_analysis.total_dividend_income;
-                  }),
-                ]);
-              }
-            },
-          },
-          data: [
-            ...summary.map((s) => {
-              return s.income_analysis.total_dividend_income;
-            }),
-          ],
-          legendIndex: 4,
-        },
-        {
-          name: "Rental",
-          type: "column",
-          events: {
-            legendItemClick: (e) => {
-              if (!e.target.visible) {
-                setShortfall([
-                  ...summary.map((s, i) => {
-                    return shortfall[i] - s.income_analysis.total_rental_income;
-                  }),
-                ]);
-              } else {
-                setShortfall([
-                  ...summary.map((s, i) => {
-                    return shortfall[i] + s.income_analysis.total_rental_income;
-                  }),
-                ]);
-              }
-            },
-          },
-          data: [
-            ...summary.map((s) => {
-              return s.income_analysis.total_rental_income;
-            }),
-          ],
-          legendIndex: 3,
-        },
-        {
-          name: "Self-Employment",
-          type: "column",
-          events: {
-            legendItemClick: (e) => {
-              if (!e.target.visible) {
-                setShortfall([
-                  ...summary.map((s, i) => {
-                    return shortfall[i] - s.income_analysis.total_self_employment_income;
-                  }),
-                ]);
-              } else {
-                setShortfall([
-                  ...summary.map((s, i) => {
-                    return shortfall[i] + s.income_analysis.total_self_employment_income;
-                  }),
-                ]);
-              }
-            },
-          },
-          data: [
-            ...summary.map((s) => {
-              return s.income_analysis.total_self_employment_income;
-            }),
-          ],
-          legendIndex: 2,
-        },
-        {
-          name: "Employment",
-          type: "column",
-          events: {
-            legendItemClick: (e) => {
-              if (!e.target.visible) {
-                setShortfall([
-                  ...summary.map((s, i) => {
-                    return shortfall[i] - s.income_analysis.total_employment_income;
-                  }),
-                ]);
-              } else {
-                setShortfall([
-                  ...summary.map((s, i) => {
-                    return shortfall[i] + s.income_analysis.total_employment_income;
-                  }),
-                ]);
-              }
-            },
-          },
-          data: [
-            ...summary.map((s) => {
-              return s.income_analysis.total_employment_income;
-            }),
-          ],
-          legendIndex: 1,
-        },
-        {
-          visible: !detailedView,
-          showInLegend: !detailedView,
-          name: "Inflow",
-          type: "column",
-          color: "#5c6bc0",
-          data: [
-            ...summary.map((s) => {
-              return s.income_analysis.total_income;
-            }),
-          ],
-        },
-        {
-          zIndex: 99,
-          visible: true,
-          showInLegend: true,
-          type: "line",
-          name: "Total Expenses",
-          step: "center",
-          data: [
-            ...summary.map((s) => {
-              return s.expense_analysis.total_expenses;
-            }),
-          ],
-          color: "#212121",
-          marker: {
-            enabled: false,
-          },
-          // pointPlacement: -0.5,
-
-          lineWidth: 3,
-          legendIndex: 9,
-        },
-      ],
+    let calculatedSF = summary.map((s) => {
+      return s.expense_analysis.total_expenses;
     });
-  }, [shortfall]);
+    if (!incomeState.employmentState) {
+      setShortfall(
+        summary.map((s, index) => {
+          return calculatedSF[index] - s.income_analysis.total_employment_income;
+        })
+      );
+    }
+  }, [incomeState, summary]);
 
   const [chartControls, setChartControls] = useState({
     label: "years",
@@ -635,7 +529,6 @@ const Cashflow = () => {
               unCheckedChildren="Detailed"
               defaultChecked={true}
               onChange={(e) => {
-                setShortfall(preShortfall);
                 setDetailedVliew(e);
               }}
             />

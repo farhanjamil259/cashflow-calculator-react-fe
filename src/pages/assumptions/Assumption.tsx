@@ -1,4 +1,4 @@
-import {Card, Col,  Layout, Row,} from "antd";
+import { Card, Col, Layout, Row, Button } from "antd";
 import Sdlt from "./assumptionsComponents/Sdlt";
 import Isaa from "./assumptionsComponents/Isaa";
 import Pension from "./assumptionsComponents/Pension";
@@ -12,42 +12,55 @@ import DividendTax from "./assumptionsComponents/DividendTax";
 import MarketData from "./assumptionsComponents/MarketData";
 import React from "react";
 import EmploymentMinimumPensionContributions from "./assumptionsComponents/EmploymentMinimumPensionContributions";
-import ResidentialPropertyCapitalTexRateThresholds
-    from "./assumptionsComponents/ResidentialPropertyCapitalTexRateThresholds";
+import ResidentialPropertyCapitalTexRateThresholds from "./assumptionsComponents/ResidentialPropertyCapitalTexRateThresholds";
 import OtherAssetsCapitalGainsTaxRateThresholds from "./assumptionsComponents/OtherAssetsCapitalGainsTaxRateThresholds";
-
+import { useHistory } from "react-router-dom";
 
 const Assumption = () => {
+  const history = useHistory();
 
-    return (
-        <Layout style={{backgroundColor: "white"}}>
-            <Row justify="center">
-                <Col span={12}>
-                    <Card title={"Tax Rules and Market Data Assumptions"} bordered={false}>
-                        <Row>
-                            <Col span={24}>
-                                <Sdlt/>
-                                <Isaa/>
-                                <Pension/>
-                                <IncomeTax/>
-                                <IncomeLimits/>
-                                <EmploymentMinimumPensionContributions/>
-                                <EmploymentNic/>
-                                <SelfEmployment2/>
-                                <SelfEmployment4/>
-                                <DividendTax/>
-                                <ResidentialPropertyCapitalTexRateThresholds/>
-                                <OtherAssetsCapitalGainsTaxRateThresholds/>
-                                <IncomeLimits2/>
-                                <MarketData/>
-                            </Col>
-                        </Row>
-                    </Card>
-                </Col>
+  return (
+    <Layout style={{ backgroundColor: "white" }}>
+      <Row justify="center">
+        <Col span={12}>
+          <Card
+            title={"Tax Rules and Market Data Assumptions"}
+            bordered={false}
+            extra={
+              <Button
+                type="primary"
+                style={{ margin: "16px" }}
+                onClick={() => {
+                  history.push("/assumption/assumptionForm");
+                }}
+              >
+                Add Assumptions
+              </Button>
+            }
+          >
+            <Row>
+              <Col span={24}>
+                <Sdlt />
+                <Isaa />
+                <Pension />
+                <IncomeTax />
+                <IncomeLimits />
+                <EmploymentMinimumPensionContributions />
+                <EmploymentNic />
+                <SelfEmployment2 />
+                <SelfEmployment4 />
+                <DividendTax />
+                <ResidentialPropertyCapitalTexRateThresholds />
+                <OtherAssetsCapitalGainsTaxRateThresholds />
+                <IncomeLimits2 />
+                <MarketData />
+              </Col>
             </Row>
-
-        </Layout>
-    );
+          </Card>
+        </Col>
+      </Row>
+    </Layout>
+  );
 };
 
 export default Assumption;
