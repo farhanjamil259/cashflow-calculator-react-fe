@@ -1,18 +1,234 @@
-import { Card, Layout, Row, Col, Form, Typography } from "antd";
-import React from "react";
-import MoneyInput from "../inputs/controls/MoneyInput";
+import { Card, Layout, Row, Col, Form, Typography, Button } from "antd";
+import React, { useState, useEffect } from "react";
+import MoneyInput from "./controls/MoneyInput";
 import TextInput from "../inputs/controls/TextInput";
 import RateInput from "./controls/RateInput";
+import IAssumptions from "../../interfaces/IAssumptions";
+import { RootStateOrAny, useSelector } from "react-redux";
+import IForecastSummary from "../../interfaces/IForecastSummary";
 
 const { Text } = Typography;
 
 const AssumptionFrom = () => {
+  const assumptions: IAssumptions = useSelector((state: RootStateOrAny) => state.assumptionReducer);
+
+  const [initialInputs, setInitialInputs] = useState<IAssumptions>({
+    sdlt_thresholds: {
+      c5: {
+        threshold: 0,
+        taxrate: 0,
+      },
+      c6: {
+        threshold: 0,
+        taxrate: 0,
+      },
+      c7: {
+        threshold: 0,
+        taxrate: 0,
+      },
+      c8: {
+        threshold: 0,
+        taxrate: 0,
+      },
+      c9: {
+        threshold: 0,
+        taxrate: 0,
+      },
+    },
+    isaa: {
+      annual_contribution_allowance: {
+        allowance: 0,
+        rate: 0,
+      },
+    },
+    pension_contribution_allowance: {
+      contribution_annual_allowance: {
+        allowance: 0,
+        rate: 0,
+      },
+      lifetime_allowance: {
+        allowance: 0,
+        rate: 0,
+      },
+      contribution_annual_allowance_floor: {
+        allowance: 0,
+        rate: 0,
+      },
+    },
+    pension_contribution_allowance_tapering: {
+      threshold_income: {
+        threshold: 0,
+        rate: 0,
+      },
+      lifetime_allowance: {
+        threshold: 0,
+        rate: 0,
+      },
+    },
+    income_tax_rate_thresholds: {
+      personal_allowance: {
+        threshold: 0,
+        rate: 0,
+      },
+      basic_rate: {
+        threshold: 0,
+        rate: 0,
+      },
+      higher_rate: {
+        threshold: 0,
+        rate: 0,
+      },
+      additional_rate: {
+        threshold: 0,
+        rate: 0,
+      },
+    },
+    income_limits: {
+      income_limit_for_personal_allowance: {
+        threshold: 0,
+        rate: 0,
+      },
+    },
+    employement_minimum_pension_contributions: {
+      minimum_contributions: {
+        member: 0,
+        employer: 0,
+      },
+    },
+    employment_nic_thresholds: {
+      lower_earnings: {
+        threshold: 0,
+        rate: 0,
+      },
+      primary_threshold: {
+        threshold: 0,
+        rate: 0,
+      },
+      upper_earnings_limit: {
+        threshold: 0,
+        rate: 0,
+      },
+    },
+    self_employment_nic_class_2_threshold: {
+      small_profit_rate: {
+        threshold: 0,
+        rate: 0,
+      },
+    },
+    self_employment_nic_class_4_threshold: {
+      lower_profits_limit: {
+        threshold: 0,
+        rate: 0,
+      },
+      upper_earnings_limit: {
+        threshold: 0,
+        rate: 0,
+      },
+    },
+    dividend_tax_rate_thresholds: {
+      personal_allowance: {
+        threshold: 0,
+        rate: 0,
+      },
+      basic_rate: {
+        threshold: 0,
+        rate: 0,
+      },
+      higher_rate: {
+        threshold: 0,
+        rate: 0,
+      },
+      additional_rate: {
+        threshold: 0,
+        rate: 0,
+      },
+    },
+    residential_property_captical_gains_tax_rate_thresholds: {
+      basic_rate: {
+        threshold: 0,
+        rate: 0,
+      },
+      higher_and_additional_rate: {
+        threshold: 0,
+        rate: 0,
+      },
+    },
+    other_assets_capital_gains_tax_rate_thresholds: {
+      basic_rate: {
+        threshold: 0,
+        rate: 0,
+      },
+      higher_and_additional_rate: {
+        threshold: 0,
+        rate: 0,
+      },
+    },
+    income_limits_2: {
+      capital_gains_tax_annual_exempt_amount: {
+        threshold: 0,
+      },
+    },
+    market_data: {
+      property_price_inflation: {
+        notes: "",
+        rate: 0,
+      },
+      cash_and_money_market_yield: {
+        notes: "",
+        rate: 0,
+      },
+      savings_and_investment_growth_rate: {
+        notes: "",
+        rate: 0,
+      },
+      earning_growth_rate: {
+        notes: "",
+        rate: 0,
+      },
+      retain_price_index: {
+        notes: "",
+        rate: 0,
+      },
+      consumer_price_index: {
+        notes: "",
+        rate: 0,
+      },
+      annuity: {
+        notes: "",
+        rate: 0,
+      },
+      private_school_fee_inflation: {
+        notes: "",
+        rate: 0,
+      },
+    },
+    inputs_assumptions: {
+      end_of_forecast_age: 100,
+      primary_school_age: 5,
+      secondary_school_age: 11,
+      university_age: 18,
+      graduation_age: 21,
+      bank_account_growth_rate: 0,
+      credit_card_interest_rate: 0.2,
+      state_pension_annual_amount: 8300,
+      state_pension_age: 67,
+    },
+  });
+
+  useEffect(() => {
+    setInitialInputs(assumptions);
+  }, [assumptions]);
+
+  const handleFinish = () => {
+    console.log(initialInputs);
+  };
+
   return (
     <Layout style={{ backgroundColor: "white" }}>
       <Row justify="center">
         <Col span={12}>
           <Card title="Assumption Form">
-            <Form layout="vertical" size="middle">
+            <Form layout="vertical" size="middle" onFinish={handleFinish}>
               {/*  SDLT Thresholds */}
               <Card style={{ margin: "16px" }}>
                 <Row>
@@ -40,7 +256,34 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        value={`${initialInputs.sdlt_thresholds.c5.threshold}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              sdlt_thresholds: {
+                                ...initialInputs.sdlt_thresholds,
+                                c5: {
+                                  ...initialInputs.sdlt_thresholds.c5,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              sdlt_thresholds: {
+                                ...initialInputs.sdlt_thresholds,
+                                c5: {
+                                  ...initialInputs.sdlt_thresholds.c5,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -57,7 +300,21 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        value={`${initialInputs.sdlt_thresholds.c6.threshold}`}
+                        onBlur={(e) => {
+                          setInitialInputs({
+                            ...initialInputs,
+                            sdlt_thresholds: {
+                              ...initialInputs.sdlt_thresholds,
+                              c6: {
+                                ...initialInputs.sdlt_thresholds.c6,
+                                threshold: e,
+                              },
+                            },
+                          });
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -74,7 +331,21 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        value={`${initialInputs.sdlt_thresholds.c7.threshold}`}
+                        onBlur={(e) => {
+                          setInitialInputs({
+                            ...initialInputs,
+                            sdlt_thresholds: {
+                              ...initialInputs.sdlt_thresholds,
+                              c7: {
+                                ...initialInputs.sdlt_thresholds.c7,
+                                threshold: e,
+                              },
+                            },
+                          });
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -91,7 +362,21 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        value={`${initialInputs.sdlt_thresholds.c8.threshold}`}
+                        onBlur={(e) => {
+                          setInitialInputs({
+                            ...initialInputs,
+                            sdlt_thresholds: {
+                              ...initialInputs.sdlt_thresholds,
+                              c8: {
+                                ...initialInputs.sdlt_thresholds.c8,
+                                threshold: e,
+                              },
+                            },
+                          });
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -108,7 +393,14 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          const clone = initialInputs;
+                          clone.sdlt_thresholds.c9.threshold = +e.target.value.replace(/£\s?|(,*)/g, "");
+                          setInitialInputs(clone);
+                        }}
+                        value={initialInputs.sdlt_thresholds.c6.threshold.toString()}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -146,7 +438,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -183,7 +480,17 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          const clone = initialInputs;
+                          clone.pension_contribution_allowance.contribution_annual_allowance.allowance = +e.target.value.replace(
+                            /£\s?|(,*)/g,
+                            ""
+                          );
+                          setInitialInputs(clone);
+                        }}
+                        value={initialInputs.pension_contribution_allowance.contribution_annual_allowance.allowance.toString()}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -200,7 +507,17 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          const clone = initialInputs;
+                          clone.pension_contribution_allowance.lifetime_allowance.allowance = +e.target.value.replace(
+                            /£\s?|(,*)/g,
+                            ""
+                          );
+                          setInitialInputs(clone);
+                        }}
+                        value={initialInputs.pension_contribution_allowance.lifetime_allowance.allowance.toString()}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -217,7 +534,17 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          const clone = initialInputs;
+                          clone.pension_contribution_allowance.contribution_annual_allowance_floor.allowance = +e.target.value.replace(
+                            /£\s?|(,*)/g,
+                            ""
+                          );
+                          setInitialInputs(clone);
+                        }}
+                        value={initialInputs.pension_contribution_allowance.contribution_annual_allowance_floor.allowance.toString()}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -254,7 +581,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -271,7 +603,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -308,7 +645,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -325,7 +667,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -342,7 +689,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -359,7 +711,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -396,7 +753,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -470,7 +832,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -487,7 +854,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -504,7 +876,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -541,7 +918,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -578,7 +960,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -595,7 +982,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -632,7 +1024,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -649,7 +1046,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -666,7 +1068,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -683,7 +1090,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -720,7 +1132,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -737,7 +1154,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -774,7 +1196,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -791,7 +1218,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -823,7 +1255,12 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <MoneyInput />
+                      <MoneyInput
+                        onBlur={(e) => {
+                          console.log(e);
+                        }}
+                        value="123"
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -984,6 +1421,11 @@ const AssumptionFrom = () => {
                   </Col>
                 </Row>
               </Card>
+              <Row justify="end">
+                <Button htmlType="submit" type="primary" size="large">
+                  Submit
+                </Button>
+              </Row>
             </Form>
           </Card>
         </Col>
