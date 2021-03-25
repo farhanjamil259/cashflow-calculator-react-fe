@@ -1,7 +1,7 @@
 import { Card, Layout, Row, Col, Form, Typography, Button } from "antd";
 import React, { useState, useEffect } from "react";
 import MoneyInput from "./controls/MoneyInput";
-import TextInput from "../inputs/controls/TextInput";
+import TextInput from "./controls/TextInput";
 import RateInput from "./controls/RateInput";
 import IAssumptions from "../../interfaces/IAssumptions";
 import { RootStateOrAny, useSelector } from "react-redux";
@@ -288,7 +288,34 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.sdlt_thresholds.c5.taxrate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              sdlt_thresholds: {
+                                ...initialInputs.sdlt_thresholds,
+                                c5: {
+                                  ...initialInputs.sdlt_thresholds.c5,
+                                  taxrate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              sdlt_thresholds: {
+                                ...initialInputs.sdlt_thresholds,
+                                c5: {
+                                  ...initialInputs.sdlt_thresholds.c5,
+                                  taxrate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -302,24 +329,40 @@ const AssumptionFrom = () => {
                     <Form.Item>
                       <MoneyInput
                         value={`${initialInputs.sdlt_thresholds.c6.threshold}`}
-                        onBlur={(e) => {
-                          setInitialInputs({
-                            ...initialInputs,
-                            sdlt_thresholds: {
-                              ...initialInputs.sdlt_thresholds,
-                              c6: {
-                                ...initialInputs.sdlt_thresholds.c6,
-                                threshold: e,
-                              },
-                            },
-                          });
-                        }}
+                        onBlur={(e) => {}}
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.sdlt_thresholds.c6.taxrate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              sdlt_thresholds: {
+                                ...initialInputs.sdlt_thresholds,
+                                c6: {
+                                  ...initialInputs.sdlt_thresholds.c6,
+                                  taxrate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              sdlt_thresholds: {
+                                ...initialInputs.sdlt_thresholds,
+                                c6: {
+                                  ...initialInputs.sdlt_thresholds.c6,
+                                  taxrate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -334,23 +377,63 @@ const AssumptionFrom = () => {
                       <MoneyInput
                         value={`${initialInputs.sdlt_thresholds.c7.threshold}`}
                         onBlur={(e) => {
-                          setInitialInputs({
-                            ...initialInputs,
-                            sdlt_thresholds: {
-                              ...initialInputs.sdlt_thresholds,
-                              c7: {
-                                ...initialInputs.sdlt_thresholds.c7,
-                                threshold: e,
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              sdlt_thresholds: {
+                                ...initialInputs.sdlt_thresholds,
+                                c7: {
+                                  ...initialInputs.sdlt_thresholds.c7,
+                                  threshold: e,
+                                },
                               },
-                            },
-                          });
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              sdlt_thresholds: {
+                                ...initialInputs.sdlt_thresholds,
+                                c7: {
+                                  ...initialInputs.sdlt_thresholds.c7,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.sdlt_thresholds.c7.taxrate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              sdlt_thresholds: {
+                                ...initialInputs.sdlt_thresholds,
+                                c7: {
+                                  ...initialInputs.sdlt_thresholds.c7,
+                                  taxrate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              sdlt_thresholds: {
+                                ...initialInputs.sdlt_thresholds,
+                                c7: {
+                                  ...initialInputs.sdlt_thresholds.c7,
+                                  taxrate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -365,23 +448,63 @@ const AssumptionFrom = () => {
                       <MoneyInput
                         value={`${initialInputs.sdlt_thresholds.c8.threshold}`}
                         onBlur={(e) => {
-                          setInitialInputs({
-                            ...initialInputs,
-                            sdlt_thresholds: {
-                              ...initialInputs.sdlt_thresholds,
-                              c8: {
-                                ...initialInputs.sdlt_thresholds.c8,
-                                threshold: e,
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              sdlt_thresholds: {
+                                ...initialInputs.sdlt_thresholds,
+                                c8: {
+                                  ...initialInputs.sdlt_thresholds.c8,
+                                  threshold: e,
+                                },
                               },
-                            },
-                          });
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              sdlt_thresholds: {
+                                ...initialInputs.sdlt_thresholds,
+                                c8: {
+                                  ...initialInputs.sdlt_thresholds.c8,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.sdlt_thresholds.c8.taxrate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              sdlt_thresholds: {
+                                ...initialInputs.sdlt_thresholds,
+                                c8: {
+                                  ...initialInputs.sdlt_thresholds.c8,
+                                  taxrate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              sdlt_thresholds: {
+                                ...initialInputs.sdlt_thresholds,
+                                c8: {
+                                  ...initialInputs.sdlt_thresholds.c8,
+                                  taxrate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -394,18 +517,65 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.sdlt_thresholds.c9.threshold}`}
                         onBlur={(e) => {
-                          const clone = initialInputs;
-                          clone.sdlt_thresholds.c9.threshold = +e.target.value.replace(/£\s?|(,*)/g, "");
-                          setInitialInputs(clone);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              sdlt_thresholds: {
+                                ...initialInputs.sdlt_thresholds,
+                                c9: {
+                                  ...initialInputs.sdlt_thresholds.c9,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              sdlt_thresholds: {
+                                ...initialInputs.sdlt_thresholds,
+                                c9: {
+                                  ...initialInputs.sdlt_thresholds.c9,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value={initialInputs.sdlt_thresholds.c6.threshold.toString()}
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.sdlt_thresholds.c9.taxrate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              sdlt_thresholds: {
+                                ...initialInputs.sdlt_thresholds,
+                                c9: {
+                                  ...initialInputs.sdlt_thresholds.c9,
+                                  taxrate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              sdlt_thresholds: {
+                                ...initialInputs.sdlt_thresholds,
+                                c9: {
+                                  ...initialInputs.sdlt_thresholds.c9,
+                                  taxrate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -439,16 +609,65 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.isaa.annual_contribution_allowance.allowance}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              isaa: {
+                                ...initialInputs.isaa,
+                                annual_contribution_allowance: {
+                                  ...initialInputs.isaa.annual_contribution_allowance,
+                                  allowance: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              isaa: {
+                                ...initialInputs.isaa,
+                                annual_contribution_allowance: {
+                                  ...initialInputs.isaa.annual_contribution_allowance,
+                                  allowance: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.isaa.annual_contribution_allowance.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              isaa: {
+                                ...initialInputs.isaa,
+                                annual_contribution_allowance: {
+                                  ...initialInputs.isaa.annual_contribution_allowance,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              isaa: {
+                                ...initialInputs.isaa,
+                                annual_contribution_allowance: {
+                                  ...initialInputs.isaa.annual_contribution_allowance,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -481,21 +700,69 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.pension_contribution_allowance.contribution_annual_allowance.allowance}`}
                         onBlur={(e) => {
-                          const clone = initialInputs;
-                          clone.pension_contribution_allowance.contribution_annual_allowance.allowance = +e.target.value.replace(
-                            /£\s?|(,*)/g,
-                            ""
-                          );
-                          setInitialInputs(clone);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              pension_contribution_allowance: {
+                                ...initialInputs.pension_contribution_allowance,
+                                contribution_annual_allowance: {
+                                  ...initialInputs.pension_contribution_allowance
+                                    .contribution_annual_allowance,
+                                  allowance: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              pension_contribution_allowance: {
+                                ...initialInputs.pension_contribution_allowance,
+                                contribution_annual_allowance: {
+                                  ...initialInputs.pension_contribution_allowance
+                                    .contribution_annual_allowance,
+                                  allowance: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value={initialInputs.pension_contribution_allowance.contribution_annual_allowance.allowance.toString()}
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.pension_contribution_allowance.contribution_annual_allowance.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              pension_contribution_allowance: {
+                                ...initialInputs.pension_contribution_allowance,
+                                contribution_annual_allowance: {
+                                  ...initialInputs.pension_contribution_allowance
+                                    .contribution_annual_allowance,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              pension_contribution_allowance: {
+                                ...initialInputs.pension_contribution_allowance,
+                                contribution_annual_allowance: {
+                                  ...initialInputs.pension_contribution_allowance
+                                    .contribution_annual_allowance,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -508,21 +775,65 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.pension_contribution_allowance.lifetime_allowance.allowance}`}
                         onBlur={(e) => {
-                          const clone = initialInputs;
-                          clone.pension_contribution_allowance.lifetime_allowance.allowance = +e.target.value.replace(
-                            /£\s?|(,*)/g,
-                            ""
-                          );
-                          setInitialInputs(clone);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              pension_contribution_allowance: {
+                                ...initialInputs.pension_contribution_allowance,
+                                lifetime_allowance: {
+                                  ...initialInputs.pension_contribution_allowance.lifetime_allowance,
+                                  allowance: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              pension_contribution_allowance: {
+                                ...initialInputs.pension_contribution_allowance,
+                                lifetime_allowance: {
+                                  ...initialInputs.pension_contribution_allowance.lifetime_allowance,
+                                  allowance: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value={initialInputs.pension_contribution_allowance.lifetime_allowance.allowance.toString()}
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.pension_contribution_allowance.lifetime_allowance.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              pension_contribution_allowance: {
+                                ...initialInputs.pension_contribution_allowance,
+                                lifetime_allowance: {
+                                  ...initialInputs.pension_contribution_allowance.lifetime_allowance,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              pension_contribution_allowance: {
+                                ...initialInputs.pension_contribution_allowance,
+                                lifetime_allowance: {
+                                  ...initialInputs.pension_contribution_allowance.lifetime_allowance,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -535,21 +846,69 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.pension_contribution_allowance.contribution_annual_allowance_floor.allowance}`}
                         onBlur={(e) => {
-                          const clone = initialInputs;
-                          clone.pension_contribution_allowance.contribution_annual_allowance_floor.allowance = +e.target.value.replace(
-                            /£\s?|(,*)/g,
-                            ""
-                          );
-                          setInitialInputs(clone);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              pension_contribution_allowance: {
+                                ...initialInputs.pension_contribution_allowance,
+                                contribution_annual_allowance_floor: {
+                                  ...initialInputs.pension_contribution_allowance
+                                    .contribution_annual_allowance_floor,
+                                  allowance: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              pension_contribution_allowance: {
+                                ...initialInputs.pension_contribution_allowance,
+                                contribution_annual_allowance_floor: {
+                                  ...initialInputs.pension_contribution_allowance
+                                    .contribution_annual_allowance_floor,
+                                  allowance: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value={initialInputs.pension_contribution_allowance.contribution_annual_allowance_floor.allowance.toString()}
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.pension_contribution_allowance.contribution_annual_allowance_floor.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              pension_contribution_allowance: {
+                                ...initialInputs.pension_contribution_allowance,
+                                contribution_annual_allowance_floor: {
+                                  ...initialInputs.pension_contribution_allowance
+                                    .contribution_annual_allowance_floor,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              pension_contribution_allowance: {
+                                ...initialInputs.pension_contribution_allowance,
+                                contribution_annual_allowance_floor: {
+                                  ...initialInputs.pension_contribution_allowance
+                                    .contribution_annual_allowance_floor,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -582,17 +941,39 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.pension_contribution_allowance_tapering.threshold_income.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              pension_contribution_allowance_tapering: {
+                                ...initialInputs.pension_contribution_allowance_tapering,
+                                threshold_income: {
+                                  ...initialInputs.pension_contribution_allowance_tapering.threshold_income,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              pension_contribution_allowance_tapering: {
+                                ...initialInputs.pension_contribution_allowance_tapering,
+                                threshold_income: {
+                                  ...initialInputs.pension_contribution_allowance_tapering.threshold_income,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
-                    <Form.Item>
-                      <RateInput />
-                    </Form.Item>
+                    {/* <Form.Item>
+                      <RateInput value={`123`} onBlur={(e) => {}} />
+                    </Form.Item> */}
                   </Col>
                 </Row>
                 <Row>
@@ -604,16 +985,65 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.pension_contribution_allowance_tapering.lifetime_allowance.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              pension_contribution_allowance_tapering: {
+                                ...initialInputs.pension_contribution_allowance_tapering,
+                                lifetime_allowance: {
+                                  ...initialInputs.pension_contribution_allowance_tapering.lifetime_allowance,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              pension_contribution_allowance_tapering: {
+                                ...initialInputs.pension_contribution_allowance_tapering,
+                                lifetime_allowance: {
+                                  ...initialInputs.pension_contribution_allowance_tapering.lifetime_allowance,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.pension_contribution_allowance_tapering.lifetime_allowance.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              pension_contribution_allowance_tapering: {
+                                ...initialInputs.pension_contribution_allowance_tapering,
+                                lifetime_allowance: {
+                                  ...initialInputs.pension_contribution_allowance_tapering.lifetime_allowance,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              pension_contribution_allowance_tapering: {
+                                ...initialInputs.pension_contribution_allowance_tapering,
+                                lifetime_allowance: {
+                                  ...initialInputs.pension_contribution_allowance_tapering.lifetime_allowance,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -646,16 +1076,65 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.income_tax_rate_thresholds.personal_allowance.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_tax_rate_thresholds: {
+                                ...initialInputs.income_tax_rate_thresholds,
+                                personal_allowance: {
+                                  ...initialInputs.income_tax_rate_thresholds.personal_allowance,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_tax_rate_thresholds: {
+                                ...initialInputs.income_tax_rate_thresholds,
+                                personal_allowance: {
+                                  ...initialInputs.income_tax_rate_thresholds.personal_allowance,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.income_tax_rate_thresholds.personal_allowance.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_tax_rate_thresholds: {
+                                ...initialInputs.income_tax_rate_thresholds,
+                                personal_allowance: {
+                                  ...initialInputs.income_tax_rate_thresholds.personal_allowance,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_tax_rate_thresholds: {
+                                ...initialInputs.income_tax_rate_thresholds,
+                                personal_allowance: {
+                                  ...initialInputs.income_tax_rate_thresholds.personal_allowance,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -668,16 +1147,65 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.income_tax_rate_thresholds.basic_rate.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_tax_rate_thresholds: {
+                                ...initialInputs.income_tax_rate_thresholds,
+                                basic_rate: {
+                                  ...initialInputs.income_tax_rate_thresholds.basic_rate,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_tax_rate_thresholds: {
+                                ...initialInputs.income_tax_rate_thresholds,
+                                basic_rate: {
+                                  ...initialInputs.income_tax_rate_thresholds.basic_rate,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.income_tax_rate_thresholds.basic_rate.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_tax_rate_thresholds: {
+                                ...initialInputs.income_tax_rate_thresholds,
+                                basic_rate: {
+                                  ...initialInputs.income_tax_rate_thresholds.basic_rate,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_tax_rate_thresholds: {
+                                ...initialInputs.income_tax_rate_thresholds,
+                                basic_rate: {
+                                  ...initialInputs.income_tax_rate_thresholds.basic_rate,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -690,16 +1218,65 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.income_tax_rate_thresholds.higher_rate.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_tax_rate_thresholds: {
+                                ...initialInputs.income_tax_rate_thresholds,
+                                higher_rate: {
+                                  ...initialInputs.income_tax_rate_thresholds.higher_rate,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_tax_rate_thresholds: {
+                                ...initialInputs.income_tax_rate_thresholds,
+                                higher_rate: {
+                                  ...initialInputs.income_tax_rate_thresholds.higher_rate,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.income_tax_rate_thresholds.higher_rate.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_tax_rate_thresholds: {
+                                ...initialInputs.income_tax_rate_thresholds,
+                                higher_rate: {
+                                  ...initialInputs.income_tax_rate_thresholds.higher_rate,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_tax_rate_thresholds: {
+                                ...initialInputs.income_tax_rate_thresholds,
+                                higher_rate: {
+                                  ...initialInputs.income_tax_rate_thresholds.higher_rate,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -712,16 +1289,65 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.income_tax_rate_thresholds.additional_rate.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_tax_rate_thresholds: {
+                                ...initialInputs.income_tax_rate_thresholds,
+                                additional_rate: {
+                                  ...initialInputs.income_tax_rate_thresholds.additional_rate,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_tax_rate_thresholds: {
+                                ...initialInputs.income_tax_rate_thresholds,
+                                additional_rate: {
+                                  ...initialInputs.income_tax_rate_thresholds.additional_rate,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.income_tax_rate_thresholds.additional_rate.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_tax_rate_thresholds: {
+                                ...initialInputs.income_tax_rate_thresholds,
+                                additional_rate: {
+                                  ...initialInputs.income_tax_rate_thresholds.additional_rate,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_tax_rate_thresholds: {
+                                ...initialInputs.income_tax_rate_thresholds,
+                                additional_rate: {
+                                  ...initialInputs.income_tax_rate_thresholds.additional_rate,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -754,16 +1380,65 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.income_limits.income_limit_for_personal_allowance.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_limits: {
+                                ...initialInputs.income_limits,
+                                income_limit_for_personal_allowance: {
+                                  ...initialInputs.income_limits.income_limit_for_personal_allowance,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_limits: {
+                                ...initialInputs.income_limits,
+                                income_limit_for_personal_allowance: {
+                                  ...initialInputs.income_limits.income_limit_for_personal_allowance,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.income_limits.income_limit_for_personal_allowance.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_limits: {
+                                ...initialInputs.income_limits,
+                                income_limit_for_personal_allowance: {
+                                  ...initialInputs.income_limits.income_limit_for_personal_allowance,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_limits: {
+                                ...initialInputs.income_limits,
+                                income_limit_for_personal_allowance: {
+                                  ...initialInputs.income_limits.income_limit_for_personal_allowance,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -795,12 +1470,70 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.employement_minimum_pension_contributions.minimum_contributions.member}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              employement_minimum_pension_contributions: {
+                                ...initialInputs.employement_minimum_pension_contributions,
+                                minimum_contributions: {
+                                  ...initialInputs.employement_minimum_pension_contributions
+                                    .minimum_contributions,
+                                  member: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              employement_minimum_pension_contributions: {
+                                ...initialInputs.employement_minimum_pension_contributions,
+                                minimum_contributions: {
+                                  ...initialInputs.employement_minimum_pension_contributions
+                                    .minimum_contributions,
+                                  member: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.employement_minimum_pension_contributions.minimum_contributions.employer}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              employement_minimum_pension_contributions: {
+                                ...initialInputs.employement_minimum_pension_contributions,
+                                minimum_contributions: {
+                                  ...initialInputs.employement_minimum_pension_contributions
+                                    .minimum_contributions,
+                                  employer: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              employement_minimum_pension_contributions: {
+                                ...initialInputs.employement_minimum_pension_contributions,
+                                minimum_contributions: {
+                                  ...initialInputs.employement_minimum_pension_contributions
+                                    .minimum_contributions,
+                                  employer: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -833,16 +1566,65 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.employment_nic_thresholds.lower_earnings.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              employment_nic_thresholds: {
+                                ...initialInputs.employment_nic_thresholds,
+                                lower_earnings: {
+                                  ...initialInputs.employment_nic_thresholds.lower_earnings,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              employment_nic_thresholds: {
+                                ...initialInputs.employment_nic_thresholds,
+                                lower_earnings: {
+                                  ...initialInputs.employment_nic_thresholds.lower_earnings,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.employment_nic_thresholds.lower_earnings.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              employment_nic_thresholds: {
+                                ...initialInputs.employment_nic_thresholds,
+                                lower_earnings: {
+                                  ...initialInputs.employment_nic_thresholds.lower_earnings,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              employment_nic_thresholds: {
+                                ...initialInputs.employment_nic_thresholds,
+                                lower_earnings: {
+                                  ...initialInputs.employment_nic_thresholds.lower_earnings,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -855,16 +1637,65 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.employment_nic_thresholds.primary_threshold.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              employment_nic_thresholds: {
+                                ...initialInputs.employment_nic_thresholds,
+                                primary_threshold: {
+                                  ...initialInputs.employment_nic_thresholds.primary_threshold,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              employment_nic_thresholds: {
+                                ...initialInputs.employment_nic_thresholds,
+                                primary_threshold: {
+                                  ...initialInputs.employment_nic_thresholds.primary_threshold,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.employment_nic_thresholds.primary_threshold.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              employment_nic_thresholds: {
+                                ...initialInputs.employment_nic_thresholds,
+                                primary_threshold: {
+                                  ...initialInputs.employment_nic_thresholds.primary_threshold,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              employment_nic_thresholds: {
+                                ...initialInputs.employment_nic_thresholds,
+                                primary_threshold: {
+                                  ...initialInputs.employment_nic_thresholds.primary_threshold,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -877,16 +1708,65 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.employment_nic_thresholds.upper_earnings_limit.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              employment_nic_thresholds: {
+                                ...initialInputs.employment_nic_thresholds,
+                                upper_earnings_limit: {
+                                  ...initialInputs.employment_nic_thresholds.upper_earnings_limit,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              employment_nic_thresholds: {
+                                ...initialInputs.employment_nic_thresholds,
+                                upper_earnings_limit: {
+                                  ...initialInputs.employment_nic_thresholds.upper_earnings_limit,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.employment_nic_thresholds.upper_earnings_limit.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              employment_nic_thresholds: {
+                                ...initialInputs.employment_nic_thresholds,
+                                upper_earnings_limit: {
+                                  ...initialInputs.employment_nic_thresholds.upper_earnings_limit,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              employment_nic_thresholds: {
+                                ...initialInputs.employment_nic_thresholds,
+                                upper_earnings_limit: {
+                                  ...initialInputs.employment_nic_thresholds.upper_earnings_limit,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -906,7 +1786,7 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <Text strong>Tax Rate</Text>
+                      <Text strong>Tax Rate p.a</Text>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -919,16 +1799,65 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.self_employment_nic_class_2_threshold.small_profit_rate.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              self_employment_nic_class_2_threshold: {
+                                ...initialInputs.self_employment_nic_class_2_threshold,
+                                small_profit_rate: {
+                                  ...initialInputs.self_employment_nic_class_2_threshold.small_profit_rate,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              self_employment_nic_class_2_threshold: {
+                                ...initialInputs.self_employment_nic_class_2_threshold,
+                                small_profit_rate: {
+                                  ...initialInputs.self_employment_nic_class_2_threshold.small_profit_rate,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <MoneyInput
+                        value={`${initialInputs.self_employment_nic_class_2_threshold.small_profit_rate.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              self_employment_nic_class_2_threshold: {
+                                ...initialInputs.self_employment_nic_class_2_threshold,
+                                small_profit_rate: {
+                                  ...initialInputs.self_employment_nic_class_2_threshold.small_profit_rate,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              self_employment_nic_class_2_threshold: {
+                                ...initialInputs.self_employment_nic_class_2_threshold,
+                                small_profit_rate: {
+                                  ...initialInputs.self_employment_nic_class_2_threshold.small_profit_rate,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -961,16 +1890,65 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.self_employment_nic_class_4_threshold.lower_profits_limit.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              self_employment_nic_class_4_threshold: {
+                                ...initialInputs.self_employment_nic_class_4_threshold,
+                                lower_profits_limit: {
+                                  ...initialInputs.self_employment_nic_class_4_threshold.lower_profits_limit,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              self_employment_nic_class_4_threshold: {
+                                ...initialInputs.self_employment_nic_class_4_threshold,
+                                lower_profits_limit: {
+                                  ...initialInputs.self_employment_nic_class_4_threshold.lower_profits_limit,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.self_employment_nic_class_4_threshold.lower_profits_limit.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              self_employment_nic_class_4_threshold: {
+                                ...initialInputs.self_employment_nic_class_4_threshold,
+                                lower_profits_limit: {
+                                  ...initialInputs.self_employment_nic_class_4_threshold.lower_profits_limit,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              self_employment_nic_class_4_threshold: {
+                                ...initialInputs.self_employment_nic_class_4_threshold,
+                                lower_profits_limit: {
+                                  ...initialInputs.self_employment_nic_class_4_threshold.lower_profits_limit,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -983,16 +1961,65 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.self_employment_nic_class_4_threshold.upper_earnings_limit.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              self_employment_nic_class_4_threshold: {
+                                ...initialInputs.self_employment_nic_class_4_threshold,
+                                upper_earnings_limit: {
+                                  ...initialInputs.self_employment_nic_class_4_threshold.upper_earnings_limit,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              self_employment_nic_class_4_threshold: {
+                                ...initialInputs.self_employment_nic_class_4_threshold,
+                                upper_earnings_limit: {
+                                  ...initialInputs.self_employment_nic_class_4_threshold.upper_earnings_limit,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.self_employment_nic_class_4_threshold.upper_earnings_limit.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              self_employment_nic_class_4_threshold: {
+                                ...initialInputs.self_employment_nic_class_4_threshold,
+                                upper_earnings_limit: {
+                                  ...initialInputs.self_employment_nic_class_4_threshold.upper_earnings_limit,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              self_employment_nic_class_4_threshold: {
+                                ...initialInputs.self_employment_nic_class_4_threshold,
+                                upper_earnings_limit: {
+                                  ...initialInputs.self_employment_nic_class_4_threshold.upper_earnings_limit,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -1025,16 +2052,65 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.dividend_tax_rate_thresholds.personal_allowance.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              dividend_tax_rate_thresholds: {
+                                ...initialInputs.dividend_tax_rate_thresholds,
+                                personal_allowance: {
+                                  ...initialInputs.dividend_tax_rate_thresholds.personal_allowance,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              dividend_tax_rate_thresholds: {
+                                ...initialInputs.dividend_tax_rate_thresholds,
+                                personal_allowance: {
+                                  ...initialInputs.dividend_tax_rate_thresholds.personal_allowance,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.dividend_tax_rate_thresholds.personal_allowance.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              dividend_tax_rate_thresholds: {
+                                ...initialInputs.dividend_tax_rate_thresholds,
+                                personal_allowance: {
+                                  ...initialInputs.dividend_tax_rate_thresholds.personal_allowance,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              dividend_tax_rate_thresholds: {
+                                ...initialInputs.dividend_tax_rate_thresholds,
+                                personal_allowance: {
+                                  ...initialInputs.dividend_tax_rate_thresholds.personal_allowance,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -1047,16 +2123,65 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.dividend_tax_rate_thresholds.basic_rate.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              dividend_tax_rate_thresholds: {
+                                ...initialInputs.dividend_tax_rate_thresholds,
+                                basic_rate: {
+                                  ...initialInputs.dividend_tax_rate_thresholds.basic_rate,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              dividend_tax_rate_thresholds: {
+                                ...initialInputs.dividend_tax_rate_thresholds,
+                                basic_rate: {
+                                  ...initialInputs.dividend_tax_rate_thresholds.basic_rate,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.dividend_tax_rate_thresholds.basic_rate.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              dividend_tax_rate_thresholds: {
+                                ...initialInputs.dividend_tax_rate_thresholds,
+                                basic_rate: {
+                                  ...initialInputs.dividend_tax_rate_thresholds.basic_rate,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              dividend_tax_rate_thresholds: {
+                                ...initialInputs.dividend_tax_rate_thresholds,
+                                basic_rate: {
+                                  ...initialInputs.dividend_tax_rate_thresholds.basic_rate,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -1069,16 +2194,65 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.dividend_tax_rate_thresholds.higher_rate.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              dividend_tax_rate_thresholds: {
+                                ...initialInputs.dividend_tax_rate_thresholds,
+                                higher_rate: {
+                                  ...initialInputs.dividend_tax_rate_thresholds.higher_rate,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              dividend_tax_rate_thresholds: {
+                                ...initialInputs.dividend_tax_rate_thresholds,
+                                higher_rate: {
+                                  ...initialInputs.dividend_tax_rate_thresholds.higher_rate,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.dividend_tax_rate_thresholds.higher_rate.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              dividend_tax_rate_thresholds: {
+                                ...initialInputs.dividend_tax_rate_thresholds,
+                                higher_rate: {
+                                  ...initialInputs.dividend_tax_rate_thresholds.higher_rate,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              dividend_tax_rate_thresholds: {
+                                ...initialInputs.dividend_tax_rate_thresholds,
+                                higher_rate: {
+                                  ...initialInputs.dividend_tax_rate_thresholds.higher_rate,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -1091,16 +2265,65 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.dividend_tax_rate_thresholds.additional_rate.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              dividend_tax_rate_thresholds: {
+                                ...initialInputs.dividend_tax_rate_thresholds,
+                                additional_rate: {
+                                  ...initialInputs.dividend_tax_rate_thresholds.additional_rate,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              dividend_tax_rate_thresholds: {
+                                ...initialInputs.dividend_tax_rate_thresholds,
+                                additional_rate: {
+                                  ...initialInputs.dividend_tax_rate_thresholds.additional_rate,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.dividend_tax_rate_thresholds.additional_rate.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              dividend_tax_rate_thresholds: {
+                                ...initialInputs.dividend_tax_rate_thresholds,
+                                additional_rate: {
+                                  ...initialInputs.dividend_tax_rate_thresholds.additional_rate,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              dividend_tax_rate_thresholds: {
+                                ...initialInputs.dividend_tax_rate_thresholds,
+                                additional_rate: {
+                                  ...initialInputs.dividend_tax_rate_thresholds.additional_rate,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -1133,16 +2356,69 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.residential_property_captical_gains_tax_rate_thresholds.basic_rate.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              residential_property_captical_gains_tax_rate_thresholds: {
+                                ...initialInputs.residential_property_captical_gains_tax_rate_thresholds,
+                                basic_rate: {
+                                  ...initialInputs.residential_property_captical_gains_tax_rate_thresholds
+                                    .basic_rate,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              residential_property_captical_gains_tax_rate_thresholds: {
+                                ...initialInputs.residential_property_captical_gains_tax_rate_thresholds,
+                                basic_rate: {
+                                  ...initialInputs.residential_property_captical_gains_tax_rate_thresholds
+                                    .basic_rate,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.residential_property_captical_gains_tax_rate_thresholds.basic_rate.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              residential_property_captical_gains_tax_rate_thresholds: {
+                                ...initialInputs.residential_property_captical_gains_tax_rate_thresholds,
+                                basic_rate: {
+                                  ...initialInputs.residential_property_captical_gains_tax_rate_thresholds
+                                    .basic_rate,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              residential_property_captical_gains_tax_rate_thresholds: {
+                                ...initialInputs.residential_property_captical_gains_tax_rate_thresholds,
+                                basic_rate: {
+                                  ...initialInputs.residential_property_captical_gains_tax_rate_thresholds
+                                    .basic_rate,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -1155,16 +2431,69 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.residential_property_captical_gains_tax_rate_thresholds.higher_and_additional_rate.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              residential_property_captical_gains_tax_rate_thresholds: {
+                                ...initialInputs.residential_property_captical_gains_tax_rate_thresholds,
+                                higher_and_additional_rate: {
+                                  ...initialInputs.residential_property_captical_gains_tax_rate_thresholds
+                                    .higher_and_additional_rate,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              residential_property_captical_gains_tax_rate_thresholds: {
+                                ...initialInputs.residential_property_captical_gains_tax_rate_thresholds,
+                                higher_and_additional_rate: {
+                                  ...initialInputs.residential_property_captical_gains_tax_rate_thresholds
+                                    .higher_and_additional_rate,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.residential_property_captical_gains_tax_rate_thresholds.higher_and_additional_rate.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              residential_property_captical_gains_tax_rate_thresholds: {
+                                ...initialInputs.residential_property_captical_gains_tax_rate_thresholds,
+                                higher_and_additional_rate: {
+                                  ...initialInputs.residential_property_captical_gains_tax_rate_thresholds
+                                    .higher_and_additional_rate,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              residential_property_captical_gains_tax_rate_thresholds: {
+                                ...initialInputs.residential_property_captical_gains_tax_rate_thresholds,
+                                higher_and_additional_rate: {
+                                  ...initialInputs.residential_property_captical_gains_tax_rate_thresholds
+                                    .higher_and_additional_rate,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -1197,16 +2526,65 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.other_assets_capital_gains_tax_rate_thresholds.basic_rate.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              other_assets_capital_gains_tax_rate_thresholds: {
+                                ...initialInputs.other_assets_capital_gains_tax_rate_thresholds,
+                                basic_rate: {
+                                  ...initialInputs.other_assets_capital_gains_tax_rate_thresholds.basic_rate,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              other_assets_capital_gains_tax_rate_thresholds: {
+                                ...initialInputs.other_assets_capital_gains_tax_rate_thresholds,
+                                basic_rate: {
+                                  ...initialInputs.other_assets_capital_gains_tax_rate_thresholds.basic_rate,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.other_assets_capital_gains_tax_rate_thresholds.basic_rate.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              other_assets_capital_gains_tax_rate_thresholds: {
+                                ...initialInputs.other_assets_capital_gains_tax_rate_thresholds,
+                                basic_rate: {
+                                  ...initialInputs.other_assets_capital_gains_tax_rate_thresholds.basic_rate,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              other_assets_capital_gains_tax_rate_thresholds: {
+                                ...initialInputs.other_assets_capital_gains_tax_rate_thresholds,
+                                basic_rate: {
+                                  ...initialInputs.other_assets_capital_gains_tax_rate_thresholds.basic_rate,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -1219,21 +2597,74 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.other_assets_capital_gains_tax_rate_thresholds.higher_and_additional_rate.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              other_assets_capital_gains_tax_rate_thresholds: {
+                                ...initialInputs.other_assets_capital_gains_tax_rate_thresholds,
+                                higher_and_additional_rate: {
+                                  ...initialInputs.other_assets_capital_gains_tax_rate_thresholds
+                                    .higher_and_additional_rate,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              other_assets_capital_gains_tax_rate_thresholds: {
+                                ...initialInputs.other_assets_capital_gains_tax_rate_thresholds,
+                                higher_and_additional_rate: {
+                                  ...initialInputs.other_assets_capital_gains_tax_rate_thresholds
+                                    .higher_and_additional_rate,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.other_assets_capital_gains_tax_rate_thresholds.higher_and_additional_rate.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              other_assets_capital_gains_tax_rate_thresholds: {
+                                ...initialInputs.other_assets_capital_gains_tax_rate_thresholds,
+                                higher_and_additional_rate: {
+                                  ...initialInputs.other_assets_capital_gains_tax_rate_thresholds
+                                    .higher_and_additional_rate,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              other_assets_capital_gains_tax_rate_thresholds: {
+                                ...initialInputs.other_assets_capital_gains_tax_rate_thresholds,
+                                higher_and_additional_rate: {
+                                  ...initialInputs.other_assets_capital_gains_tax_rate_thresholds
+                                    .higher_and_additional_rate,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
               </Card>
-              {/* Income Limits */}
+              {/* Income Limits 2 */}
               <Card style={{ margin: "16px" }}>
                 <Row>
                   <Col lg={9} md={9} sm={24} xs={24} className="custom-input-fields">
@@ -1256,10 +2687,32 @@ const AssumptionFrom = () => {
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
                       <MoneyInput
+                        value={`${initialInputs.income_limits_2.capital_gains_tax_annual_exempt_amount.threshold}`}
                         onBlur={(e) => {
-                          console.log(e);
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_limits_2: {
+                                ...initialInputs.income_limits_2,
+                                capital_gains_tax_annual_exempt_amount: {
+                                  ...initialInputs.income_limits_2.capital_gains_tax_annual_exempt_amount,
+                                  threshold: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              income_limits_2: {
+                                ...initialInputs.income_limits_2,
+                                capital_gains_tax_annual_exempt_amount: {
+                                  ...initialInputs.income_limits_2.capital_gains_tax_annual_exempt_amount,
+                                  threshold: 0,
+                                },
+                              },
+                            });
+                          }
                         }}
-                        value="123"
                       />
                     </Form.Item>
                   </Col>
@@ -1292,7 +2745,34 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.market_data.property_price_inflation.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              market_data: {
+                                ...initialInputs.market_data,
+                                property_price_inflation: {
+                                  ...initialInputs.market_data.property_price_inflation,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              market_data: {
+                                ...initialInputs.market_data,
+                                property_price_inflation: {
+                                  ...initialInputs.market_data.property_price_inflation,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -1309,7 +2789,34 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.market_data.cash_and_money_market_yield.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              market_data: {
+                                ...initialInputs.market_data,
+                                cash_and_money_market_yield: {
+                                  ...initialInputs.market_data.cash_and_money_market_yield,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              market_data: {
+                                ...initialInputs.market_data,
+                                cash_and_money_market_yield: {
+                                  ...initialInputs.market_data.cash_and_money_market_yield,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -1326,7 +2833,34 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.market_data.savings_and_investment_growth_rate.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              market_data: {
+                                ...initialInputs.market_data,
+                                savings_and_investment_growth_rate: {
+                                  ...initialInputs.market_data.savings_and_investment_growth_rate,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              market_data: {
+                                ...initialInputs.market_data,
+                                savings_and_investment_growth_rate: {
+                                  ...initialInputs.market_data.savings_and_investment_growth_rate,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -1343,7 +2877,34 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.market_data.earning_growth_rate.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              market_data: {
+                                ...initialInputs.market_data,
+                                earning_growth_rate: {
+                                  ...initialInputs.market_data.earning_growth_rate,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              market_data: {
+                                ...initialInputs.market_data,
+                                earning_growth_rate: {
+                                  ...initialInputs.market_data.earning_growth_rate,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -1360,7 +2921,34 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.market_data.retain_price_index.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              market_data: {
+                                ...initialInputs.market_data,
+                                retain_price_index: {
+                                  ...initialInputs.market_data.retain_price_index,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              market_data: {
+                                ...initialInputs.market_data,
+                                retain_price_index: {
+                                  ...initialInputs.market_data.retain_price_index,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -1377,7 +2965,34 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.market_data.consumer_price_index.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              market_data: {
+                                ...initialInputs.market_data,
+                                consumer_price_index: {
+                                  ...initialInputs.market_data.consumer_price_index,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              market_data: {
+                                ...initialInputs.market_data,
+                                consumer_price_index: {
+                                  ...initialInputs.market_data.consumer_price_index,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -1394,7 +3009,34 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.market_data.annuity.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              market_data: {
+                                ...initialInputs.market_data,
+                                annuity: {
+                                  ...initialInputs.market_data.annuity,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              market_data: {
+                                ...initialInputs.market_data,
+                                annuity: {
+                                  ...initialInputs.market_data.annuity,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
@@ -1411,7 +3053,34 @@ const AssumptionFrom = () => {
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item>
-                      <RateInput />
+                      <RateInput
+                        value={`${initialInputs.market_data.private_school_fee_inflation.rate}`}
+                        onBlur={(e) => {
+                          if (e) {
+                            setInitialInputs({
+                              ...initialInputs,
+                              market_data: {
+                                ...initialInputs.market_data,
+                                private_school_fee_inflation: {
+                                  ...initialInputs.market_data.private_school_fee_inflation,
+                                  rate: e,
+                                },
+                              },
+                            });
+                          } else {
+                            setInitialInputs({
+                              ...initialInputs,
+                              market_data: {
+                                ...initialInputs.market_data,
+                                private_school_fee_inflation: {
+                                  ...initialInputs.market_data.private_school_fee_inflation,
+                                  rate: 0,
+                                },
+                              },
+                            });
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">

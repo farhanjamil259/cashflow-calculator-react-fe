@@ -352,7 +352,7 @@ const InputsEditForm = () => {
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Owner Name">
-                    <TextInput />
+                    <TextInput placeholder="Name" onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -383,7 +383,7 @@ const InputsEditForm = () => {
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Child Name">
-                    <TextInput />
+                    <TextInput placeholder="Name" onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -408,13 +408,13 @@ const InputsEditForm = () => {
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Property Name">
-                    <TextInput />
+                    <TextInput placeholder="Name" onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
 
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Original Price">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="123" />
                   </Form.Item>
                 </Col>
 
@@ -471,12 +471,12 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Original Balance">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Min. Balance Acceptable">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -491,12 +491,12 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Original Balance">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Contributions">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -512,12 +512,12 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Original Balance">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Contributions">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -580,12 +580,12 @@ const InputsEditForm = () => {
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Loan Name">
-                    <TextInput />
+                    <TextInput placeholder="Name" onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Original Balance">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
@@ -622,12 +622,12 @@ const InputsEditForm = () => {
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Card Name">
-                    <TextInput />
+                    <TextInput placeholder="Name" onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Original Balance">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
@@ -653,7 +653,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Gross annual amount:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -669,7 +669,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Gross annual amount:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -685,7 +685,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label=" ">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -728,7 +728,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual amount:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -775,7 +775,7 @@ const InputsEditForm = () => {
                   </Col>
                   <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item label="Drawdown:">
-                      <MoneyInput />
+                      <MoneyInput onBlur={(e) => {}} value="12" />
                     </Form.Item>
                   </Col>
                   <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -825,12 +825,12 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Estimated lump sum:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Est. annual pension:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -872,7 +872,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Amount:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -905,12 +905,12 @@ const InputsEditForm = () => {
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Expense:">
-                    <TextInput />
+                    <TextInput placeholder="Name" onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -960,12 +960,12 @@ const InputsEditForm = () => {
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Expense:">
-                    <TextInput />
+                    <TextInput placeholder="Name" onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1004,12 +1004,12 @@ const InputsEditForm = () => {
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Expense:">
-                    <TextInput />
+                    <TextInput placeholder="Name" onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1048,12 +1048,12 @@ const InputsEditForm = () => {
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Expense:">
-                    <TextInput />
+                    <TextInput placeholder="Name" onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1092,12 +1092,12 @@ const InputsEditForm = () => {
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Expense:">
-                    <TextInput />
+                    <TextInput placeholder="Name" onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1136,12 +1136,12 @@ const InputsEditForm = () => {
               <Row key={"holiday"}>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Expense:">
-                    <TextInput />
+                    <TextInput placeholder="Name" onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1181,7 +1181,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1206,7 +1206,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1231,7 +1231,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1256,7 +1256,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1281,7 +1281,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1305,7 +1305,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1332,12 +1332,12 @@ const InputsEditForm = () => {
               <Row key={"oneOffExpenses"}>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Expense:">
-                    <TextInput />
+                    <TextInput placeholder="Name" onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual expense">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1369,7 +1369,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Fees">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -1382,7 +1382,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Fees">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -1394,7 +1394,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Fees">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>

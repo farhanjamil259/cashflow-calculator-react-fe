@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { cloneElement, useEffect, useState } from "react";
 import { Affix, Anchor, Button, Card, Col, Divider, Form, InputNumber, Row, Typography, Select } from "antd";
 import Layout from "antd/lib/layout/layout";
 
@@ -143,7 +143,7 @@ const InputsForm = () => {
             drawdowns: [
               {
                 id: uuid(),
-                name: "Drawdown 1",
+                name: "Drawdown",
                 amount_to_drawn_down: 0,
                 start_year: 2021,
                 end_year: 2033,
@@ -287,7 +287,9 @@ const InputsForm = () => {
     },
   });
 
-  const handleFinish = async () => {};
+  const handleFinish = async () => {
+    console.log(initialInputs);
+  };
 
   return (
     <Layout style={{ backgroundColor: "white" }}>
@@ -305,7 +307,10 @@ const InputsForm = () => {
                 <Link href="#properties" title="Properties" />
                 <Link href="#bank-account" title="Bank Account" />
                 <Link href="#savings-and-investments" title="Savings and Investments" />
-                <Link href="#defined-contribution-pension-plans" title="Defined Contribution Pension Plans" />
+                <Link
+                  href="#Non-Employment-Defined-Contribution-Pension-Plans"
+                  title="Defined Contribution Pension Plans"
+                />
               </Link>
               <Link href="#liabilities" title="Liabilities">
                 <Link href="#mortgages" title="Mortgages" />
@@ -349,18 +354,76 @@ const InputsForm = () => {
                   type="link"
                   onClick={() => {
                     const clone = { ...initialInputs };
-                    initialInputs.household_owners.push({
+                    clone.household_owners.push({
                       id: uuid(),
                       name: "",
                       birth_year: 1993,
                       retirement_age: 65,
                     });
-                    initialInputs.household_income.employment_income.push({
-                      gross_anual_amount: 0,
-                    });
-                    initialInputs.assets.savings_and_investments.individual_savings_account.push({
+                    clone.assets.savings_and_investments.individual_savings_account.push({
                       original_balance: 0,
                       annual_contribution: 0,
+                    });
+                    clone.assets.savings_and_investments.general_investment_account.push({
+                      original_balance: 0,
+                      annual_contribution: 0,
+                    });
+                    clone.assets.non_employment_defined_contribution_pension_plans.push({
+                      original_balance: 0,
+                      annual_contribution: 0,
+                    });
+                    clone.household_income.employment_income.push({
+                      gross_anual_amount: 0,
+                    });
+                    clone.household_income.self_employment_income.push({
+                      gross_anual_amount: 0,
+                    });
+                    clone.household_income.rental_income.details.push({
+                      share_of_rental_income: 0.5,
+                      start_year: 2061,
+                    });
+                    clone.household_income.dividend_income.push({
+                      anual_amount: 0,
+                      start_year: 2021,
+                      end_year: 2050,
+                    });
+                    clone.household_income.savings_and_investments_drawdowns.individual_savings_accounts.push(
+                      {
+                        owner_name: "",
+                        drawdowns: [
+                          {
+                            id: uuid(),
+                            name: "Drawdown 1",
+                            amount_to_drawn_down: 0,
+                            start_year: 2021,
+                            end_year: 2033,
+                          },
+                        ],
+                      }
+                    );
+                    clone.household_income.savings_and_investments_drawdowns.general_investment_accounts.push(
+                      {
+                        owner_name: "",
+                        drawdowns: [
+                          {
+                            id: uuid(),
+                            name: "Drawdown 1",
+                            amount_to_drawn_down: 0,
+                            start_year: 2021,
+                            end_year: 2033,
+                          },
+                        ],
+                      }
+                    );
+                    clone.household_income.pension_income.defined_benifit_pension_plans.push({
+                      option_taken: "Lump Sum",
+                      estimated_lump_sum: 0,
+                      estimated_annual_pension: 0,
+                      annual_increase: 0,
+                    });
+                    clone.household_income.pension_income.defined_contribution_pension_plans.push({
+                      option_taken: "Drawdown",
+                      drawdown_option_annual_amount: 0,
                     });
                     setInitialInputs(clone);
                   }}
@@ -368,12 +431,20 @@ const InputsForm = () => {
                   <PlusCircleOutlined />
                 </Button>
               </Divider>
-              {initialInputs.household_owners.map((o) => {
+              {initialInputs.household_owners.map((o, i) => {
                 return (
                   <Row>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Owner Name">
-                        <TextInput />
+                        <TextInput
+                          placeholder="Name"
+                          onBlur={(e) => {
+                            const clone = { ...initialInputs };
+                            clone.household_owners[i].name = e;
+                            setInitialInputs(clone);
+                          }}
+                          value={initialInputs.household_owners[i].name}
+                        />
                       </Form.Item>
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -399,22 +470,41 @@ const InputsForm = () => {
               <div id="children" />
               <Divider orientation="left">
                 Children
-                <Button type="link">
+                <Button
+                  type="link"
+                  onClick={() => {
+                    const clone = { ...initialInputs };
+                    clone.children.push({
+                      id: uuid(),
+                      name: "",
+                      birth_year: 2024,
+                    });
+                    setInitialInputs(clone);
+                  }}
+                >
                   <PlusCircleOutlined />
                 </Button>
               </Divider>
-              <Row>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Child Name">
-                    <TextInput />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Birth Year">
-                    <DateInput />
-                  </Form.Item>
-                </Col>
-              </Row>
+              {initialInputs.children.map((c, i) => {
+                return (
+                  <Row>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Child Name">
+                        <TextInput
+                          placeholder="Name"
+                          onBlur={(e) => {}}
+                          value={initialInputs.children[i].name}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Birth Year">
+                        <DateInput />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                );
+              })}
             </Card>
 
             {/* Assets */}
@@ -423,66 +513,103 @@ const InputsForm = () => {
               <div id="properties" />
               <Divider orientation="left">
                 Properties
-                <Button type="link">
+                <Button
+                  type="link"
+                  onClick={() => {
+                    const clone = { ...initialInputs };
+                    clone.assets.properties.push({
+                      id: uuid(),
+                      name: "",
+                      original_price: 0,
+                      start_year: 2025,
+                      sell_in_future: true,
+                      end_year: 2050,
+                      type_of_property: "Main Home",
+                      on_mortgage: false,
+                      mortgage_rate: 0,
+                    });
+                    setInitialInputs(clone);
+                  }}
+                >
                   <PlusCircleOutlined />
                 </Button>
               </Divider>
 
-              <Row>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Property Name">
-                    <TextInput />
-                  </Form.Item>
-                </Col>
+              {initialInputs.assets.properties.map((p, i) => {
+                return (
+                  <Row>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Property Name">
+                        <TextInput
+                          placeholder="Name"
+                          onBlur={(e) => {}}
+                          value={initialInputs.assets.properties[i].name}
+                        />
+                      </Form.Item>
+                    </Col>
 
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Original Price">
-                    <MoneyInput />
-                  </Form.Item>
-                </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Original Price">
+                        <MoneyInput
+                          onBlur={(e) => {
+                            if (e) {
+                              const clone = { ...initialInputs };
+                              clone.assets.properties[0].original_price = e;
+                              setInitialInputs(clone);
+                            } else {
+                              const clone = { ...initialInputs };
+                              clone.assets.properties[0].original_price = 0;
+                              setInitialInputs(clone);
+                            }
+                          }}
+                          value={initialInputs.assets.properties[0].original_price.toString()}
+                        />
+                      </Form.Item>
+                    </Col>
 
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Today's Value">
-                    <Text strong>£123412</Text>
-                  </Form.Item>
-                </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Today's Value">
+                        <Text strong>£123412</Text>
+                      </Form.Item>
+                    </Col>
 
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Start Year">
-                    <DateInput />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Sell in future?">
-                    <Select defaultValue="no" className="custom-input-fields">
-                      <Option value="yes">Yes</Option>
-                      <Option value="no">No</Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <Form.Item label="Sell/ End Year">
-                    <DateInput />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Type of Property">
-                    <Select defaultValue="no" className="custom-input-fields">
-                      <Option value="yes">Yes</Option>
-                      <Option value="no">No</Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="On Mortgage?">
-                    <Select defaultValue="no" className="custom-input-fields">
-                      <Option value="yes">Yes</Option>
-                      <Option value="no">No</Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-              </Row>
-
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Start Year">
+                        <DateInput />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Sell in future?">
+                        <Select defaultValue="no" className="custom-input-fields">
+                          <Option value="yes">Yes</Option>
+                          <Option value="no">No</Option>
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                    <Col>
+                      <Form.Item label="Sell/ End Year">
+                        <DateInput />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Type of Property">
+                        <Select defaultValue="no" className="custom-input-fields">
+                          <Option value="yes">Yes</Option>
+                          <Option value="no">No</Option>
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="On Mortgage?">
+                        <Select defaultValue="no" className="custom-input-fields">
+                          <Option value="yes">Yes</Option>
+                          <Option value="no">No</Option>
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                );
+              })}
               {/* Bank Accounts */}
               <div id="bank-account" />
               <Divider orientation="left">Bank Accounts</Divider>
@@ -494,60 +621,88 @@ const InputsForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Original Balance">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Min. Balance Acceptable">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
               {/* Savings and Investments  */}
               <div id="savings-and-investments" />
               <Divider orientation="left">Savings and Investments</Divider>
+              <Title level={5}>Individual Saving Account </Title>
               {initialInputs.assets.savings_and_investments.individual_savings_account.map((o, i) => {
                 return (
                   <Row>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label=" ">
-                        <Text strong>Owner Name</Text>
+                        <Text strong>{initialInputs.household_owners[i].name}</Text>
                       </Form.Item>
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Original Balance">
-                        <MoneyInput />
+                        <MoneyInput onBlur={(e) => {}} value="12" />
                       </Form.Item>
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Annual Contributions">
-                        <MoneyInput />
+                        <MoneyInput onBlur={(e) => {}} value="12" />
                       </Form.Item>
                     </Col>
                   </Row>
                 );
               })}
 
-              {/*  Defined Contribution Pension Plans */}
-              <div id="defined-contribution-pension-plans" />
-              <Divider orientation="left">Defined Contribution Pension Plans</Divider>
-              <Row>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label=" ">
-                    <Text strong>asd</Text>
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Original Balance">
-                    <MoneyInput />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Annual Contributions">
-                    <MoneyInput />
-                  </Form.Item>
-                </Col>
-              </Row>
+              <Title level={5}>General Investment Account </Title>
+              {initialInputs.assets.savings_and_investments.general_investment_account.map((o, i) => {
+                return (
+                  <Row>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label=" ">
+                        <Text strong>{initialInputs.household_owners[i].name}</Text>
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Original Balance">
+                        <MoneyInput onBlur={(e) => {}} value="12" />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Annual Contributions">
+                        <MoneyInput onBlur={(e) => {}} value="12" />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                );
+              })}
+
+              {/* Non-Employment Defined Contribution Pension Plans */}
+              <div id="Non-Employment-Defined-Contribution-Pension-Plans" />
+              <Divider orientation="left">Non-Employment Defined Contribution Pension Plans</Divider>
+              {initialInputs.assets.non_employment_defined_contribution_pension_plans.map((s, i) => {
+                return (
+                  <Row>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label=" ">
+                        <Text strong>{initialInputs.household_owners[i].name}</Text>
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Original Balance">
+                        <MoneyInput onBlur={(e) => {}} value="12" />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Annual Contributions">
+                        <MoneyInput onBlur={(e) => {}} value="12" />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                );
+              })}
             </Card>
 
             {/* Liabilities */}
@@ -599,62 +754,84 @@ const InputsForm = () => {
               <div id="other-loans" />
               <Divider orientation="left">
                 Other Loans
-                <Button type="link">
+                <Button
+                  type="link"
+                  onClick={() => {
+                    const clone = { ...initialInputs };
+                    clone.liabilities.other_loans.push({
+                      id: uuid(),
+                      name: "",
+                      original_balance: 0,
+                      interest_rate: 0,
+                      start_year: 2019,
+                      loan_period: 10,
+                      number_of_payments_per_year: 12,
+                    });
+                    setInitialInputs(clone);
+                  }}
+                >
                   <PlusCircleOutlined />
                 </Button>
               </Divider>
 
-              <Row>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Loan Name">
-                    <TextInput />
-                  </Form.Item>
-                </Col>
-                <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Original Balance">
-                    <MoneyInput />
-                  </Form.Item>
-                </Col>
-                <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Interest Rate">
-                    <RateInput />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Start Year">
-                    <DateInput />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Loan Period (yrs)">
-                    <InputNumber className="custom-input-fields" />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="# of Payments/yr">
-                    <Select defaultValue="12" className="custom-input-fields">
-                      <Option value="1">1</Option>
-                      <Option value="2">2</Option>
-                      <Option value="4">4</Option>
-                      <Option value="6">6</Option>
-                      <Option value="12">12</Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-              </Row>
-
+              {initialInputs.liabilities.other_loans.map((o, i) => {
+                return (
+                  <Row>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Loan Name">
+                        <TextInput
+                          placeholder="Name"
+                          onBlur={(e) => {}}
+                          value={initialInputs.liabilities.other_loans[i].name}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Original Balance">
+                        <MoneyInput onBlur={(e) => {}} value="12" />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Interest Rate">
+                        <RateInput />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Start Year">
+                        <DateInput />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Loan Period (yrs)">
+                        <InputNumber className="custom-input-fields" />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="# of Payments/yr">
+                        <Select defaultValue="12" className="custom-input-fields">
+                          <Option value="1">1</Option>
+                          <Option value="2">2</Option>
+                          <Option value="4">4</Option>
+                          <Option value="6">6</Option>
+                          <Option value="12">12</Option>
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                );
+              })}
               {/* Credit Card */}
               <div id="credit-card" />
               <Divider orientation="left">Credit Card</Divider>
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Card Name">
-                    <TextInput />
+                    <TextInput placeholder="Name" onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Original Balance">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
@@ -682,7 +859,7 @@ const InputsForm = () => {
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Gross annual amount:">
-                        <MoneyInput />
+                        <MoneyInput onBlur={(e) => {}} value="12" />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -692,18 +869,22 @@ const InputsForm = () => {
               {/* Self-Employment Income */}
               <div id="self-employment-income" />
               <Divider orientation="left">Self-Employment Income</Divider>
-              <Row>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label=" ">
-                    <Text strong>Self </Text>
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Gross annual amount:">
-                    <MoneyInput />
-                  </Form.Item>
-                </Col>
-              </Row>
+              {initialInputs.household_income.self_employment_income.map((s, i) => {
+                return (
+                  <Row>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label=" ">
+                        <Text strong>{initialInputs.household_owners[i].name} </Text>
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Gross annual amount:">
+                        <MoneyInput onBlur={(e) => {}} value="12" />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                );
+              })}
 
               {/* Rental Income */}
               <div id="rental-income" />
@@ -716,111 +897,209 @@ const InputsForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label=" ">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
 
-              <Row>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label=" ">
-                    <Text strong>Owner Name</Text>
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Share of income:">
-                    <RateInput />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Start year:">
-                    <DateInput />
-                  </Form.Item>
-                </Col>
-              </Row>
+              {initialInputs.household_income.rental_income.details.map((s, i) => {
+                return (
+                  <Row>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label=" ">
+                        <Text strong>{initialInputs.household_owners[i].name}</Text>
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Share of income:">
+                        <RateInput />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Start year:">
+                        <DateInput />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                );
+              })}
 
               {/* Dividend Income */}
 
               <div id="dividend-income" />
               <Divider orientation="left">Dividend Income</Divider>
 
-              <Row>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label=" ">
-                    <Text
-                      strong
-                      editable={{
-                        onChange: (e) => {},
-                      }}
-                    >
-                      Owner Name
-                    </Text>
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Annual amount:">
-                    <MoneyInput />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Start year:">
-                    <DateInput />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="End year:">
-                    <DateInput />
-                  </Form.Item>
-                </Col>
-              </Row>
+              {initialInputs.household_income.dividend_income.map((s, i) => {
+                return (
+                  <Row>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label=" ">
+                        <Text strong>{initialInputs.household_owners[i].name}</Text>
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Annual amount:">
+                        <MoneyInput onBlur={(e) => {}} value="12" />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Start year:">
+                        <DateInput />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="End year:">
+                        <DateInput />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                );
+              })}
 
               {/* Drawdowns */}
               <div id="drawdowns" />
-              <Divider orientation="left">Drawdowns</Divider>
+              <Divider orientation="left">Individual Savings Account - Drawdowns</Divider>
 
-              <div>
-                <Row>
-                  <Col lg={24} md={24} sm={24} xs={24} className="custom-input-fields">
-                    <Form.Item label=" ">
-                      <Text>
-                        Individual Savings Account (ISA) - <Text strong>Owner Name</Text>
-                        <Button type="link" onClick={() => {}}>
-                          <PlusCircleOutlined />
-                        </Button>
-                      </Text>
-                    </Form.Item>
-                  </Col>
-                </Row>
+              {initialInputs.household_income.savings_and_investments_drawdowns.individual_savings_accounts.map(
+                (s, i) => {
+                  return (
+                    <div>
+                      <Row>
+                        <Col lg={24} md={24} sm={24} xs={24} className="custom-input-fields">
+                          <Form.Item label=" ">
+                            <Text>
+                              Individual Savings Account (ISA) -{" "}
+                              <Text strong>{initialInputs.household_owners[i].name}</Text>
+                              <Button
+                                type="link"
+                                onClick={() => {
+                                  const clone = { ...initialInputs };
+                                  clone.household_income.savings_and_investments_drawdowns.individual_savings_accounts[
+                                    i
+                                  ].drawdowns.push({
+                                    id: uuid(),
+                                    name: "Drawdown",
+                                    amount_to_drawn_down: 0,
+                                    start_year: 2021,
+                                    end_year: 2033,
+                                  });
+                                  setInitialInputs(clone);
+                                }}
+                              >
+                                <PlusCircleOutlined />
+                              </Button>
+                            </Text>
+                          </Form.Item>
+                        </Col>
+                      </Row>
 
-                <Row>
-                  <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                    <Form.Item label=" ">
-                      <Text
-                        editable={{
-                          onChange: (e) => {},
-                        }}
-                      >
-                        Draw Name
-                      </Text>
-                    </Form.Item>
-                  </Col>
-                  <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                    <Form.Item label="Drawdown:">
-                      <MoneyInput />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                    <Form.Item label="Start year:">
-                      <DateInput />
-                    </Form.Item>
-                  </Col>
-                  <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                    <Form.Item label="End year:">
-                      <DateInput />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </div>
+                      {initialInputs.household_income.savings_and_investments_drawdowns.individual_savings_accounts[
+                        i
+                      ].drawdowns.map((d, index) => {
+                        return (
+                          <Row>
+                            <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                              <Form.Item label=" ">
+                                <Text>
+                                  {`${
+                                    initialInputs.household_income.savings_and_investments_drawdowns
+                                      .individual_savings_accounts[i].drawdowns[index].name
+                                  } ${index + 1}`}
+                                </Text>
+                              </Form.Item>
+                            </Col>
+                            <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                              <Form.Item label="Drawdown:">
+                                <MoneyInput onBlur={(e) => {}} value="12" />
+                              </Form.Item>
+                            </Col>
+                            <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                              <Form.Item label="Start year:">
+                                <DateInput />
+                              </Form.Item>
+                            </Col>
+                            <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                              <Form.Item label="End year:">
+                                <DateInput />
+                              </Form.Item>
+                            </Col>
+                          </Row>
+                        );
+                      })}
+                    </div>
+                  );
+                }
+              )}
+
+              {/* General Investment Account */}
+              <div id="drawdowns" />
+              <Divider orientation="left">General Investment Account - Drawdowns </Divider>
+
+              {initialInputs.household_income.savings_and_investments_drawdowns.individual_savings_accounts.map(
+                (s, i) => {
+                  return (
+                    <div>
+                      <Row>
+                        <Col lg={24} md={24} sm={24} xs={24} className="custom-input-fields">
+                          <Form.Item label=" ">
+                            <Text>
+                              General Investment Account (GIA) -{" "}
+                              <Text strong>{initialInputs.household_owners[i].name}</Text>
+                              <Button
+                                type="link"
+                                onClick={() => {
+                                  const clone = { ...initialInputs };
+                                  clone.household_income.savings_and_investments_drawdowns.general_investment_accounts[
+                                    i
+                                  ].drawdowns.push({
+                                    id: uuid(),
+                                    name: "Drawdown 1",
+                                    amount_to_drawn_down: 0,
+                                    start_year: 2055,
+                                    end_year: 2095,
+                                  });
+                                  setInitialInputs(clone);
+                                }}
+                              >
+                                <PlusCircleOutlined />
+                              </Button>
+                            </Text>
+                          </Form.Item>
+                        </Col>
+                      </Row>
+
+                      {initialInputs.household_income.savings_and_investments_drawdowns.general_investment_accounts[
+                        i
+                      ].drawdowns.map((d, i) => {
+                        return (
+                          <Row>
+                            <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                              <Form.Item label=" ">
+                                <Text>Draw Name</Text>
+                              </Form.Item>
+                            </Col>
+                            <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                              <Form.Item label="Drawdown:">
+                                <MoneyInput onBlur={(e) => {}} value="12" />
+                              </Form.Item>
+                            </Col>
+                            <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                              <Form.Item label="Start year:">
+                                <DateInput />
+                              </Form.Item>
+                            </Col>
+                            <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                              <Form.Item label="End year:">
+                                <DateInput />
+                              </Form.Item>
+                            </Col>
+                          </Row>
+                        );
+                      })}
+                    </div>
+                  );
+                }
+              )}
 
               <div id="pension-plans" />
               {/* Pension Plans */}
@@ -833,43 +1112,47 @@ const InputsForm = () => {
                 </Col>
               </Row>
 
-              <Row>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label=" ">
-                    <Text
-                      strong
-                      editable={{
-                        onChange: (e) => {},
-                      }}
-                    >
-                      Owner Name
-                    </Text>
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Option taken:">
-                    <Select defaultValue="Lump Sum" className="custom-input-fields" onChange={(e) => {}}>
-                      <Option value="Lump Sum">Lump Sum</Option>
-                      <Option value="Annual">Annual</Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Estimated lump sum:">
-                    <MoneyInput />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Est. annual pension:">
-                    <MoneyInput />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Annual increase">
-                    <RateInput />
-                  </Form.Item>
-                </Col>
-              </Row>
+              {initialInputs.household_income.pension_income.defined_benifit_pension_plans.map((s, i) => {
+                return (
+                  <Row>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label=" ">
+                        <Text
+                          strong
+                          editable={{
+                            onChange: (e) => {},
+                          }}
+                        >
+                          {initialInputs.household_owners[i].name}
+                        </Text>
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Option taken:">
+                        <Select defaultValue="Lump Sum" className="custom-input-fields" onChange={(e) => {}}>
+                          <Option value="Lump Sum">Lump Sum</Option>
+                          <Option value="Annual">Annual</Option>
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Estimated lump sum:">
+                        <MoneyInput onBlur={(e) => {}} value="12" />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Est. annual pension:">
+                        <MoneyInput onBlur={(e) => {}} value="12" />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Annual increase">
+                        <RateInput />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                );
+              })}
 
               <Row>
                 <Col lg={24} md={24} sm={24} xs={24} className="custom-input-fields">
@@ -879,35 +1162,44 @@ const InputsForm = () => {
                 </Col>
               </Row>
 
-              <Row>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label=" ">
-                    <Text
-                      strong
-                      editable={{
-                        onChange: (e) => {},
-                      }}
-                    >
-                      Owner Name
-                    </Text>
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Option taken:">
-                    <Select defaultValue="Lump Sum" className="custom-input-fields" onChange={(e) => {}}>
-                      <Option value="Lump Sum">Lump Sum</Option>
-                      <Option value="Annual">Annual</Option>
-                      <Option value="Drawdown">Drawdown</Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Annual Amount:">
-                    <MoneyInput />
-                  </Form.Item>
-                </Col>
-              </Row>
-
+              {initialInputs.household_income.pension_income.defined_contribution_pension_plans.map(
+                (s, i) => {
+                  return (
+                    <Row>
+                      <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                        <Form.Item label=" ">
+                          <Text
+                            strong
+                            editable={{
+                              onChange: (e) => {},
+                            }}
+                          >
+                            {initialInputs.household_owners[i].name}
+                          </Text>
+                        </Form.Item>
+                      </Col>
+                      <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                        <Form.Item label="Option taken:">
+                          <Select
+                            defaultValue="Lump Sum"
+                            className="custom-input-fields"
+                            onChange={(e) => {}}
+                          >
+                            <Option value="Lump Sum">Lump Sum</Option>
+                            <Option value="Annual">Annual</Option>
+                            <Option value="Drawdown">Drawdown</Option>
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                        <Form.Item label="Annual Amount:">
+                          <MoneyInput onBlur={(e) => {}} value="12" />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  );
+                }
+              )}
               {/* Other Income */}
               <div id="other-income" />
               <Divider orientation="left">Other Income</Divider>
@@ -936,12 +1228,12 @@ const InputsForm = () => {
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Expense:">
-                    <TextInput />
+                    <TextInput placeholder="Name" onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -991,12 +1283,12 @@ const InputsForm = () => {
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Expense:">
-                    <TextInput />
+                    <TextInput placeholder="Name" onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1035,12 +1327,12 @@ const InputsForm = () => {
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Expense:">
-                    <TextInput />
+                    <TextInput placeholder="Name" onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1079,12 +1371,12 @@ const InputsForm = () => {
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Expense:">
-                    <TextInput />
+                    <TextInput placeholder="Name" onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1123,12 +1415,12 @@ const InputsForm = () => {
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Expense:">
-                    <TextInput />
+                    <TextInput placeholder="Name" onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1167,12 +1459,12 @@ const InputsForm = () => {
               <Row key={"holiday"}>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Expense:">
-                    <TextInput />
+                    <TextInput placeholder="Name" onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1212,7 +1504,7 @@ const InputsForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1237,7 +1529,7 @@ const InputsForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1262,7 +1554,7 @@ const InputsForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1287,7 +1579,7 @@ const InputsForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1312,7 +1604,7 @@ const InputsForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1336,7 +1628,7 @@ const InputsForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Expense:">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1363,12 +1655,12 @@ const InputsForm = () => {
               <Row key={"oneOffExpenses"}>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Expense:">
-                    <TextInput />
+                    <TextInput placeholder="Name" onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual expense">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1400,7 +1692,7 @@ const InputsForm = () => {
                 </Col>
                 <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Fees">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -1413,7 +1705,7 @@ const InputsForm = () => {
                 </Col>
                 <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Fees">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -1425,7 +1717,7 @@ const InputsForm = () => {
                 </Col>
                 <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Fees">
-                    <MoneyInput />
+                    <MoneyInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
