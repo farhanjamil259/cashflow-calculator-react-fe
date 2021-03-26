@@ -357,7 +357,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Birth Year">
-                    <DateInput />
+                    <DateInput onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -388,7 +388,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Birth Year">
-                    <DateInput />
+                    <DateInput onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
               </Row>
@@ -426,7 +426,7 @@ const InputsEditForm = () => {
 
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Start Year">
-                    <DateInput />
+                    <DateInput onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -439,7 +439,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col>
                   <Form.Item label="Sell/ End Year">
-                    <DateInput />
+                    <DateInput onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -595,7 +595,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Start Year">
-                    <DateInput />
+                    <DateInput onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -703,7 +703,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Start year:">
-                    <DateInput />
+                    <DateInput onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
               </Row>
@@ -733,12 +733,12 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Start year:">
-                    <DateInput />
+                    <DateInput onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="End year:">
-                    <DateInput />
+                    <DateInput onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
               </Row>
@@ -780,12 +780,12 @@ const InputsEditForm = () => {
                   </Col>
                   <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item label="Start year:">
-                      <DateInput />
+                      <DateInput onBlur={(e) => {}} />
                     </Form.Item>
                   </Col>
                   <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                     <Form.Item label="End year:">
-                      <DateInput />
+                      <DateInput onBlur={(e) => {}} />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -920,12 +920,12 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Start Year:">
-                    <DateInput />
+                    <DateInput onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="End Year">
-                    <DateInput />
+                    <DateInput onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
               </Row>
@@ -1347,12 +1347,12 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Start year:">
-                    <DateInput />
+                    <DateInput onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="End year:">
-                    <DateInput />
+                    <DateInput onBlur={(e) => {}} />
                   </Form.Item>
                 </Col>
               </Row>

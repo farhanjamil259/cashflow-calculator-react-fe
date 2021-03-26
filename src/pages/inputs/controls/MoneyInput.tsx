@@ -12,10 +12,10 @@ const MoneyInput: React.FC<Props> = ({ onBlur, value }) => {
     <div>
       <InputNumber
         formatter={(value) => `${pound}${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-        parser={(value) => value!.replace(/£\s?|(,*)/g, "")}
+        // parser={(value) => value!.replace(/£\s?|(,*)/g, "")}
         value={value}
         className="custom-input-fields"
-        onChange={(e) => onBlur(e)}
+        onBlur={(e) => onBlur(e.target.value.replace(/£\s?|(,*)/g, ""))}
       />
     </div>
   );

@@ -157,7 +157,7 @@ const InputsForm = () => {
             drawdowns: [
               {
                 id: uuid(),
-                name: "Drawdown 1",
+                name: "Drawdown",
                 amount_to_drawn_down: 0,
                 start_year: 2055,
                 end_year: 2095,
@@ -322,7 +322,8 @@ const InputsForm = () => {
                 <Link href="#self-employment-income" title="Self-Employment Income" />
                 <Link href="#rental-income" title="Rental Income" />
                 <Link href="#dividend-income" title="Dividend Income" />
-                <Link href="#drawdowns" title="Drawdowns" />
+                <Link href="#individual-savings-account" title="Individual Savings Account" />
+                <Link href="#general-investment-account" title="General Investment Account" />
                 <Link href="#pension-plans" title="Pension Plans" />
                 <Link href="#other-income" title="Other Income" />
               </Link>
@@ -433,7 +434,7 @@ const InputsForm = () => {
               </Divider>
               {initialInputs.household_owners.map((o, i) => {
                 return (
-                  <Row>
+                  <Row key={"owner" + i}>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Owner Name">
                         <TextInput
@@ -449,7 +450,14 @@ const InputsForm = () => {
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Birth Year">
-                        <DateInput />
+                        <DateInput
+                          onBlur={(date, dateString) => {
+                            const clone = { ...initialInputs };
+                            clone.household_owners[i].birth_year = +dateString;
+                            setInitialInputs(clone);
+                          }}
+                          value={initialInputs.household_owners[i].birth_year.toString()}
+                        />
                       </Form.Item>
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -487,19 +495,30 @@ const InputsForm = () => {
               </Divider>
               {initialInputs.children.map((c, i) => {
                 return (
-                  <Row>
+                  <Row key={"children" + i}>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Child Name">
                         <TextInput
                           placeholder="Name"
-                          onBlur={(e) => {}}
+                          onBlur={(e) => {
+                            const clone = { ...initialInputs };
+                            clone.children[i].name = e;
+                            setInitialInputs(clone);
+                          }}
                           value={initialInputs.children[i].name}
                         />
                       </Form.Item>
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Birth Year">
-                        <DateInput />
+                        <DateInput
+                          onBlur={(date, dateString) => {
+                            const clone = { ...initialInputs };
+                            clone.children[i].birth_year = +dateString;
+                            setInitialInputs(clone);
+                          }}
+                          value={initialInputs.children[i].birth_year.toString()}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -528,6 +547,11 @@ const InputsForm = () => {
                       on_mortgage: false,
                       mortgage_rate: 0,
                     });
+                    clone.liabilities.mortgages.push({
+                      interest_rate: 0,
+                      mortgage_period: 0,
+                      number_of_payments_per_year: 12,
+                    });
                     setInitialInputs(clone);
                   }}
                 >
@@ -537,12 +561,16 @@ const InputsForm = () => {
 
               {initialInputs.assets.properties.map((p, i) => {
                 return (
-                  <Row>
+                  <Row key={"properties" + i}>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Property Name">
                         <TextInput
                           placeholder="Name"
-                          onBlur={(e) => {}}
+                          onBlur={(e) => {
+                            const clone = { ...initialInputs };
+                            clone.assets.properties[i].name = e;
+                            setInitialInputs(clone);
+                          }}
                           value={initialInputs.assets.properties[i].name}
                         />
                       </Form.Item>
@@ -554,7 +582,7 @@ const InputsForm = () => {
                           onBlur={(e) => {
                             if (e) {
                               const clone = { ...initialInputs };
-                              clone.assets.properties[0].original_price = e;
+                              clone.assets.properties[0].original_price = +e;
                               setInitialInputs(clone);
                             } else {
                               const clone = { ...initialInputs };
@@ -575,7 +603,14 @@ const InputsForm = () => {
 
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Start Year">
-                        <DateInput />
+                        <DateInput
+                          onBlur={(date, dateString) => {
+                            const clone = { ...initialInputs };
+                            clone.assets.properties[i].start_year = +dateString;
+                            setInitialInputs(clone);
+                          }}
+                          value={initialInputs.assets.properties[i].start_year.toString()}
+                        />
                       </Form.Item>
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -588,7 +623,14 @@ const InputsForm = () => {
                     </Col>
                     <Col>
                       <Form.Item label="Sell/ End Year">
-                        <DateInput />
+                        <DateInput
+                          onBlur={(date, dateString) => {
+                            const clone = { ...initialInputs };
+                            clone.assets.properties[i].end_year = +dateString;
+                            setInitialInputs(clone);
+                          }}
+                          value={initialInputs.assets.properties[i].end_year.toString()}
+                        />
                       </Form.Item>
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -621,12 +663,38 @@ const InputsForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Original Balance">
-                    <MoneyInput onBlur={(e) => {}} value="12" />
+                    <MoneyInput
+                      onBlur={(e) => {
+                        if (e) {
+                          const clone = { ...initialInputs };
+                          clone.assets.bank_accounts.original_balance = +e;
+                          setInitialInputs(clone);
+                        } else {
+                          const clone = { ...initialInputs };
+                          clone.assets.bank_accounts.original_balance = 0;
+                          setInitialInputs(clone);
+                        }
+                      }}
+                      value={`${initialInputs.assets.bank_accounts.original_balance}`}
+                    />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Min. Balance Acceptable">
-                    <MoneyInput onBlur={(e) => {}} value="12" />
+                    <MoneyInput
+                      onBlur={(e) => {
+                        if (e) {
+                          const clone = { ...initialInputs };
+                          clone.assets.bank_accounts.minimum_cash_balance_acceptable = +e;
+                          setInitialInputs(clone);
+                        } else {
+                          const clone = { ...initialInputs };
+                          clone.assets.bank_accounts.minimum_cash_balance_acceptable = 0;
+                          setInitialInputs(clone);
+                        }
+                      }}
+                      value={`${initialInputs.assets.bank_accounts.minimum_cash_balance_acceptable}`}
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -636,7 +704,7 @@ const InputsForm = () => {
               <Title level={5}>Individual Saving Account </Title>
               {initialInputs.assets.savings_and_investments.individual_savings_account.map((o, i) => {
                 return (
-                  <Row>
+                  <Row key={"individual" + i}>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label=" ">
                         <Text strong>{initialInputs.household_owners[i].name}</Text>
@@ -644,12 +712,46 @@ const InputsForm = () => {
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Original Balance">
-                        <MoneyInput onBlur={(e) => {}} value="12" />
+                        <MoneyInput
+                          onBlur={(e) => {
+                            if (e) {
+                              const clone = { ...initialInputs };
+                              clone.assets.savings_and_investments.individual_savings_account[
+                                i
+                              ].original_balance = +e;
+                              setInitialInputs(clone);
+                            } else {
+                              const clone = { ...initialInputs };
+                              clone.assets.savings_and_investments.individual_savings_account[
+                                i
+                              ].original_balance = 0;
+                              setInitialInputs(clone);
+                            }
+                          }}
+                          value={`${initialInputs.assets.savings_and_investments.individual_savings_account[i].original_balance}`}
+                        />
                       </Form.Item>
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Annual Contributions">
-                        <MoneyInput onBlur={(e) => {}} value="12" />
+                        <MoneyInput
+                          onBlur={(e) => {
+                            if (e) {
+                              const clone = { ...initialInputs };
+                              clone.assets.savings_and_investments.individual_savings_account[
+                                i
+                              ].annual_contribution = +e;
+                              setInitialInputs(clone);
+                            } else {
+                              const clone = { ...initialInputs };
+                              clone.assets.savings_and_investments.individual_savings_account[
+                                i
+                              ].annual_contribution = 0;
+                              setInitialInputs(clone);
+                            }
+                          }}
+                          value={`${initialInputs.assets.savings_and_investments.individual_savings_account[i].annual_contribution}`}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -659,7 +761,7 @@ const InputsForm = () => {
               <Title level={5}>General Investment Account </Title>
               {initialInputs.assets.savings_and_investments.general_investment_account.map((o, i) => {
                 return (
-                  <Row>
+                  <Row key={"General" + i}>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label=" ">
                         <Text strong>{initialInputs.household_owners[i].name}</Text>
@@ -667,12 +769,46 @@ const InputsForm = () => {
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Original Balance">
-                        <MoneyInput onBlur={(e) => {}} value="12" />
+                        <MoneyInput
+                          onBlur={(e) => {
+                            if (e) {
+                              const clone = { ...initialInputs };
+                              clone.assets.savings_and_investments.general_investment_account[
+                                i
+                              ].original_balance = +e;
+                              setInitialInputs(clone);
+                            } else {
+                              const clone = { ...initialInputs };
+                              clone.assets.savings_and_investments.general_investment_account[
+                                i
+                              ].original_balance = 0;
+                              setInitialInputs(clone);
+                            }
+                          }}
+                          value={`${initialInputs.assets.savings_and_investments.general_investment_account[i].original_balance}`}
+                        />
                       </Form.Item>
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Annual Contributions">
-                        <MoneyInput onBlur={(e) => {}} value="12" />
+                        <MoneyInput
+                          onBlur={(e) => {
+                            if (e) {
+                              const clone = { ...initialInputs };
+                              clone.assets.savings_and_investments.general_investment_account[
+                                i
+                              ].annual_contribution = +e;
+                              setInitialInputs(clone);
+                            } else {
+                              const clone = { ...initialInputs };
+                              clone.assets.savings_and_investments.general_investment_account[
+                                i
+                              ].annual_contribution = 0;
+                              setInitialInputs(clone);
+                            }
+                          }}
+                          value={`${initialInputs.assets.savings_and_investments.general_investment_account[i].annual_contribution}`}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -684,7 +820,7 @@ const InputsForm = () => {
               <Divider orientation="left">Non-Employment Defined Contribution Pension Plans</Divider>
               {initialInputs.assets.non_employment_defined_contribution_pension_plans.map((s, i) => {
                 return (
-                  <Row>
+                  <Row key={"nonEmployment" + i}>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label=" ">
                         <Text strong>{initialInputs.household_owners[i].name}</Text>
@@ -692,12 +828,46 @@ const InputsForm = () => {
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Original Balance">
-                        <MoneyInput onBlur={(e) => {}} value="12" />
+                        <MoneyInput
+                          onBlur={(e) => {
+                            if (e) {
+                              const clone = { ...initialInputs };
+                              clone.assets.non_employment_defined_contribution_pension_plans[
+                                i
+                              ].original_balance = +e;
+                              setInitialInputs(clone);
+                            } else {
+                              const clone = { ...initialInputs };
+                              clone.assets.non_employment_defined_contribution_pension_plans[
+                                i
+                              ].original_balance = 0;
+                              setInitialInputs(clone);
+                            }
+                          }}
+                          value={`${initialInputs.assets.non_employment_defined_contribution_pension_plans[i].original_balance}`}
+                        />
                       </Form.Item>
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Annual Contributions">
-                        <MoneyInput onBlur={(e) => {}} value="12" />
+                        <MoneyInput
+                          onBlur={(e) => {
+                            if (e) {
+                              const clone = { ...initialInputs };
+                              clone.assets.non_employment_defined_contribution_pension_plans[
+                                i
+                              ].annual_contribution = +e;
+                              setInitialInputs(clone);
+                            } else {
+                              const clone = { ...initialInputs };
+                              clone.assets.non_employment_defined_contribution_pension_plans[
+                                i
+                              ].annual_contribution = 0;
+                              setInitialInputs(clone);
+                            }
+                          }}
+                          value={`${initialInputs.assets.non_employment_defined_contribution_pension_plans[i].annual_contribution}`}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -711,45 +881,48 @@ const InputsForm = () => {
               <div id="mortgages" />
               <Divider orientation="left">Mortgages</Divider>
 
-              <Row>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label=" ">
-                    <Text>property name</Text>
-                  </Form.Item>
-                </Col>
-                <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Mortgage Rate">
-                    <RateInput />
-                  </Form.Item>
-                </Col>
-                <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Interest Rate">
-                    <RateInput />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Mortgage Period (yrs)">
-                    <InputNumber className="custom-input-fields" placeholder="30" />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="# of Annual Payments">
-                    <Select defaultValue="12" className="custom-input-fields">
-                      <Option value="1">1</Option>
-                      <Option value="2">2</Option>
-                      <Option value="4">4</Option>
-                      <Option value="6">6</Option>
-                      <Option value="12">12</Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Annual Payments">
-                    <Text strong>$ 123123</Text>
-                  </Form.Item>
-                </Col>
-              </Row>
-
+              {initialInputs.liabilities.mortgages.map((p, i) => {
+                return (
+                  <Row key={"mortgages" + i}>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label=" ">
+                        <Text strong>{initialInputs.assets.properties[i].name}</Text>
+                      </Form.Item>
+                    </Col>
+                    <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Mortgage Rate">
+                        <RateInput />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Interest Rate">
+                        <RateInput />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Mortgage Period (yrs)">
+                        <InputNumber className="custom-input-fields" placeholder="30" />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="# of Annual Payments">
+                        <Select defaultValue="12" className="custom-input-fields">
+                          <Option value="1">1</Option>
+                          <Option value="2">2</Option>
+                          <Option value="4">4</Option>
+                          <Option value="6">6</Option>
+                          <Option value="12">12</Option>
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Annual Payments">
+                        <Text strong>$ 123123</Text>
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                );
+              })}
               {/* Other Loans */}
               <div id="other-loans" />
               <Divider orientation="left">
@@ -776,19 +949,36 @@ const InputsForm = () => {
 
               {initialInputs.liabilities.other_loans.map((o, i) => {
                 return (
-                  <Row>
+                  <Row key={"otherLoans" + i}>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Loan Name">
                         <TextInput
                           placeholder="Name"
-                          onBlur={(e) => {}}
+                          onBlur={(e) => {
+                            const clone = { ...initialInputs };
+                            clone.liabilities.other_loans[i].name = e;
+                            setInitialInputs(clone);
+                          }}
                           value={initialInputs.liabilities.other_loans[i].name}
                         />
                       </Form.Item>
                     </Col>
                     <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Original Balance">
-                        <MoneyInput onBlur={(e) => {}} value="12" />
+                        <MoneyInput
+                          onBlur={(e) => {
+                            if (e) {
+                              const clone = { ...initialInputs };
+                              clone.liabilities.other_loans[i].original_balance = +e;
+                              setInitialInputs(clone);
+                            } else {
+                              const clone = { ...initialInputs };
+                              clone.liabilities.other_loans[i].original_balance = 0;
+                              setInitialInputs(clone);
+                            }
+                          }}
+                          value={`${initialInputs.liabilities.other_loans[i].original_balance}`}
+                        />
                       </Form.Item>
                     </Col>
                     <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
@@ -798,7 +988,14 @@ const InputsForm = () => {
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Start Year">
-                        <DateInput />
+                        <DateInput
+                          onBlur={(date, dateString) => {
+                            const clone = { ...initialInputs };
+                            clone.liabilities.other_loans[i].start_year = +dateString;
+                            setInitialInputs(clone);
+                          }}
+                          value={initialInputs.liabilities.other_loans[i].start_year.toString()}
+                        />
                       </Form.Item>
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -825,13 +1022,26 @@ const InputsForm = () => {
               <Divider orientation="left">Credit Card</Divider>
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Card Name">
-                    <TextInput placeholder="Name" onBlur={(e) => {}} />
+                  <Form.Item label=" ">
+                    <Text strong>{initialInputs.liabilities.credit_card.name}</Text>
                   </Form.Item>
                 </Col>
                 <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Original Balance">
-                    <MoneyInput onBlur={(e) => {}} value="12" />
+                    <MoneyInput
+                      onBlur={(e) => {
+                        if (e) {
+                          const clone = { ...initialInputs };
+                          clone.liabilities.credit_card.original_balance = +e;
+                          setInitialInputs(clone);
+                        } else {
+                          const clone = { ...initialInputs };
+                          clone.liabilities.credit_card.original_balance = 0;
+                          setInitialInputs(clone);
+                        }
+                      }}
+                      value={`${initialInputs.liabilities.credit_card.original_balance}`}
+                    />
                   </Form.Item>
                 </Col>
                 <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
@@ -851,7 +1061,7 @@ const InputsForm = () => {
 
               {initialInputs.household_income.employment_income.map((o, i) => {
                 return (
-                  <Row>
+                  <Row key={"employment" + i}>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label=" ">
                         <Text strong>{initialInputs.household_owners[i].name}</Text>
@@ -859,7 +1069,20 @@ const InputsForm = () => {
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Gross annual amount:">
-                        <MoneyInput onBlur={(e) => {}} value="12" />
+                        <MoneyInput
+                          onBlur={(e) => {
+                            if (e) {
+                              const clone = { ...initialInputs };
+                              clone.household_income.employment_income[i].gross_anual_amount = +e;
+                              setInitialInputs(clone);
+                            } else {
+                              const clone = { ...initialInputs };
+                              clone.household_income.employment_income[i].gross_anual_amount = 0;
+                              setInitialInputs(clone);
+                            }
+                          }}
+                          value={`${initialInputs.household_income.employment_income[i].gross_anual_amount}`}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -871,7 +1094,7 @@ const InputsForm = () => {
               <Divider orientation="left">Self-Employment Income</Divider>
               {initialInputs.household_income.self_employment_income.map((s, i) => {
                 return (
-                  <Row>
+                  <Row key={"selfEmployment" + i}>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label=" ">
                         <Text strong>{initialInputs.household_owners[i].name} </Text>
@@ -879,7 +1102,20 @@ const InputsForm = () => {
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Gross annual amount:">
-                        <MoneyInput onBlur={(e) => {}} value="12" />
+                        <MoneyInput
+                          onBlur={(e) => {
+                            if (e) {
+                              const clone = { ...initialInputs };
+                              clone.household_income.self_employment_income[i].gross_anual_amount = +e;
+                              setInitialInputs(clone);
+                            } else {
+                              const clone = { ...initialInputs };
+                              clone.household_income.self_employment_income[i].gross_anual_amount = 0;
+                              setInitialInputs(clone);
+                            }
+                          }}
+                          value={`${initialInputs.household_income.self_employment_income[i].gross_anual_amount}`}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -904,7 +1140,7 @@ const InputsForm = () => {
 
               {initialInputs.household_income.rental_income.details.map((s, i) => {
                 return (
-                  <Row>
+                  <Row key={"rental" + i}>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label=" ">
                         <Text strong>{initialInputs.household_owners[i].name}</Text>
@@ -917,7 +1153,16 @@ const InputsForm = () => {
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Start year:">
-                        <DateInput />
+                        <DateInput
+                          onBlur={(date, dateString) => {
+                            const clone = { ...initialInputs };
+                            clone.household_income.rental_income.details[i].start_year = +dateString;
+                            setInitialInputs(clone);
+                          }}
+                          value={initialInputs.household_income.rental_income.details[
+                            i
+                          ].start_year.toString()}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -931,7 +1176,7 @@ const InputsForm = () => {
 
               {initialInputs.household_income.dividend_income.map((s, i) => {
                 return (
-                  <Row>
+                  <Row key={"dividend" + i}>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label=" ">
                         <Text strong>{initialInputs.household_owners[i].name}</Text>
@@ -939,17 +1184,44 @@ const InputsForm = () => {
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Annual amount:">
-                        <MoneyInput onBlur={(e) => {}} value="12" />
+                        <MoneyInput
+                          onBlur={(e) => {
+                            if (e) {
+                              const clone = { ...initialInputs };
+                              clone.household_income.dividend_income[i].anual_amount = +e;
+                              setInitialInputs(clone);
+                            } else {
+                              const clone = { ...initialInputs };
+                              clone.household_income.dividend_income[i].anual_amount = 0;
+                              setInitialInputs(clone);
+                            }
+                          }}
+                          value={`${initialInputs.household_income.dividend_income[i].anual_amount}`}
+                        />
                       </Form.Item>
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Start year:">
-                        <DateInput />
+                        <DateInput
+                          onBlur={(date, dateString) => {
+                            const clone = { ...initialInputs };
+                            clone.household_income.dividend_income[i].start_year = +dateString;
+                            setInitialInputs(clone);
+                          }}
+                          value={initialInputs.household_income.dividend_income[i].start_year.toString()}
+                        />
                       </Form.Item>
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="End year:">
-                        <DateInput />
+                        <DateInput
+                          onBlur={(date, dateString) => {
+                            const clone = { ...initialInputs };
+                            clone.household_income.dividend_income[i].end_year = +dateString;
+                            setInitialInputs(clone);
+                          }}
+                          value={initialInputs.household_income.dividend_income[i].end_year.toString()}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -957,14 +1229,14 @@ const InputsForm = () => {
               })}
 
               {/* Drawdowns */}
-              <div id="drawdowns" />
+              <div id="individual-savings-account" />
               <Divider orientation="left">Individual Savings Account - Drawdowns</Divider>
 
               {initialInputs.household_income.savings_and_investments_drawdowns.individual_savings_accounts.map(
                 (s, i) => {
                   return (
                     <div>
-                      <Row>
+                      <Row key={"individualSavings" + i}>
                         <Col lg={24} md={24} sm={24} xs={24} className="custom-input-fields">
                           <Form.Item label=" ">
                             <Text>
@@ -997,7 +1269,7 @@ const InputsForm = () => {
                         i
                       ].drawdowns.map((d, index) => {
                         return (
-                          <Row>
+                          <Row key={"IndividualDraw" + index}>
                             <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                               <Form.Item label=" ">
                                 <Text>
@@ -1010,17 +1282,56 @@ const InputsForm = () => {
                             </Col>
                             <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                               <Form.Item label="Drawdown:">
-                                <MoneyInput onBlur={(e) => {}} value="12" />
+                                <MoneyInput
+                                  onBlur={(e) => {
+                                    if (e) {
+                                      const clone = { ...initialInputs };
+                                      clone.household_income.savings_and_investments_drawdowns.individual_savings_accounts[
+                                        i
+                                      ].drawdowns[index].amount_to_drawn_down = +e;
+                                      setInitialInputs(clone);
+                                    } else {
+                                      const clone = { ...initialInputs };
+                                      clone.household_income.savings_and_investments_drawdowns.individual_savings_accounts[
+                                        i
+                                      ].drawdowns[index].amount_to_drawn_down = 0;
+                                      setInitialInputs(clone);
+                                    }
+                                  }}
+                                  value={`${initialInputs.household_income.savings_and_investments_drawdowns.individual_savings_accounts[i].drawdowns[index].amount_to_drawn_down}`}
+                                />
                               </Form.Item>
                             </Col>
                             <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                               <Form.Item label="Start year:">
-                                <DateInput />
+                                <DateInput
+                                  onBlur={(date, dateString) => {
+                                    const clone = { ...initialInputs };
+                                    clone.household_income.savings_and_investments_drawdowns.individual_savings_accounts[
+                                      i
+                                    ].drawdowns[index].start_year = +dateString;
+                                    setInitialInputs(clone);
+                                  }}
+                                  value={initialInputs.household_income.savings_and_investments_drawdowns.individual_savings_accounts[
+                                    i
+                                  ].drawdowns[index].start_year.toString()}
+                                />
                               </Form.Item>
                             </Col>
                             <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                               <Form.Item label="End year:">
-                                <DateInput />
+                                <DateInput
+                                  onBlur={(date, dateString) => {
+                                    const clone = { ...initialInputs };
+                                    clone.household_income.savings_and_investments_drawdowns.individual_savings_accounts[
+                                      i
+                                    ].drawdowns[index].end_year = +dateString;
+                                    setInitialInputs(clone);
+                                  }}
+                                  value={initialInputs.household_income.savings_and_investments_drawdowns.individual_savings_accounts[
+                                    i
+                                  ].drawdowns[index].end_year.toString()}
+                                />
                               </Form.Item>
                             </Col>
                           </Row>
@@ -1032,14 +1343,14 @@ const InputsForm = () => {
               )}
 
               {/* General Investment Account */}
-              <div id="drawdowns" />
+              <div id="general-investment-account" />
               <Divider orientation="left">General Investment Account - Drawdowns </Divider>
 
               {initialInputs.household_income.savings_and_investments_drawdowns.individual_savings_accounts.map(
                 (s, i) => {
                   return (
                     <div>
-                      <Row>
+                      <Row key={"GeneralInvestment" + i}>
                         <Col lg={24} md={24} sm={24} xs={24} className="custom-input-fields">
                           <Form.Item label=" ">
                             <Text>
@@ -1053,7 +1364,7 @@ const InputsForm = () => {
                                     i
                                   ].drawdowns.push({
                                     id: uuid(),
-                                    name: "Drawdown 1",
+                                    name: "Drawdown",
                                     amount_to_drawn_down: 0,
                                     start_year: 2055,
                                     end_year: 2095,
@@ -1070,27 +1381,69 @@ const InputsForm = () => {
 
                       {initialInputs.household_income.savings_and_investments_drawdowns.general_investment_accounts[
                         i
-                      ].drawdowns.map((d, i) => {
+                      ].drawdowns.map((d, index) => {
                         return (
-                          <Row>
+                          <Row key={"generalDraw" + index}>
                             <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                               <Form.Item label=" ">
-                                <Text>Draw Name</Text>
+                                <Text>{`${
+                                  initialInputs.household_income.savings_and_investments_drawdowns
+                                    .general_investment_accounts[i].drawdowns[index].name
+                                } ${index + 1}`}</Text>
                               </Form.Item>
                             </Col>
                             <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                               <Form.Item label="Drawdown:">
-                                <MoneyInput onBlur={(e) => {}} value="12" />
+                                <MoneyInput
+                                  onBlur={(e) => {
+                                    if (e) {
+                                      const clone = { ...initialInputs };
+                                      clone.household_income.savings_and_investments_drawdowns.general_investment_accounts[
+                                        i
+                                      ].drawdowns[index].amount_to_drawn_down = +e;
+                                      setInitialInputs(clone);
+                                    } else {
+                                      const clone = { ...initialInputs };
+                                      clone.household_income.savings_and_investments_drawdowns.general_investment_accounts[
+                                        i
+                                      ].drawdowns[index].amount_to_drawn_down = 0;
+                                      setInitialInputs(clone);
+                                    }
+                                  }}
+                                  value={`${initialInputs.household_income.savings_and_investments_drawdowns.general_investment_accounts[i].drawdowns[index].amount_to_drawn_down}`}
+                                />
                               </Form.Item>
                             </Col>
                             <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                               <Form.Item label="Start year:">
-                                <DateInput />
+                                <DateInput
+                                  onBlur={(date, dateString) => {
+                                    const clone = { ...initialInputs };
+                                    clone.household_income.savings_and_investments_drawdowns.general_investment_accounts[
+                                      i
+                                    ].drawdowns[index].start_year = +dateString;
+                                    setInitialInputs(clone);
+                                  }}
+                                  value={initialInputs.household_income.savings_and_investments_drawdowns.general_investment_accounts[
+                                    i
+                                  ].drawdowns[index].start_year.toString()}
+                                />
                               </Form.Item>
                             </Col>
                             <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                               <Form.Item label="End year:">
-                                <DateInput />
+                                <DateInput
+                                  onBlur={(date, dateString) => {
+                                    const clone = { ...initialInputs };
+                                    clone.household_income.savings_and_investments_drawdowns.general_investment_accounts[
+                                      i
+                                    ].drawdowns[index].end_year = +dateString;
+                                    setInitialInputs(clone);
+                                  }}
+                                  value={initialInputs.household_income.savings_and_investments_drawdowns.general_investment_accounts[
+                                    i
+                                  ].drawdowns[index].end_year.toString()}
+                                />
                               </Form.Item>
                             </Col>
                           </Row>
@@ -1114,7 +1467,7 @@ const InputsForm = () => {
 
               {initialInputs.household_income.pension_income.defined_benifit_pension_plans.map((s, i) => {
                 return (
-                  <Row>
+                  <Row key={"definedBenifit" + i}>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label=" ">
                         <Text
@@ -1137,12 +1490,46 @@ const InputsForm = () => {
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Estimated lump sum:">
-                        <MoneyInput onBlur={(e) => {}} value="12" />
+                        <MoneyInput
+                          onBlur={(e) => {
+                            if (e) {
+                              const clone = { ...initialInputs };
+                              clone.household_income.pension_income.defined_benifit_pension_plans[
+                                i
+                              ].estimated_lump_sum = +e;
+                              setInitialInputs(clone);
+                            } else {
+                              const clone = { ...initialInputs };
+                              clone.household_income.pension_income.defined_benifit_pension_plans[
+                                i
+                              ].estimated_lump_sum = 0;
+                              setInitialInputs(clone);
+                            }
+                          }}
+                          value={`${initialInputs.household_income.pension_income.defined_benifit_pension_plans[i].estimated_lump_sum}`}
+                        />
                       </Form.Item>
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                       <Form.Item label="Est. annual pension:">
-                        <MoneyInput onBlur={(e) => {}} value="12" />
+                        <MoneyInput
+                          onBlur={(e) => {
+                            if (e) {
+                              const clone = { ...initialInputs };
+                              clone.household_income.pension_income.defined_benifit_pension_plans[
+                                i
+                              ].estimated_annual_pension = +e;
+                              setInitialInputs(clone);
+                            } else {
+                              const clone = { ...initialInputs };
+                              clone.household_income.pension_income.defined_benifit_pension_plans[
+                                i
+                              ].estimated_annual_pension = 0;
+                              setInitialInputs(clone);
+                            }
+                          }}
+                          value={`${initialInputs.household_income.pension_income.defined_benifit_pension_plans[i].estimated_annual_pension}`}
+                        />
                       </Form.Item>
                     </Col>
                     <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1165,7 +1552,7 @@ const InputsForm = () => {
               {initialInputs.household_income.pension_income.defined_contribution_pension_plans.map(
                 (s, i) => {
                   return (
-                    <Row>
+                    <Row key={"definedContribution" + i}>
                       <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                         <Form.Item label=" ">
                           <Text
@@ -1193,7 +1580,24 @@ const InputsForm = () => {
                       </Col>
                       <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                         <Form.Item label="Annual Amount:">
-                          <MoneyInput onBlur={(e) => {}} value="12" />
+                          <MoneyInput
+                            onBlur={(e) => {
+                              if (e) {
+                                const clone = { ...initialInputs };
+                                clone.household_income.pension_income.defined_contribution_pension_plans[
+                                  i
+                                ].drawdown_option_annual_amount = +e;
+                                setInitialInputs(clone);
+                              } else {
+                                const clone = { ...initialInputs };
+                                clone.household_income.pension_income.defined_contribution_pension_plans[
+                                  i
+                                ].drawdown_option_annual_amount = 0;
+                                setInitialInputs(clone);
+                              }
+                            }}
+                            value={`${initialInputs.household_income.pension_income.defined_contribution_pension_plans[i].drawdown_option_annual_amount}`}
+                          />
                         </Form.Item>
                       </Col>
                     </Row>
@@ -1221,38 +1625,92 @@ const InputsForm = () => {
               <div id="housing" />
               <Divider orientation="left">
                 Housing
-                <Button type="link" onClick={() => {}}>
+                <Button
+                  type="link"
+                  onClick={() => {
+                    const clone = { ...initialInputs };
+                    clone.household_expenses.housing.details.push({
+                      id: uuid(),
+                      name: "Rent",
+                      annual_expense: 0,
+                      start_year: 2021,
+                      end_year: 2044,
+                      rate_after_retirement: 0,
+                      type: "property",
+                    });
+                    setInitialInputs(clone);
+                  }}
+                >
                   <PlusCircleOutlined />
                 </Button>
               </Divider>
-              <Row>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Expense:">
-                    <TextInput placeholder="Name" onBlur={(e) => {}} />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Annual expense:">
-                    <MoneyInput onBlur={(e) => {}} value="12" />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="% After retirement: ">
-                    <RateInput />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Start Year:">
-                    <DateInput />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="End Year">
-                    <DateInput />
-                  </Form.Item>
-                </Col>
-              </Row>
 
+              {initialInputs.household_expenses.housing.details.map((e, i) => {
+                return (
+                  <Row key={"housing" + i}>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Expense:">
+                        <TextInput
+                          placeholder="Name"
+                          onBlur={(e) => {
+                            const clone = { ...initialInputs };
+                            clone.household_expenses.housing.details[i].name = e;
+                            setInitialInputs(clone);
+                          }}
+                          value={`${initialInputs.household_expenses.housing.details[i].name}`}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Annual expense:">
+                        <MoneyInput
+                          onBlur={(e) => {
+                            if (e) {
+                              const clone = { ...initialInputs };
+                              clone.household_expenses.housing.details[i].annual_expense = +e;
+                              setInitialInputs(clone);
+                            } else {
+                              const clone = { ...initialInputs };
+                              clone.household_expenses.housing.details[i].annual_expense = 0;
+                              setInitialInputs(clone);
+                            }
+                          }}
+                          value={`${initialInputs.household_expenses.housing.details[i].annual_expense}`}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="% After retirement: ">
+                        <RateInput />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Start Year:">
+                        <DateInput
+                          onBlur={(date, dateString) => {
+                            const clone = { ...initialInputs };
+                            clone.household_expenses.housing.details[i].start_year = +dateString;
+                            setInitialInputs(clone);
+                          }}
+                          value={initialInputs.household_expenses.housing.details[i].start_year.toString()}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="End Year">
+                        <DateInput
+                          onBlur={(date, dateString) => {
+                            const clone = { ...initialInputs };
+                            clone.household_expenses.housing.details[i].end_year = +dateString;
+                            setInitialInputs(clone);
+                          }}
+                          value={initialInputs.household_expenses.housing.details[i].end_year.toString()}
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                );
+              })}
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label=" ">
@@ -1275,28 +1733,64 @@ const InputsForm = () => {
               <div id="consumables" />
               <Divider orientation="left">
                 Consumables
-                <Button type="link" onClick={() => {}}>
+                <Button
+                  type="link"
+                  onClick={() => {
+                    const clone = { ...initialInputs };
+                    clone.household_expenses.consumables.details.push({
+                      id: uuid(),
+                      name: "Eating Out",
+                      annual_expense: 2000,
+                      rate_after_retirement: 1,
+                    });
+                    setInitialInputs(clone);
+                  }}
+                >
                   <PlusCircleOutlined />
                 </Button>
               </Divider>
-
-              <Row>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Expense:">
-                    <TextInput placeholder="Name" onBlur={(e) => {}} />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Annual expense:">
-                    <MoneyInput onBlur={(e) => {}} value="12" />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="% After retirement">
-                    <RateInput />
-                  </Form.Item>
-                </Col>
-              </Row>
+              {initialInputs.household_expenses.consumables.details.map((e, i) => {
+                return (
+                  <Row key={"consumables" + i}>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Expense:">
+                        <TextInput
+                          placeholder="Name"
+                          onBlur={(e) => {
+                            const clone = { ...initialInputs };
+                            clone.household_expenses.consumables.details[i].name = e;
+                            setInitialInputs(clone);
+                          }}
+                          value={initialInputs.household_expenses.consumables.details[i].name}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Annual expense:">
+                        <MoneyInput
+                          onBlur={(e) => {
+                            if (e) {
+                              const clone = { ...initialInputs };
+                              clone.household_expenses.consumables.details[i].annual_expense = +e;
+                              setInitialInputs(clone);
+                            } else {
+                              const clone = { ...initialInputs };
+                              clone.household_expenses.consumables.details[i].annual_expense = 0;
+                              setInitialInputs(clone);
+                            }
+                          }}
+                          value={`${initialInputs.household_expenses.consumables.details[i].annual_expense}`}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="% After retirement">
+                        <RateInput />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                );
+              })}
 
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1319,28 +1813,65 @@ const InputsForm = () => {
               <div id="travel" />
               <Divider orientation="left">
                 Travel
-                <Button type="link" onClick={() => {}}>
+                <Button
+                  type="link"
+                  onClick={() => {
+                    const clone = { ...initialInputs };
+                    clone.household_expenses.travel.details.push({
+                      id: uuid(),
+                      name: "Travel Card",
+                      annual_expense: 1600,
+                      rate_after_retirement: 0.2,
+                    });
+                    setInitialInputs(clone);
+                  }}
+                >
                   <PlusCircleOutlined />
                 </Button>
               </Divider>
 
-              <Row>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Expense:">
-                    <TextInput placeholder="Name" onBlur={(e) => {}} />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Annual expense:">
-                    <MoneyInput onBlur={(e) => {}} value="12" />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="% After retirement">
-                    <RateInput />
-                  </Form.Item>
-                </Col>
-              </Row>
+              {initialInputs.household_expenses.travel.details.map((e, i) => {
+                return (
+                  <Row key={"travel" + i}>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Expense:">
+                        <TextInput
+                          placeholder="Name"
+                          onBlur={(e) => {
+                            const clone = { ...initialInputs };
+                            clone.household_expenses.travel.details[i].name = e;
+                            setInitialInputs(clone);
+                          }}
+                          value={initialInputs.household_expenses.travel.details[i].name}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Annual expense:">
+                        <MoneyInput
+                          onBlur={(e) => {
+                            if (e) {
+                              const clone = { ...initialInputs };
+                              clone.household_expenses.travel.details[i].annual_expense = +e;
+                              setInitialInputs(clone);
+                            } else {
+                              const clone = { ...initialInputs };
+                              clone.household_expenses.travel.details[i].annual_expense = 0;
+                              setInitialInputs(clone);
+                            }
+                          }}
+                          value={`${initialInputs.household_expenses.travel.details[i].annual_expense}`}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="% After retirement">
+                        <RateInput />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                );
+              })}
 
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1363,28 +1894,64 @@ const InputsForm = () => {
               <div id="shopping" />
               <Divider orientation="left">
                 Shopping
-                <Button type="link" onClick={() => {}}>
+                <Button
+                  type="link"
+                  onClick={() => {
+                    const clone = { ...initialInputs };
+                    clone.household_expenses.shopping.details.push({
+                      id: uuid(),
+                      name: "Clothing and Accessories",
+                      annual_expense: 1000,
+                      rate_after_retirement: 0.7,
+                    });
+                    setInitialInputs(clone);
+                  }}
+                >
                   <PlusCircleOutlined />
                 </Button>
               </Divider>
-
-              <Row>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Expense:">
-                    <TextInput placeholder="Name" onBlur={(e) => {}} />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Annual expense:">
-                    <MoneyInput onBlur={(e) => {}} value="12" />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="% After retirement">
-                    <RateInput />
-                  </Form.Item>
-                </Col>
-              </Row>
+              {initialInputs.household_expenses.shopping.details.map((e, i) => {
+                return (
+                  <Row key={"shopping" + i}>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Expense:">
+                        <TextInput
+                          placeholder="Name"
+                          onBlur={(e) => {
+                            const clone = { ...initialInputs };
+                            clone.household_expenses.shopping.details[i].name = e;
+                            setInitialInputs(clone);
+                          }}
+                          value={initialInputs.household_expenses.shopping.details[i].name}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Annual expense:">
+                        <MoneyInput
+                          onBlur={(e) => {
+                            if (e) {
+                              const clone = { ...initialInputs };
+                              clone.household_expenses.shopping.details[i].annual_expense = +e;
+                              setInitialInputs(clone);
+                            } else {
+                              const clone = { ...initialInputs };
+                              clone.household_expenses.shopping.details[i].annual_expense = 0;
+                              setInitialInputs(clone);
+                            }
+                          }}
+                          value={`${initialInputs.household_expenses.shopping.details[i].annual_expense}`}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="% After retirement">
+                        <RateInput />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                );
+              })}
 
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1407,28 +1974,65 @@ const InputsForm = () => {
               <div id="entertainment" />
               <Divider orientation="left">
                 Entertainment
-                <Button type="link" onClick={() => {}}>
+                <Button
+                  type="link"
+                  onClick={() => {
+                    const clone = { ...initialInputs };
+                    clone.household_expenses.entertainment.details.push({
+                      id: uuid(),
+                      name: "Drinks",
+                      annual_expense: 200,
+                      rate_after_retirement: 1,
+                    });
+                    setInitialInputs(clone);
+                  }}
+                >
                   <PlusCircleOutlined />
                 </Button>
               </Divider>
 
-              <Row>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Expense:">
-                    <TextInput placeholder="Name" onBlur={(e) => {}} />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Annual expense:">
-                    <MoneyInput onBlur={(e) => {}} value="12" />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="% After retirement">
-                    <RateInput />
-                  </Form.Item>
-                </Col>
-              </Row>
+              {initialInputs.household_expenses.entertainment.details.map((e, i) => {
+                return (
+                  <Row key={"entertaiment" + i}>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Expense:">
+                        <TextInput
+                          placeholder="Name"
+                          onBlur={(e) => {
+                            const clone = { ...initialInputs };
+                            clone.household_expenses.entertainment.details[i].name = e;
+                            setInitialInputs(clone);
+                          }}
+                          value={initialInputs.household_expenses.entertainment.details[i].name}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Annual expense:">
+                        <MoneyInput
+                          onBlur={(e) => {
+                            if (e) {
+                              const clone = { ...initialInputs };
+                              clone.household_expenses.entertainment.details[i].annual_expense = +e;
+                              setInitialInputs(clone);
+                            } else {
+                              const clone = { ...initialInputs };
+                              clone.household_expenses.entertainment.details[i].annual_expense = 0;
+                              setInitialInputs(clone);
+                            }
+                          }}
+                          value={`${initialInputs.household_expenses.entertainment.details[i].annual_expense}`}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="% After retirement">
+                        <RateInput />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                );
+              })}
 
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1451,28 +2055,65 @@ const InputsForm = () => {
               <div id="holiday" />
               <Divider orientation="left">
                 Holiday
-                <Button type="link" onClick={() => {}}>
+                <Button
+                  type="link"
+                  onClick={() => {
+                    const clone = { ...initialInputs };
+                    clone.household_expenses.holiday.details.push({
+                      id: uuid(),
+                      name: "Flights",
+                      annual_expense: 600,
+                      rate_after_retirement: 1,
+                    });
+                    setInitialInputs(clone);
+                  }}
+                >
                   <PlusCircleOutlined />
                 </Button>
               </Divider>
 
-              <Row key={"holiday"}>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Expense:">
-                    <TextInput placeholder="Name" onBlur={(e) => {}} />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Annual expense:">
-                    <MoneyInput onBlur={(e) => {}} value="12" />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="% After retirement">
-                    <RateInput />
-                  </Form.Item>
-                </Col>
-              </Row>
+              {initialInputs.household_expenses.holiday.details.map((e, i) => {
+                return (
+                  <Row key={"holiday" + i}>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Expense:">
+                        <TextInput
+                          placeholder="Name"
+                          onBlur={(e) => {
+                            const clone = { ...initialInputs };
+                            clone.household_expenses.holiday.details[i].name = e;
+                            setInitialInputs(clone);
+                          }}
+                          value={initialInputs.household_expenses.holiday.details[i].name}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Annual expense:">
+                        <MoneyInput
+                          onBlur={(e) => {
+                            if (e) {
+                              const clone = { ...initialInputs };
+                              clone.household_expenses.holiday.details[i].annual_expense = +e;
+                              setInitialInputs(clone);
+                            } else {
+                              const clone = { ...initialInputs };
+                              clone.household_expenses.holiday.details[i].annual_expense = 0;
+                              setInitialInputs(clone);
+                            }
+                          }}
+                          value={`${initialInputs.household_expenses.holiday.details[i].annual_expense}`}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="% After retirement">
+                        <RateInput />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                );
+              })}
 
               <Row>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -1647,39 +2288,93 @@ const InputsForm = () => {
               <div id="one-off-expenses" />
               <Divider orientation="left">
                 One-Off Expenses
-                <Button type="link" onClick={() => {}}>
+                <Button
+                  type="link"
+                  onClick={() => {
+                    const clone = { ...initialInputs };
+                    clone.household_expenses.one_off_expenses.push({
+                      id: uuid(),
+                      name: "Main House Renovation",
+                      annual_payment_in_todays_terms: 0,
+                      inflation: 0,
+                      start_year: 2039,
+                      end_year: 2041,
+                    });
+                    setInitialInputs(clone);
+                  }}
+                >
                   <PlusCircleOutlined />
                 </Button>
               </Divider>
 
-              <Row key={"oneOffExpenses"}>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Expense:">
-                    <TextInput placeholder="Name" onBlur={(e) => {}} />
-                  </Form.Item>
-                </Col>
-                <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Annual expense">
-                    <MoneyInput onBlur={(e) => {}} value="12" />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Inflation:">
-                    <RateInput />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="Start year:">
-                    <DateInput />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
-                  <Form.Item label="End year:">
-                    <DateInput />
-                  </Form.Item>
-                </Col>
-              </Row>
-
+              {initialInputs.household_expenses.one_off_expenses.map((e, i) => {
+                return (
+                  <Row key={"oneOffExpenses" + i}>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Expense:">
+                        <TextInput
+                          placeholder="Name"
+                          onBlur={(e) => {
+                            const clone = { ...initialInputs };
+                            clone.household_expenses.one_off_expenses[i].name = e;
+                            setInitialInputs(clone);
+                          }}
+                          value={initialInputs.household_expenses.one_off_expenses[i].name}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Annual expense">
+                        <MoneyInput
+                          onBlur={(e) => {
+                            if (e) {
+                              const clone = { ...initialInputs };
+                              clone.household_expenses.one_off_expenses[
+                                i
+                              ].annual_payment_in_todays_terms = +e;
+                              setInitialInputs(clone);
+                            } else {
+                              const clone = { ...initialInputs };
+                              clone.household_expenses.one_off_expenses[i].annual_payment_in_todays_terms = 0;
+                              setInitialInputs(clone);
+                            }
+                          }}
+                          value={`${initialInputs.household_expenses.one_off_expenses[i].annual_payment_in_todays_terms}`}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Inflation:">
+                        <RateInput />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="Start year:">
+                        <DateInput
+                          onBlur={(date, dateString) => {
+                            const clone = { ...initialInputs };
+                            clone.household_expenses.one_off_expenses[i].start_year = +dateString;
+                            setInitialInputs(clone);
+                          }}
+                          value={initialInputs.household_expenses.one_off_expenses[i].start_year.toString()}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
+                      <Form.Item label="End year:">
+                        <DateInput
+                          onBlur={(date, dateString) => {
+                            const clone = { ...initialInputs };
+                            clone.household_expenses.one_off_expenses[i].end_year = +dateString;
+                            setInitialInputs(clone);
+                          }}
+                          value={initialInputs.household_expenses.one_off_expenses[i].end_year.toString()}
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                );
+              })}
               {/* Children Education Expenses */}
               <div id="children-education-expenses" />
               <Divider orientation="left">Children Education Expenses</Divider>
@@ -1692,7 +2387,20 @@ const InputsForm = () => {
                 </Col>
                 <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Fees">
-                    <MoneyInput onBlur={(e) => {}} value="12" />
+                    <MoneyInput
+                      onBlur={(e) => {
+                        if (e) {
+                          const clone = { ...initialInputs };
+                          clone.household_expenses.children_education_expenses.primary_school_fees.annual_fee_in_todays_terms = +e;
+                          setInitialInputs(clone);
+                        } else {
+                          const clone = { ...initialInputs };
+                          clone.household_expenses.children_education_expenses.primary_school_fees.annual_fee_in_todays_terms = 0;
+                          setInitialInputs(clone);
+                        }
+                      }}
+                      value={`${initialInputs.household_expenses.children_education_expenses.primary_school_fees.annual_fee_in_todays_terms}`}
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -1705,7 +2413,20 @@ const InputsForm = () => {
                 </Col>
                 <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Fees">
-                    <MoneyInput onBlur={(e) => {}} value="12" />
+                    <MoneyInput
+                      onBlur={(e) => {
+                        if (e) {
+                          const clone = { ...initialInputs };
+                          clone.household_expenses.children_education_expenses.seconday_school_fees.annual_fee_in_todays_terms = +e;
+                          setInitialInputs(clone);
+                        } else {
+                          const clone = { ...initialInputs };
+                          clone.household_expenses.children_education_expenses.seconday_school_fees.annual_fee_in_todays_terms = 0;
+                          setInitialInputs(clone);
+                        }
+                      }}
+                      value={`${initialInputs.household_expenses.children_education_expenses.seconday_school_fees.annual_fee_in_todays_terms}`}
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -1717,7 +2438,20 @@ const InputsForm = () => {
                 </Col>
                 <Col lg={5} md={5} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual Fees">
-                    <MoneyInput onBlur={(e) => {}} value="12" />
+                    <MoneyInput
+                      onBlur={(e) => {
+                        if (e) {
+                          const clone = { ...initialInputs };
+                          clone.household_expenses.children_education_expenses.university_fees.annual_fee_in_todays_terms = +e;
+                          setInitialInputs(clone);
+                        } else {
+                          const clone = { ...initialInputs };
+                          clone.household_expenses.children_education_expenses.university_fees.annual_fee_in_todays_terms = 0;
+                          setInitialInputs(clone);
+                        }
+                      }}
+                      value={`${initialInputs.household_expenses.children_education_expenses.university_fees.annual_fee_in_todays_terms}`}
+                    />
                   </Form.Item>
                 </Col>
               </Row>
