@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Card, Col, Row, Typography, Input, Button, Modal } from "antd";
+import { Card, Col, Row, Typography, Input, Button, Modal, Dropdown, Menu, Form } from "antd";
 import Layout from "antd/lib/layout/layout";
 import { Table, Space } from "antd";
 import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { inputsFormRoute } from "../../routes/navRoutes";
 import { GetInputsAction, setCurrentInputSetAction } from "../../redux/inputs/inputs";
 import axios from "axios";
@@ -16,6 +16,7 @@ import { setSummaryAction } from "../../redux/summary/summary";
 import CalcRealSummary from "../../helpers/calcRealSummary";
 import IAssumptions from "../../interfaces/IAssumptions";
 import { setRealSummaryAction } from "../../redux/summary/realSummary";
+import { MoreOutlined } from "@ant-design/icons";
 
 const { Text, Title } = Typography;
 const { TextArea } = Input;
@@ -24,10 +25,14 @@ const ClientDashboard = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const [isModalVisible2, setIsModelVisible2] = useState(false);
+  const [isModalVisibleClone, setIsModelVisibleClone] = useState(false);
   const [selectedId, setSelectedId] = useState("");
+
   const [loading, setLoading] = useState(false);
   const client = useSelector((state: RootStateOrAny) => state.activeClientReducer);
   const inputs = useSelector((state: RootStateOrAny) => state.inputsReducer);
+
+  const [testState, setTestState] = useState("");
   const columns = [
     {
       title: "#",
@@ -100,16 +105,46 @@ const ClientDashboard = () => {
       key: "action",
       render: (text: any, record: any) => (
         <Space size="middle">
-          <a
-            href="#!"
-            onClick={(e) => {
-              e.stopPropagation();
-              setSelectedId(record.id);
-              setIsModelVisible2(true);
-            }}
+          <Dropdown
+            overlay={
+              <Menu>
+                <Menu.Item key="1">
+                  <Button
+                    type="link"
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsModelVisibleClone(true);
+                      setSelectedId(record.id);
+                    }}
+                  >
+                    Clone
+                  </Button>
+                </Menu.Item>
+                <Menu.Item key="2">
+                  <Button
+                    type="link"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedId(record.id);
+                      setIsModelVisible2(true);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </Menu.Item>
+              </Menu>
+            }
           >
-            Delete
-          </a>
+            <Button
+              size="small"
+              onClick={async (e) => {
+                e.stopPropagation();
+              }}
+            >
+              <MoreOutlined />
+            </Button>
+          </Dropdown>
         </Space>
       ),
     },
@@ -118,7 +153,7 @@ const ClientDashboard = () => {
   const data = useSelector((state: RootStateOrAny) => state.inputsReducer).map((d: any, i: number) => {
     return {
       id: d._id,
-      key: i,
+      key: d._id,
       set_name: d.input_set_name,
       current_year: d.current_year,
 
@@ -130,6 +165,8 @@ const ClientDashboard = () => {
   });
 
   const assumptions: IAssumptions = useSelector((state: RootStateOrAny) => state.assumptionReducer);
+
+  const [form] = Form.useForm();
 
   return (
     <Layout className="layout" style={{ background: "white" }}>
@@ -224,7 +261,7 @@ const ClientDashboard = () => {
                     },
                     onClick: async () => {
                       setLoading(true);
-                      dispatch(setCurrentInputSetAction(inputs[record.key]));
+                      dispatch(setCurrentInputSetAction(inputs[rowIndex]));
                       const res = await axios.get(summaryRoute + inputs[0]._id);
                       await dispatch(setSummaryAction(res.data));
                       await dispatch(setRealSummaryAction(CalcRealSummary(res.data, assumptions)));
@@ -238,6 +275,59 @@ const ClientDashboard = () => {
           </Col>
         </Row>
       </Card>
+
+      <Modal
+        title={"Clone "}
+        okType={"primary"}
+        visible={isModalVisibleClone}
+        okText="Ok"
+        confirmLoading={loading}
+        onOk={async () => {
+          const inputSetToClone: IInputs = inputs.filter((set: any) => {
+            return set._id === selectedId;
+          })[0];
+          inputSetToClone.input_set_name = testState;
+          console.log(inputSetToClone);
+
+          try {
+            setLoading(true);
+            const res = await axios.post(inputsRoute + client._id, inputSetToClone);
+            if (res.status !== 200) {
+              dispatch(AlertAction("Plan with the same name already exists", "error"));
+              setLoading(false);
+            } else {
+              await dispatch(GetInputsAction(client._id));
+              setLoading(false);
+              setIsModelVisibleClone(false);
+              dispatch(AlertAction("Plan successfully created" + ": " + res.data.input_set_name, "success"));
+              setTestState("");
+              form.resetFields();
+            }
+          } catch (err) {
+            console.log(err);
+          }
+        }}
+        onCancel={() => setIsModelVisibleClone(false)}
+      >
+        <Form
+          form={form}
+          initialValues={{
+            plane_name: "",
+          }}
+        >
+          <Form.Item label="Plan Name">
+            <Input
+              placeholder="Plan Name"
+              name="plane_name"
+              value={testState}
+              onChange={(e) => {
+                setTestState(e.target.value);
+              }}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+
       <Modal
         title="Delete InputSet"
         okType={"danger"}

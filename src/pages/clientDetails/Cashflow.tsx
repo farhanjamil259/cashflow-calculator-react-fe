@@ -564,13 +564,6 @@ const Cashflow = () => {
 
   return (
     <Layout style={{ backgroundColor: "white" }}>
-      <button
-        onClick={() => {
-          console.log(incomeState);
-        }}
-      >
-        asd
-      </button>
       <Card
         title="Cashflow"
         style={{ margin: "16px" }}

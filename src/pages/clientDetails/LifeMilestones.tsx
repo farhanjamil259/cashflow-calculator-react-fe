@@ -1,29 +1,38 @@
 import Layout from "antd/lib/layout/layout";
 import {
-    Card,
-    Col,
-    Row,
-    Table,
-    Typography,
-    Progress,
-    Button,
-    Modal,
-    Form,
-    Input,
-    DatePicker,
-    Select,
+  Card,
+  Col,
+  Row,
+  Table,
+  Typography,
+  Progress,
+  Button,
+  Modal,
+  Form,
+  Input,
+  DatePicker,
+  Select,
 } from "antd";
 
-import Highcharts, {numberFormat} from "highcharts";
+import Highcharts, { numberFormat } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import React, {useEffect, useMemo} from "react";
+import React, { useEffect, useMemo } from "react";
 import IInputs from "../../interfaces/IInputs";
-import {RootStateOrAny, useSelector} from "react-redux";
-import {useState} from "react";
+import { RootStateOrAny, useSelector } from "react-redux";
+import { useState } from "react";
 import IForecastSummary from "../../interfaces/IForecastSummary";
 
-import {bookIcon, bottleIcon, endIcon, hatIcon, startIcon, umbrellaIcon} from "../../components/iconSvg";
-import {pound} from "../../components/currencySumbol";
+import {
+  bookIcon,
+  bottleIcon,
+  endIcon,
+  hatIcon,
+  startIcon,
+  umbrellaIcon,
+  homeIcon,
+  partyIcon,
+} from "../../components/iconSvg";
+import { pound } from "../../components/currencySumbol";
 
 import "./LifeMilestones.css";
 
@@ -31,455 +40,482 @@ require("highcharts/highcharts-more")(Highcharts);
 require("highcharts/modules/dumbbell")(Highcharts);
 require("highcharts/modules/lollipop")(Highcharts);
 
-const {Text} = Typography;
+const { Text } = Typography;
 
 interface ILifeGoals {
-    name: string;
-    start_year: number;
-    end_year: number;
-    progress: number;
-    amount: number;
+  name: string;
+  start_year: number;
+  end_year: number;
+  progress: number;
+  amount: number;
 }
 
 interface IEvents {
-    name: string;
-    year: number;
-    icon: string;
-    owner: string;
+  name: string;
+  year: number;
+  icon: string;
+  owner: string;
 }
 
 function LifeMilestones() {
-    const inputs: IInputs = useSelector((state: RootStateOrAny) => state.currentInputSetReducer);
-    const summary: IForecastSummary[] = useSelector((state: RootStateOrAny) => state.summaryReducer);
+  const inputs: IInputs = useSelector((state: RootStateOrAny) => state.currentInputSetReducer);
+  const summary: IForecastSummary[] = useSelector((state: RootStateOrAny) => state.summaryReducer);
 
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isModalVisibleGoals, setIsModalVisibleGoals] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisibleGoals, setIsModalVisibleGoals] = useState(false);
 
-    const handleCancel = () => {
-        setIsModalVisible(false);
-        setIsModalVisibleGoals(false);
-    };
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    setIsModalVisibleGoals(false);
+  };
 
-    const lifeGoals: ILifeGoals[] = [
-        ...inputs.household_expenses.one_off_expenses.map((g) => {
-            return {
-                name: g.name,
-                start_year: g.start_year,
-                end_year: g.end_year,
-                progress: Math.floor(Math.random() * 20 + 80),
-                amount: g.annual_payment_in_todays_terms,
-            };
+  const lifeGoals: ILifeGoals[] = [
+    ...inputs.household_expenses.one_off_expenses.map((g) => {
+      return {
+        name: g.name,
+        start_year: g.start_year,
+        end_year: g.end_year,
+        progress: Math.floor(Math.random() * 20 + 80),
+        amount: g.annual_payment_in_todays_terms,
+      };
+    }),
+  ];
+
+  const planColor: string = "#424242";
+  const ownerColors: string[] = useMemo(() => {
+    return ["#81d4fa", "#a5d6a7"];
+  }, []);
+  const childrenColors: string[] = useMemo(() => {
+    return ["#7e57c2", "#9575cd", "#b39ddb", "#d1c4e9", "#ede7f6"];
+  }, []);
+
+  const lifeEvents: IEvents[] = useMemo(() => {
+    return [
+      {
+        name: "Plan Start",
+        year: inputs.current_year,
+        owner: "",
+        icon: startIcon(planColor),
+      },
+      {
+        name: "Plan End",
+        year:
+          inputs.household_owners.length > 1
+            ? Math.max(
+                inputs.household_owners[0].end_of_forecast_year - 1,
+                inputs.household_owners[1].end_of_forecast_year - 1
+              )
+            : inputs.household_owners[0].end_of_forecast_year - 1,
+        owner: "",
+        icon: endIcon(planColor),
+      },
+      ...inputs.household_owners.map((o, i) => {
+        return {
+          name: "Retirement " + o.name,
+          year: inputs.household_owners[i].retirement_year,
+          owner: o.name,
+          icon: umbrellaIcon(ownerColors[i]),
+        };
+      }),
+      ...inputs.children.map((c, i) => {
+        return {
+          name: c.name + " born",
+          year: c.birth_year,
+          owner: c.name,
+          icon: bottleIcon(childrenColors[i]),
+        };
+      }),
+      ...inputs.children.map((c, i) => {
+        return {
+          name: "School " + c.name,
+          year: c.primary_school_year,
+          owner: c.name,
+          icon: bookIcon(childrenColors[i]),
+        };
+      }),
+      ...inputs.children.map((c, i) => {
+        return {
+          name: "Graduation " + c.name,
+          year: c.graduation_year,
+          owner: c.name,
+          icon: hatIcon(childrenColors[i]),
+        };
+      }),
+    ];
+  }, [childrenColors, inputs.children, inputs.household_owners, ownerColors, inputs.current_year]);
+
+  const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
+    chart: {
+      height: 400,
+    },
+    colors: ["#000"],
+    credits: {
+      enabled: false,
+    },
+    tooltip: {
+      useHTML: true,
+      backgroundColor: "white",
+      borderWidth: 0,
+      formatter: function () {
+        let tooltip_html = this.x.toString();
+        tooltip_html += "<table>";
+
+        this.points!.forEach(function (entry: any) {
+          if (entry.y > 0) {
+            tooltip_html += '<tr><td style="font-weight:bold ">' + entry.series.name + "</td></tr>";
+          }
+        });
+        tooltip_html += "</table>";
+
+        return tooltip_html;
+      },
+      headerFormat: "<small>{point.key}</small><table>",
+      shared: true,
+      headerShape: "square",
+    },
+    legend: {
+      enabled: false,
+    },
+    title: {
+      text: "",
+    },
+    xAxis: {
+      categories: [
+        ...summary.map((s) => {
+          return `<b>${s.year}</b> <br> ${
+            s.ages.owner_ages[0].age <= 100 ? s.ages.owner_ages[0].age : "-"
+          }<br>${s.ages.owner_ages[1].age <= 100 ? s.ages.owner_ages[1].age : "-"}`;
         }),
-    ];
+      ],
+      gridLineWidth: 10,
+      gridLineColor: "#f5f5f5",
+      labels: {
+        rotation: 0,
+        autoRotation: false,
+        step: 5,
+      },
+    },
+    yAxis: {
+      labels: {
+        enabled: false,
+      },
+      min: 0,
+      max: 12,
+      title: {
+        text: "",
+      },
 
-    const planColor : string ="#424242"
-    const ownerColors : string[] = useMemo(()=>{
-        return ["#81d4fa", "#a5d6a7"]
-    }, [])
-    const childrenColors : string[] = useMemo(()=>{
-        return ["#7e57c2", "#9575cd", "#b39ddb", "#d1c4e9", "#ede7f6"]
-    }, [])
-
-    const lifeEvents: IEvents[] = useMemo(()=>{
-        return [
-            {
-                name: "Plan Start",
-                year: inputs.current_year,
-                owner: "",
-                icon: startIcon(planColor),
-            },
-            {
-                name: "Plan End",
-                year:
-                    inputs.household_owners.length > 1
-                        ? Math.max(
-                        inputs.household_owners[0].end_of_forecast_year - 1,
-                        inputs.household_owners[1].end_of_forecast_year - 1
-                        )
-                        : inputs.household_owners[0].end_of_forecast_year - 1,
-                owner: "",
-                icon: endIcon(planColor),
-            },
-            ...inputs.household_owners.map((o, i) => {
-                return {
-                    name: "Retirement " + o.name,
-                    year: inputs.household_owners[i].retirement_year,
-                    owner: o.name,
-                    icon: umbrellaIcon(ownerColors[i]),
-                };
-            }),
-            ...inputs.children.map((c, i) => {
-                return {
-                    name: c.name +  " born",
-                    year: c.birth_year,
-                    owner: c.name,
-                    icon: bottleIcon(childrenColors[i]),
-                };
-            }),
-            ...inputs.children.map((c, i) => {
-                return {
-                    name: "School " + c.name,
-                    year: c.primary_school_year,
-                    owner: c.name,
-                    icon: bookIcon(childrenColors[i]),
-                };
-            }),
-            ...inputs.children.map((c, i) => {
-                return {
-                    name: "Graduation " + c.name,
-                    year: c.graduation_year,
-                    owner: c.name,
-                    icon: hatIcon(childrenColors[i]),
-                };
-            }),
-        ];
-    }, [childrenColors, inputs.children, inputs.household_owners, ownerColors, inputs.current_year])
-
-
-    const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
-        chart: {
-            height: 400,
+      gridLineWidth: 0,
+    },
+    plotOptions: {
+      series: {
+        dataGrouping: {
+          enabled: true,
         },
-        colors: ["#000"],
-        credits: {
-            enabled: false,
-        },
-        tooltip: {
-            useHTML: true,
-            backgroundColor: "white",
-            borderWidth: 0,
-            formatter: function () {
-                let tooltip_html = this.x.toString();
-                tooltip_html += "<table>";
+      },
+      lollipop: {
+        groupPadding: 0.5,
+      },
+    },
+    series: [
+      {
+        type: "lollipop",
+      },
+    ],
+  });
 
-                this.points!.forEach(function (entry: any) {
-                    if (entry.y > 0) {
+  useEffect(() => {
+    const newSeries: any = [];
 
-                            tooltip_html +=
-                                '<tr><td style="font-weight:bold ">' +
-                                entry.series.name +
-                                "</td></tr>";
-
-                    }
-                });
-                tooltip_html += "</table>";
-
-                return tooltip_html;
-            },
-          headerFormat: '<small>{point.key}</small><table>',
-            shared: true,
-            headerShape: "square"
-
-        },
-        legend: {
-            enabled: false,
-        },
-        title: {
-            text: "",
-        },
-        xAxis: {
-            categories: [
-                ...summary.map((s) => {
-                    return `<b>${s.year}</b> <br> ${s.ages.owner_ages[0].age <= 100 ? s.ages.owner_ages[0].age : "-"}<br>${
-                        s.ages.owner_ages[1].age <= 100 ? s.ages.owner_ages[1].age : "-"
-                    }`;
-                }),
-            ],
-            gridLineWidth: 10,
-            gridLineColor: "#f5f5f5",
-            labels: {
-
-                rotation: 0,
-                autoRotation: false,
-                step: 5
-
-            },
-        },
-        yAxis: {
-            labels: {
-                enabled: false,
-            },
-            min: 0,
-            max: 12,
-            title: {
-                text: "",
-            },
-
-            gridLineWidth: 0,
-        },
-        plotOptions: {
-            series: {
-                dataGrouping: {
-                    enabled: true,
-                },
-            },
-            lollipop: {
-                groupPadding: 0.5,
-            },
-        },
-        series: [
-            {
-                type: "lollipop",
-            },
+    lifeEvents.map((goal) => {
+      newSeries.push({
+        type: "lollipop",
+        data: [
+          ...summary.map(() => {
+            return -1;
+          }),
         ],
+        name: goal.name,
+        marker: {
+          symbol: goal.icon,
+          width: 40,
+          height: 40,
+        },
+      });
+      return null;
     });
 
+    const clone = { ...chartOptions };
+    clone.series = [...newSeries];
 
-    useEffect(() => {
-        const newSeries: any = [];
+    const newClone: any = { ...clone };
 
-        lifeEvents.map((goal) => {
-            newSeries.push({
-                type: "lollipop",
-                data: [
-                    ...summary.map(() => {
-                        return -1;
-                    }),
-                ],
-                name: goal.name,
-                marker: {
-                    symbol: goal.icon,
-                    width: 40,
-                    height: 40,
-                },
+    summary.map((s, index) => {
+      lifeEvents.map((goal, i) => {
+        if (s.year === goal.year) {
+          newClone.series[i].data[index] = 1;
+        }
+        return null;
+      });
+      return null;
+    });
 
-            });
-            return null
-        });
+    // summary.map((s, index) => {
+    //     lifeEvents.map((goal, i) => {
+    //         if (s.year === goal.year) {
+    //             if(newClone.series[i].data[index -1] === newClone.series[i].data[index]){
+    //                 newClone.series[i].data[index] = 3;
+    //             }
+    //         }
+    //     });
+    // });
 
-        const clone = {...chartOptions};
-        clone.series = [...newSeries];
+    let tempArray: number[] = [];
+    let range = 2;
 
-        const newClone: any = {...clone};
+    newClone.series.map((s: any) => {
+      s.data.map((d: any, i: number) => {
+        if (d > 0) {
+          tempArray.push(i);
+        }
+        return null;
+      });
+      return null;
+    });
+    tempArray.map((num, i) => {
+      if (i > 0) {
+        let previousNum = tempArray[i - 1];
+        let diff = num - previousNum;
 
-        summary.map((s, index) => {
-            lifeEvents.map((goal, i) => {
-                if (s.year === goal.year) {
-                    newClone.series[i].data[index] = 1;
-                }
-                return null
-            });
-            return null
-        });
+        if (diff <= range) {
+          newClone.series[i].data[num] += 3;
+          newClone.series[i].zIndex = -1;
+        }
+      }
+      return null;
+    });
 
-        // summary.map((s, index) => {
-        //     lifeEvents.map((goal, i) => {
-        //         if (s.year === goal.year) {
-        //             if(newClone.series[i].data[index -1] === newClone.series[i].data[index]){
-        //                 newClone.series[i].data[index] = 3;
-        //             }
-        //         }
-        //     });
-        // });
+    setChartOptions(newClone);
+  }, []);
 
-        let tempArray: number[] = [];
-        let range = 2
+  const columnsGoals = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      width: "30%",
+    },
+    {
+      title: "Progress",
+      dataIndex: "progress",
+      key: "category",
+      width: "50%",
+      render: (text: any) => {
+        return <Progress percent={text} />;
+      },
+    },
+    {
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+      render: (text: any) => (
+        <Text>
+          {pound}
+          {numberFormat(text, 0, ".", ",")}
+        </Text>
+      ),
+      align: "right",
+    },
+  ];
 
-        newClone.series.map((s: any)=>{
-            s.data.map((d: any, i: number)=>{
-                if(d >0){
-                    tempArray.push(i)
-                }
-                return null
-            })
-            return null
-        })
-        tempArray.map((num, i)=>{
-            if(i>0){
-                let previousNum = tempArray[i-1];
-                let diff = num - previousNum
+  const dataGoals = lifeGoals;
 
-                if(diff <= range){
+  const columnsEvent = [
+    {
+      title: "Name",
+      dataIndex: "name",
+    },
+    {
+      title: "Owner",
+      dataIndex: "owner",
+    },
+    {
+      title: "Year",
+      dataIndex: "year",
+    },
+  ];
 
-                    newClone.series[i].data[num] += 3;
-                    newClone.series[i].zIndex = -1
-                }
+  const dataEvent = lifeEvents.sort((a: IEvents, b: IEvents) => {
+    return a.year > b.year ? 1 : -1;
+  });
+
+  const [form] = Form.useForm();
+  const { Option } = Select;
+
+  return (
+    <Layout style={{ backgroundColor: "white" }}>
+      <Row justify="space-around">
+        <Col span={23}>
+          <HighchartsReact highcharts={Highcharts} options={chartOptions} />
+        </Col>
+      </Row>
+      <Row>
+        <Col span={12}>
+          <Card
+            title="Goals"
+            bordered={false}
+            extra={
+              <Button
+                type="primary"
+                size="small"
+                onClick={() => {
+                  setIsModalVisibleGoals(true);
+                }}
+              >
+                Add Goal
+              </Button>
             }
-            return null
-        })
+          >
+            <Table
+              // @ts-ignore
+              columns={columnsGoals}
+              size={"small"}
+              dataSource={dataGoals}
+              bordered={false}
+              pagination={false}
+            />
+          </Card>
+        </Col>
+        <Col span={12}>
+          <Card
+            title="Events"
+            bordered={false}
+            extra={
+              <Button
+                type="primary"
+                size="small"
+                onClick={() => {
+                  setIsModalVisible(true);
+                }}
+              >
+                Add Event
+              </Button>
+            }
+          >
+            <Table
+              columns={columnsEvent}
+              dataSource={dataEvent}
+              size={"small"}
+              bordered={false}
+              pagination={false}
+            />
+          </Card>
+        </Col>
+      </Row>
 
-        setChartOptions(newClone);
-    }, []);
+      <Modal title="Goal" visible={isModalVisibleGoals} okText="Save" onCancel={handleCancel}>
+        <Form form={form} labelAlign="left" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
+          <Form.Item
+            name="name"
+            label="Name of Goal"
+            rules={[{ required: true, message: "First name is required" }]}
+          >
+            <Input name="fname" />
+          </Form.Item>
 
-    const columnsGoals = [
-        {
-            title: "Name",
-            dataIndex: "name",
-            key: "name",
-            width: "30%",
-        },
-        {
-            title: "Progress",
-            dataIndex: "progress",
-            key: "category",
-            width: "50%",
-            render: (text: any) => {
-                return <Progress percent={text}/>;
-            },
-        },
-        {
-            title: "Amount",
-            dataIndex: "amount",
-            key: "amount",
-            render: (text: any) => (
-                <Text>
-                    {pound}
-                    {numberFormat(text, 0, ".", ",")}
-                </Text>
-            ),
-            align: "right",
-        },
-    ];
+          <Form.Item
+            name="start_year"
+            label="Start Year"
+            rules={[{ required: true, message: "Please select a year" }]}
+          >
+            <DatePicker picker="year" name="year" style={{ width: "100%" }} />
+          </Form.Item>
+          <Form.Item name="end_year" label="End Year">
+            <DatePicker picker="year" name="year" style={{ width: "100%" }} />
+          </Form.Item>
+          <Form.Item
+            name="progress"
+            label="Progress"
+            rules={[{ required: true, message: "First name is required" }]}
+          >
+            <Input name="progress" />
+          </Form.Item>
+          <Form.Item
+            name="amount"
+            label="Amount"
+            rules={[{ required: true, message: "First name is required" }]}
+          >
+            <Input name="amount" />
+          </Form.Item>
+        </Form>
+      </Modal>
 
-    const dataGoals = lifeGoals;
+      <Modal title="Event" visible={isModalVisible} okText="Save" onCancel={handleCancel} width={1000}>
+        <Row justify="space-around">
+          <Col span={22}>
+            <Form form={form} layout="vertical" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
+              <Row>
+                <Col span={10}>
+                  <Form.Item
+                    name="name"
+                    label="Name of Event"
+                    rules={[{ required: true, message: "First name is required" }]}
+                  >
+                    <Input name="fname" />
+                  </Form.Item>
 
-    const columnsEvent = [
-        {
-            title: "Name",
-            dataIndex: "name",
-        },
-        {
-            title: "Owner",
-            dataIndex: "owner",
-        },
-        {
-            title: "Year",
-            dataIndex: "year",
-        },
-    ];
+                  <Form.Item name="owner" label="Owner">
+                    <Select style={{ width: "100%" }}>
+                      <Option value="mr">Mr</Option>
+                      <Option value="mrs">Mrs</Option>
+                    </Select>
+                  </Form.Item>
 
-    const dataEvent = lifeEvents.sort((a: IEvents, b: IEvents) => {
-        return a.year > b.year ? 1 : -1
-    });
-
-    const [form] = Form.useForm();
-    const {Option} = Select;
-
-    return (
-        <Layout style={{backgroundColor: "white"}}>
-
-            <Row justify="space-around">
-                <Col span={23}>
-                    <HighchartsReact highcharts={Highcharts} options={chartOptions}/>
+                  <Form.Item
+                    name="year"
+                    label="Year"
+                    rules={[{ required: true, message: "Please select a year" }]}
+                  >
+                    <DatePicker picker="year" name="year" style={{ width: "100%" }} />
+                  </Form.Item>
                 </Col>
-            </Row>
-            <Row>
-                <Col span={12}>
-                    <Card
-                        title="Goals"
-                        bordered={false}
-                        extra={
-                            <Button
-                                type="primary"
-                                size="small"
-                                onClick={() => {
-                                    setIsModalVisibleGoals(true);
-                                }}
-                            >
-                                Add Goal
-                            </Button>
-                        }
-                    >
-                        <Table
-                            // @ts-ignore
-                            columns={columnsGoals}
-                            size={"small"}
-                            dataSource={dataGoals}
-                            bordered={false}
-                            pagination={false}
-                        />
-                    </Card>
+                <Col span={14}>
+                  <Form.Item>
+                    <Row>
+                      <Col span={4} style={{ marginBottom: "16px" }}>
+                        <img src={homeIcon("black")} />
+                      </Col>
+                      <Col span={4} style={{ marginBottom: "16px" }}>
+                        <img src={partyIcon("black")} />
+                      </Col>
+                      <Col span={4} style={{ marginBottom: "16px" }}>
+                        <img src={homeIcon("black")} />
+                      </Col>
+                      <Col span={4} style={{ marginBottom: "16px" }}>
+                        <img src={homeIcon("black")} />
+                      </Col>
+                      <Col span={4} style={{ marginBottom: "16px" }}>
+                        <img src={homeIcon("black")} />
+                      </Col>
+                      <Col span={4} style={{ marginBottom: "16px" }}>
+                        <img src={homeIcon("black")} />
+                      </Col>
+                      <Col span={4} style={{ marginBottom: "16px" }}>
+                        <img src={homeIcon("black")} />
+                      </Col>
+                      <Col span={4} style={{ marginBottom: "16px" }}>
+                        <img src={homeIcon("black")} />
+                      </Col>
+                    </Row>
+                  </Form.Item>
                 </Col>
-                <Col span={12}>
-                    <Card
-                        title="Events"
-                        bordered={false}
-                        extra={
-                            <Button
-                                type="primary"
-                                size="small"
-                                onClick={() => {
-                                    setIsModalVisible(true);
-                                }}
-                            >
-                                Add Event
-                            </Button>
-                        }
-                    >
-                        <Table
-                            columns={columnsEvent}
-                            dataSource={dataEvent}
-                            size={"small"}
-                            bordered={false}
-                            pagination={false}
-                        />
-                    </Card>
-                </Col>
-            </Row>
-
-            <Modal title="Goal" visible={isModalVisibleGoals} okText="Save" onCancel={handleCancel}>
-                <Form form={form} labelAlign="left" labelCol={{span: 8}} wrapperCol={{span: 16}}>
-                    <Form.Item
-                        name="name"
-                        label="Name of Goal"
-                        rules={[{required: true, message: "First name is required"}]}
-                    >
-                        <Input name="fname"/>
-                    </Form.Item>
-
-                    <Form.Item
-                        name="start_year"
-                        label="Start Year"
-                        rules={[{required: true, message: "Please select a year"}]}
-                    >
-                        <DatePicker picker="year" name="year" style={{width: "100%"}}/>
-                    </Form.Item>
-                    <Form.Item name="end_year" label="End Year">
-                        <DatePicker picker="year" name="year" style={{width: "100%"}}/>
-                    </Form.Item>
-                    <Form.Item
-                        name="progress"
-                        label="Progress"
-                        rules={[{required: true, message: "First name is required"}]}
-                    >
-                        <Input name="progress"/>
-                    </Form.Item>
-                    <Form.Item
-                        name="amount"
-                        label="Amount"
-                        rules={[{required: true, message: "First name is required"}]}
-                    >
-                        <Input name="amount"/>
-                    </Form.Item>
-                </Form>
-            </Modal>
-
-            <Modal title="Event" visible={isModalVisible} okText="Save" onCancel={handleCancel}>
-                <Form form={form} labelAlign="left" labelCol={{span: 8}} wrapperCol={{span: 16}}>
-                    <Form.Item
-                        name="name"
-                        label="Name of Event"
-                        rules={[{required: true, message: "First name is required"}]}
-                    >
-                        <Input name="fname"/>
-                    </Form.Item>
-
-                    <Form.Item name="year" label="Year" rules={[{required: true, message: "Please select a year"}]}>
-                        <DatePicker picker="year" name="year" style={{width: "100%"}}/>
-                    </Form.Item>
-                    <Form.Item name="owner" label="Owner">
-                        <Select style={{width: "100%"}}>
-                            <Option value="mr">Mr</Option>
-                            <Option value="mrs">Mrs</Option>
-                        </Select>
-                    </Form.Item>
-                    <Form.Item name="icon" label="Icon">
-                        <textarea style={{width: "100%"}}/>
-                    </Form.Item>
-                </Form>
-            </Modal>
-        </Layout>
-    );
+              </Row>
+            </Form>
+          </Col>
+        </Row>
+      </Modal>
+    </Layout>
+  );
 }
 
 export default LifeMilestones;

@@ -537,12 +537,12 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Mortgage Rate">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Interest Rate">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -590,7 +590,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Interest Rate">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -632,7 +632,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={3} md={3} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Interest Rate">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -698,7 +698,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Share of income:">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -835,7 +835,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Annual increase">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -915,7 +915,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="% After retirement: ">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
@@ -970,7 +970,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="% After retirement">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -1014,7 +1014,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="% After retirement">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -1058,7 +1058,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="% After retirement">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -1102,7 +1102,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="% After retirement">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -1146,7 +1146,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="% After retirement">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -1186,12 +1186,12 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Inflation:">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="% After retirement:">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -1211,12 +1211,12 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Inflation:">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="% After retirement:">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -1236,12 +1236,12 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Inflation:">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="% After retirement:">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -1261,12 +1261,12 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Inflation:">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="% After retirement:">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -1286,12 +1286,12 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Inflation:">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="% After retirement:">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -1310,12 +1310,12 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Inflation:">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="% After retirement:">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -1342,7 +1342,7 @@ const InputsEditForm = () => {
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">
                   <Form.Item label="Inflation:">
-                    <RateInput />
+                    <RateInput onBlur={(e) => {}} value="12" />
                   </Form.Item>
                 </Col>
                 <Col lg={4} md={4} sm={24} xs={24} className="custom-input-fields">

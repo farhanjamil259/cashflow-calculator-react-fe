@@ -34,7 +34,7 @@ const Assumption = () => {
                   history.push("/assumption/assumptionForm");
                 }}
               >
-                Add Assumptions
+                Edit Assumptions
               </Button>
             }
           >

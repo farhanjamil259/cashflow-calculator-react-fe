@@ -139,7 +139,7 @@ const ClientsList = () => {
               },
               onClick: async () => {
                 await dispatch(setActiveClientAction(data[rowIndex]));
-                await dispatch(GetInputsAction(activeClientId._id));
+                await dispatch(GetInputsAction(data[rowIndex]._id));
 
                 history.push("/dashboard/clientDashboard");
               },
@@ -298,6 +298,8 @@ const ClientsList = () => {
         okText="Open Client"
         onOk={async () => {
           await dispatch(setActiveClientAction(activeClientId));
+
+          console.log(activeClientId);
 
           await dispatch(GetInputsAction(activeClientId._id));
           history.push("/dashboard/clientDashboard");
