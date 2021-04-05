@@ -239,7 +239,11 @@ export interface IInputs {
       details: Array<IExpenseDetails>;
       total: number;
     };
-    insurance_policies: Array<IInsurancePolicies>;
+    insurance_policies: {
+      life_insurance: Array<IInsurancePolicies>;
+      critical_illness_cover: Array<IInsurancePolicies>;
+      family_income_benefit: Array<IInsurancePolicies>;
+    };
     one_off_expenses: Array<IOneOffExpenses>;
     children_education_expenses: {
       primary_school_fees: ISchoolFees;

@@ -1,9 +1,9 @@
 import React, { Fragment, useState } from "react";
-import {  Form,   Modal,   Table } from "antd";
+import { Form, Modal, Table } from "antd";
 
 // @ts-ignore
 import CurrencyFormat from "react-currency-format";
-import { RootStateOrAny,  useSelector } from "react-redux";
+import { RootStateOrAny, useSelector } from "react-redux";
 import IInputs from "../../../../interfaces/IInputs";
 
 import Text from "antd/lib/typography/Text";
@@ -17,9 +17,7 @@ const CreditCard = () => {
 
   const [isModelVisible, setIsModelVisible] = useState(false);
 
-
   const [form] = useForm();
-
 
   const columns: any = [
     {
@@ -62,13 +60,13 @@ const CreditCard = () => {
         onRow={(record, rowIndex) => {
           return {
             onClick: (event) => {
-
               setIsModelVisible(true);
               // console.log(properties[activeItemIndex]);
             },
             hidden: record.original_balance <= 0,
           };
         }}
+        rowKey={(record) => record.name}
       />
       <Modal
         title="Credit Card"

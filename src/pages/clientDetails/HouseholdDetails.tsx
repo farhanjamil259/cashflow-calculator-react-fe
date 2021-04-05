@@ -10,7 +10,7 @@ import Liabilities from "./householdDetails/Liabilities";
 import Owner from "./householdDetails/peopleComponents/Owner";
 import "./HouseholdDetails.css";
 
-import  { numberFormat, Options } from "highcharts";
+import { numberFormat, Options } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import IInputs from "../../interfaces/IInputs";
 import { pound } from "../../components/currencySumbol";
@@ -36,7 +36,7 @@ const HouseholdDetails = () => {
       if (cy >= p.start_year && cy <= p.end_year) {
         totalAssetsTemp += p.todays_value;
       }
-      return null
+      return null;
     });
 
     totalAssetsTemp += inputs.assets.bank_accounts.original_balance;
@@ -45,28 +45,28 @@ const HouseholdDetails = () => {
       if (cy >= sai.contribution_start_year && cy <= sai.contribution_end_year) {
         totalAssetsTemp += sai.original_balance;
       }
-      return null
+      return null;
     });
 
     inputs.assets.non_employment_defined_contribution_pension_plans.map((dcpp) => {
       if (cy >= dcpp.contribution_start_year && cy <= dcpp.contribution_end_year) {
         totalAssetsTemp += dcpp.original_balance;
       }
-      return null
+      return null;
     });
 
     inputs.liabilities.mortgages.map((m) => {
       if (cy >= m.start_year && cy <= m.end_year) {
         totalLiabilitiesTemp += m.original_balance;
       }
-      return null
+      return null;
     });
 
     inputs.liabilities.other_loans.map((ol) => {
       if (cy >= ol.start_year && cy <= ol.end_year) {
         totalLiabilitiesTemp += ol.original_balance;
       }
-      return null
+      return null;
     });
 
     totalLiabilitiesTemp += inputs.liabilities.credit_card.original_balance;
@@ -78,13 +78,13 @@ const HouseholdDetails = () => {
       if (cy >= ei.start_year && cy <= ei.end_year) {
         totalIncomeTemp += ei.gross_anual_amount;
       }
-      return null
+      return null;
     });
     inputs.household_income.self_employment_income.map((sei) => {
       if (cy >= sei.start_year && cy <= sei.end_year) {
         totalIncomeTemp += sei.gross_anual_amount;
       }
-      return null
+      return null;
     });
     totalIncomeTemp +=
       cy >= inputs.household_income.rental_income.details[0].start_year &&
@@ -96,7 +96,7 @@ const HouseholdDetails = () => {
       if (cy >= di.start_year && cy <= di.end_year) {
         totalIncomeTemp += di.anual_amount;
       }
-      return null
+      return null;
     });
 
     inputs.household_income.savings_and_investments_drawdowns.individual_savings_accounts.map((draw) => {
@@ -104,88 +104,100 @@ const HouseholdDetails = () => {
         if (cy >= d.start_year && cy <= d.end_year) {
           totalIncomeTemp += d.amount_to_drawn_down;
         }
-        return null
+        return null;
       });
-      return null
+      return null;
     });
     inputs.household_income.pension_income.state_pension.map((sp) => {
       if (cy >= sp.start_year && cy <= sp.end_year) {
         totalIncomeTemp += sp.annual_amount;
       }
-      return null
+      return null;
     });
     inputs.household_income.pension_income.defined_benifit_pension_plans.map((dbpp) => {
       if (cy >= dbpp.start_year && cy <= dbpp.end_year) {
         totalIncomeTemp += dbpp.estimated_lump_sum;
       }
-      return null
+      return null;
     });
     inputs.household_income.pension_income.defined_contribution_pension_plans.map((dcpp) => {
       if (cy >= dcpp.end_year && cy <= dcpp.end_year) {
         totalIncomeTemp += dcpp.drawdown_option_annual_amount;
       }
-      return null
+      return null;
     });
     inputs.household_income.other_income.other_taxable_income.map((income) => {
       if (cy >= income.start_year && cy <= income.end_year) {
         totalIncomeTemp += income.gross_annual_amount;
       }
-      return null
+      return null;
     });
     inputs.household_income.other_income.other_non_taxable_income.map((income) => {
       if (cy >= income.start_year && cy <= income.end_year) {
         totalIncomeTemp += income.gross_annual_amount;
       }
-      return null
+      return null;
     });
 
     inputs.household_expenses.housing.details.map((expense) => {
       if (cy >= expense.start_year && cy <= expense.end_year) {
         totalExpensesTemp += expense.annual_expense;
       }
-      return null
+      return null;
     });
     inputs.household_expenses.consumables.details.map((expense) => {
       if (cy >= expense.start_year && cy <= expense.end_year) {
         totalExpensesTemp += expense.annual_expense;
       }
-      return null
+      return null;
     });
     inputs.household_expenses.travel.details.map((expense) => {
       if (cy >= expense.start_year && cy <= expense.end_year) {
         totalExpensesTemp += expense.annual_expense;
       }
-      return null
+      return null;
     });
     inputs.household_expenses.shopping.details.map((expense) => {
       if (cy >= expense.start_year && cy <= expense.end_year) {
         totalExpensesTemp += expense.annual_expense;
       }
-      return null
+      return null;
     });
     inputs.household_expenses.entertainment.details.map((expense) => {
       if (cy >= expense.start_year && cy <= expense.end_year) {
         totalExpensesTemp += expense.annual_expense;
       }
-      return null
+      return null;
     });
     inputs.household_expenses.holiday.details.map((expense) => {
       if (cy >= expense.start_year && cy <= expense.end_year) {
         totalExpensesTemp += expense.annual_expense;
       }
-      return null
+      return null;
     });
-    inputs.household_expenses.insurance_policies.map((expense) => {
+    inputs.household_expenses.insurance_policies.life_insurance.map((expense) => {
       if (cy >= expense.start_year && cy <= expense.end_year) {
         totalExpensesTemp += expense.annual_expense;
       }
-      return null
+      return null;
+    });
+    inputs.household_expenses.insurance_policies.critical_illness_cover.map((expense) => {
+      if (cy >= expense.start_year && cy <= expense.end_year) {
+        totalExpensesTemp += expense.annual_expense;
+      }
+      return null;
+    });
+    inputs.household_expenses.insurance_policies.family_income_benefit.map((expense) => {
+      if (cy >= expense.start_year && cy <= expense.end_year) {
+        totalExpensesTemp += expense.annual_expense;
+      }
+      return null;
     });
     inputs.household_expenses.one_off_expenses.map((expense) => {
       if (cy >= expense.start_year && cy <= expense.end_year) {
         totalExpensesTemp += expense.annual_payment_in_todays_terms;
       }
-      return null
+      return null;
     });
 
     if (
@@ -256,7 +268,7 @@ const HouseholdDetails = () => {
     },
   };
 
-  const assetChartOptions : Options = ({
+  const assetChartOptions: Options = {
     ...commonChartOptions,
     legend: {
       align: "right",
@@ -327,8 +339,8 @@ const HouseholdDetails = () => {
         ],
       },
     ],
-  });
-  const liabilitiesChartOptions : Options = ({
+  };
+  const liabilitiesChartOptions: Options = {
     ...commonChartOptions,
     legend: {
       align: "right",
@@ -371,9 +383,9 @@ const HouseholdDetails = () => {
         ],
       },
     ],
-  });
+  };
 
-  const incomeChartOptions : Options = ({
+  const incomeChartOptions: Options = {
     ...commonChartOptions,
     legend: {
       align: "right",
@@ -501,8 +513,8 @@ const HouseholdDetails = () => {
         ],
       },
     ],
-  });
-  const expensesChartOptions : Options =({
+  };
+  const expensesChartOptions: Options = {
     ...commonChartOptions,
     legend: {
       align: "right",
@@ -581,13 +593,28 @@ const HouseholdDetails = () => {
           },
           {
             name: "Insurance Policies",
-            y: inputs.household_expenses.insurance_policies.reduce((a: any, b: any) => {
-              if (inputs.current_year <= b.end_year && inputs.current_year >= b.start_year) {
-                return a + b.annual_expense;
-              } else {
-                return a;
-              }
-            }, 0),
+            y:
+              inputs.household_expenses.insurance_policies.life_insurance.reduce((a: any, b: any) => {
+                if (inputs.current_year <= b.end_year && inputs.current_year >= b.start_year) {
+                  return a + b.annual_expense;
+                } else {
+                  return a;
+                }
+              }, 0) +
+              inputs.household_expenses.insurance_policies.critical_illness_cover.reduce((a: any, b: any) => {
+                if (inputs.current_year <= b.end_year && inputs.current_year >= b.start_year) {
+                  return a + b.annual_expense;
+                } else {
+                  return a;
+                }
+              }, 0) +
+              inputs.household_expenses.insurance_policies.family_income_benefit.reduce((a: any, b: any) => {
+                if (inputs.current_year <= b.end_year && inputs.current_year >= b.start_year) {
+                  return a + b.annual_expense;
+                } else {
+                  return a;
+                }
+              }, 0),
           },
           {
             name: "One-Off Expenses",
@@ -631,7 +658,7 @@ const HouseholdDetails = () => {
         ],
       },
     ],
-  });
+  };
 
   return (
     <Fragment>

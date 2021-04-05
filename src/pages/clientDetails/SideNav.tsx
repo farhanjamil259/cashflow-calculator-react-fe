@@ -4,22 +4,22 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 
 const SideNav = () => {
-  const [menuKey, setMenuKey] = useState(["1"]);
+  const [menuKey, setMenuKey] = useState(["2"]);
 
   return (
     <>
       <Sider style={{ background: "white" }}>
         <Menu mode="inline" defaultSelectedKeys={menuKey} style={{ height: "100%" }}>
-          <Menu.Item key="0">
+          <Menu.Item key="1">
             <Link
               to={"/dashboard/clientDashboard/clientPlanDetails/lifeMilestones"}
-              onClick={() => setMenuKey(["0"])}
+              onClick={() => setMenuKey(["1"])}
             >
               Life Milestones
             </Link>
           </Menu.Item>
-          <Menu.Item key="1">
-            <Link to={"/dashboard/clientDashboard/clientPlanDetails"} onClick={() => setMenuKey(["1"])}>
+          <Menu.Item key="2">
+            <Link to={"/dashboard/clientDashboard/clientPlanDetails"} onClick={() => setMenuKey(["2"])}>
               Household Details
             </Link>
           </Menu.Item>

@@ -2,7 +2,7 @@ import { InputNumber } from "antd";
 import React from "react";
 interface Props {
   onBlur: (e: any) => void;
-  value: string;
+  value: any;
 }
 
 const RateInput: React.FC<Props> = ({ onBlur, value }) => {

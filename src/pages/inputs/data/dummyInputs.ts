@@ -1,7 +1,5 @@
 import { v4 as uuid } from "uuid";
-import {
-  IInputs,
-} from "../../../interfaces/ISubInputs";
+import { IInputs } from "../../../interfaces/ISubInputs";
 
 const dummyInputs: IInputs = {
   user_id: "",
@@ -64,7 +62,6 @@ const dummyInputs: IInputs = {
       ],
       general_investment_account: [
         {
-
           original_balance: 0,
           annual_contribution: 900,
         },
@@ -159,95 +156,95 @@ const dummyInputs: IInputs = {
         end_year: 2045,
       },
     ],
-      savings_and_investments_drawdowns: {
-          individual_savings_accounts: [
-              {
-                  owner_name: "Mr Optimistic",
-                  drawdowns: [
-                      {
-                          id: uuid(),
-                          name: "Drawdown 1",
-                          amount_to_drawn_down: 3000,
-                          start_year: 2021,
-                          end_year: 2033
-                      },
-                      {
-                          id: uuid(),
-                          name: "Drawdown 2",
-                          amount_to_drawn_down: 3000,
-                          start_year: 2034,
-                          end_year: 2054
-                      },
-                      {
-                          id: uuid(),
-                          name: "Drawdown 3",
-                          amount_to_drawn_down: 15000,
-                          start_year: 2055,
-                          end_year: 2095
-                      },
-                      {
-                          id: uuid(),
-                          name: "Drawdown 4",
-                          amount_to_drawn_down: 0,
-                          start_year: 2032,
-                          end_year: 2032
-                      },
-                      {
-                          id: uuid(),
-                          name: "Drawdown 5",
-                          amount_to_drawn_down: 120000,
-                          start_year: 2025,
-                          end_year: 2025
-                      }
-                  ]
-              },
-              {
-                owner_name  : "Mrs Optimistic",
-                  drawdowns: [
-                      {
-                          id: uuid(),
-                          name: "Drawdown 1",
-                          amount_to_drawn_down: 500,
-                          start_year: 2034,
-                          end_year: 2049
-                      },
-                      {
-                          id: uuid(),
-                          name: "Drawdown 2",
-                          amount_to_drawn_down: 10000,
-                          start_year: 2050,
-                          end_year: 2095
-                      }
-                  ]
-              }
+    savings_and_investments_drawdowns: {
+      individual_savings_accounts: [
+        {
+          owner_name: "Mr Optimistic",
+          drawdowns: [
+            {
+              id: uuid(),
+              name: "Drawdown 1",
+              amount_to_drawn_down: 3000,
+              start_year: 2021,
+              end_year: 2033,
+            },
+            {
+              id: uuid(),
+              name: "Drawdown 2",
+              amount_to_drawn_down: 3000,
+              start_year: 2034,
+              end_year: 2054,
+            },
+            {
+              id: uuid(),
+              name: "Drawdown 3",
+              amount_to_drawn_down: 15000,
+              start_year: 2055,
+              end_year: 2095,
+            },
+            {
+              id: uuid(),
+              name: "Drawdown 4",
+              amount_to_drawn_down: 0,
+              start_year: 2032,
+              end_year: 2032,
+            },
+            {
+              id: uuid(),
+              name: "Drawdown 5",
+              amount_to_drawn_down: 120000,
+              start_year: 2025,
+              end_year: 2025,
+            },
           ],
-          general_investment_accounts: [
-              {
-                  owner_name: "Mr Optimistic",
-                  drawdowns: [
-                      {
-                          id: uuid(),
-                          name: "Drawdown 1",
-                          amount_to_drawn_down: 20000,
-                          start_year: 2055,
-                          end_year: 2095
-                      }
-                  ]
-              },
-              {
-                  owner_name: "Mrs Optimistic",
-                  drawdowns: [
-                      {
-                          id: uuid(),
-                          name: "Drawdown 1",
-                          amount_to_drawn_down: 30000,
-                          start_year: 2044,
-                          end_year: 2059
-                      }
-                  ]
-              }
-          ]
-      },
+        },
+        {
+          owner_name: "Mrs Optimistic",
+          drawdowns: [
+            {
+              id: uuid(),
+              name: "Drawdown 1",
+              amount_to_drawn_down: 500,
+              start_year: 2034,
+              end_year: 2049,
+            },
+            {
+              id: uuid(),
+              name: "Drawdown 2",
+              amount_to_drawn_down: 10000,
+              start_year: 2050,
+              end_year: 2095,
+            },
+          ],
+        },
+      ],
+      general_investment_accounts: [
+        {
+          owner_name: "Mr Optimistic",
+          drawdowns: [
+            {
+              id: uuid(),
+              name: "Drawdown 1",
+              amount_to_drawn_down: 20000,
+              start_year: 2055,
+              end_year: 2095,
+            },
+          ],
+        },
+        {
+          owner_name: "Mrs Optimistic",
+          drawdowns: [
+            {
+              id: uuid(),
+              name: "Drawdown 1",
+              amount_to_drawn_down: 30000,
+              start_year: 2044,
+              end_year: 2059,
+            },
+          ],
+        },
+      ],
+    },
     pension_income: {
       defined_benifit_pension_plans: [
         {
@@ -497,44 +494,50 @@ const dummyInputs: IInputs = {
       ],
       total: 0,
     },
-    insurance_policies: [
-      {
-        name: "Life Insurance - ",
-        annual_expense: 40,
-        inflation: 0,
-        rate_after_retirement: 0,
-      },
-      {
-        name: "Life Insurance - ",
-        annual_expense: 20,
-        inflation: 0,
-        rate_after_retirement: 0,
-      },
-      {
-        name: "Critical Illness Cover - ",
-        annual_expense: 0,
-        inflation: 0,
-        rate_after_retirement: 0,
-      },
-      {
-        name: "Critical Illness Cover - ",
-        annual_expense: 0,
-        inflation: 0,
-        rate_after_retirement: 0,
-      },
-      {
-        name: "Family Income Benifit - ",
-        annual_expense: 0,
-        inflation: 0,
-        rate_after_retirement: 0,
-      },
-      {
-        name: "Family Income Benifit - ",
-        annual_expense: 0,
-        inflation: 0,
-        rate_after_retirement: 0,
-      },
-    ],
+    insurance_policies: {
+      life_insurance: [
+        {
+          name: "Life Insurance - ",
+          annual_expense: 40,
+          inflation: 0,
+          rate_after_retirement: 0,
+        },
+        {
+          name: "Life Insurance - ",
+          annual_expense: 20,
+          inflation: 0,
+          rate_after_retirement: 0,
+        },
+      ],
+      critical_illness_cover: [
+        {
+          name: "Critical Illness Cover - ",
+          annual_expense: 0,
+          inflation: 0,
+          rate_after_retirement: 0,
+        },
+        {
+          name: "Critical Illness Cover - ",
+          annual_expense: 0,
+          inflation: 0,
+          rate_after_retirement: 0,
+        },
+      ],
+      family_income_benefit: [
+        {
+          name: "Family Income Benifit - ",
+          annual_expense: 0,
+          inflation: 0,
+          rate_after_retirement: 0,
+        },
+        {
+          name: "Family Income Benifit - ",
+          annual_expense: 0,
+          inflation: 0,
+          rate_after_retirement: 0,
+        },
+      ],
+    },
     one_off_expenses: [
       {
         id: uuid(),

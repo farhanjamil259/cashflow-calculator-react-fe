@@ -48,17 +48,18 @@ const YearBreakdownTabs = (props: any) => {
         <Table
           columns={[
             {
-              title: "Type of Income",
-              dataIndex: "name",
-              key: "name",
-              width: columnWidths[0],
-            },
-            {
               title: "Name",
-              dataIndex: "category",
+              dataIndex: "name",
               key: "category",
               width: columnWidths[1],
             },
+            {
+              title: "Category",
+              dataIndex: "category",
+              key: "name",
+              width: columnWidths[0],
+            },
+
             {
               title: "Owner",
               dataIndex: "owner",
@@ -91,7 +92,7 @@ const YearBreakdownTabs = (props: any) => {
                   >
                     <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
                     <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
-                  </svg>{" "}
+                  </svg>
                 </span>
               ),
               value:
@@ -100,8 +101,22 @@ const YearBreakdownTabs = (props: any) => {
             },
             {
               name: "Self-Employment Income",
-              category: "Employment",
-              owner: "Mr, Mrs",
+              category: "Other Income",
+              owner: (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlnsXlink="http://www.w3.org/1999/xlink"
+                  aria-hidden="true"
+                  focusable="false"
+                  width="1em"
+                  height="1em"
+                  preserveAspectRatio="xMidYMid meet"
+                  viewBox="0 0 32 32"
+                >
+                  <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                  <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                </svg>
+              ),
               value:
                 "£" +
                 numberFormat(
@@ -113,22 +128,109 @@ const YearBreakdownTabs = (props: any) => {
             },
             {
               name: "Rental Income",
-              category: "Employment",
-              owner: "Mr, Mrs",
+              category: "Other Income",
+              owner: (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                  </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                  </svg>
+                </span>
+              ),
               value:
                 "£" + numberFormat(selectedSummaryAtIndex.income_analysis.total_rental_income, 0, ".", ","),
             },
             {
               name: "Dividend Income",
-              category: "Employment",
-              owner: "Mr, Mrs",
+              category: "Other Income",
+              owner: (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                  </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                  </svg>
+                </span>
+              ),
               value:
                 "£" + numberFormat(selectedSummaryAtIndex.income_analysis.total_dividend_income, 0, ".", ","),
             },
             {
               name: "Savings and Investments Drawdowns",
-              category: "Employment",
-              owner: "Mr, Mrs",
+              category: "Savings and Investments",
+              owner: (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                  </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                  </svg>
+                </span>
+              ),
               value:
                 "£" +
                 numberFormat(
@@ -140,15 +242,73 @@ const YearBreakdownTabs = (props: any) => {
             },
             {
               name: "Pension Income",
-              category: "Employment",
-              owner: "Mr, Mrs",
+              category: "Pension",
+              owner: (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                  </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                  </svg>
+                </span>
+              ),
               value:
                 "£" + numberFormat(selectedSummaryAtIndex.income_analysis.total_pension_income, 0, ".", ","),
             },
             {
               name: "Other Income",
-              category: "Employment",
-              owner: "Mr, Mrs",
+              category: "Other Income",
+              owner: (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                  </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                  </svg>
+                </span>
+              ),
               value:
                 "£" + numberFormat(selectedSummaryAtIndex.income_analysis.total_other_income, 0, ".", ","),
             },
@@ -202,40 +362,185 @@ const YearBreakdownTabs = (props: any) => {
           dataSource={[
             {
               name: "Housing Expenses",
-              category: "Expense",
-              owner: "Mr, Mrs",
+              category: "Basics",
+              owner: (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                  </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                  </svg>
+                </span>
+              ),
               value:
                 "£" +
                 numberFormat(selectedSummaryAtIndex.expense_analysis.total_housing_expenses, 0, ".", ","),
             },
             {
               name: "Consumables Expenses",
-              category: "Expense",
-              owner: "Mr, Mrs",
+              category: "Basics",
+              owner: (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                  </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                  </svg>
+                </span>
+              ),
               value:
                 "£" +
                 numberFormat(selectedSummaryAtIndex.expense_analysis.total_consumables_expenses, 0, ".", ","),
             },
             {
               name: "Travel Expenses",
-              category: "Expense",
-              owner: "Mr, Mrs",
+              category: "Leisure",
+              owner: (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                  </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                  </svg>
+                </span>
+              ),
               value:
                 "£" +
                 numberFormat(selectedSummaryAtIndex.expense_analysis.total_travel_expenses, 0, ".", ","),
             },
             {
               name: "Shopping Expenses",
-              category: "Expense",
-              owner: "Mr, Mrs",
+              category: "Leisure",
+              owner: (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                  </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                  </svg>
+                </span>
+              ),
               value:
                 "£" +
                 numberFormat(selectedSummaryAtIndex.expense_analysis.total_shopping_expenses, 0, ".", ","),
             },
             {
               name: "Entertainment Expenses",
-              category: "Expense",
-              owner: "Mr, Mrs",
+              category: "Leisure",
+              owner: (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                  </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                  </svg>
+                </span>
+              ),
               value:
                 "£" +
                 numberFormat(
@@ -247,24 +552,75 @@ const YearBreakdownTabs = (props: any) => {
             },
             {
               name: "Holiday Expenses",
-              category: "Expense",
-              owner: "Mr, Mrs",
+              category: "Leisure",
+              owner: (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                  </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                  </svg>
+                </span>
+              ),
               value:
                 "£" +
                 numberFormat(selectedSummaryAtIndex.expense_analysis.total_holiday_expenses, 0, ".", ","),
             },
-            {
-              name: "One-off Expenses",
-              category: "Expense",
-              owner: "Mr, Mrs",
-              value:
-                "£" +
-                numberFormat(selectedSummaryAtIndex.expense_analysis.total_one_off_expenses, 0, ".", ","),
-            },
+
             {
               name: "Children Education Expenses",
-              category: "Expense",
-              owner: "Mr, Mrs",
+              category: "Basics",
+              owner: (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                  </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                  </svg>
+                </span>
+              ),
               value:
                 "£" +
                 numberFormat(
@@ -276,16 +632,74 @@ const YearBreakdownTabs = (props: any) => {
             },
             {
               name: "Financials Expenses",
-              category: "Expense",
-              owner: "Mr, Mrs",
+              category: "Other",
+              owner: (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                  </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                  </svg>
+                </span>
+              ),
               value:
                 "£" +
                 numberFormat(selectedSummaryAtIndex.expense_analysis.total_financial_expenses, 0, ".", ","),
             },
             {
               name: "Additional Tax Charge",
-              category: "Expense",
-              owner: "Mr, Mrs",
+              category: "Taxes",
+              owner: (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                  </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                  </svg>
+                </span>
+              ),
               value:
                 "£" +
                 numberFormat(
@@ -323,8 +737,8 @@ const YearBreakdownTabs = (props: any) => {
               width: columnWidths[0],
             },
             {
-              title: "Category",
-              dataIndex: "category",
+              title: "",
+              dataIndex: "",
               key: "category",
               width: columnWidths[1],
             },
@@ -346,7 +760,36 @@ const YearBreakdownTabs = (props: any) => {
             {
               name: "Savings and Investments",
               category: "Savings and Investments",
-              owner: "Mr, Mrs",
+              owner: (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                  </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                  </svg>
+                </span>
+              ),
               value:
                 "£" +
                 numberFormat(
@@ -390,8 +833,8 @@ const YearBreakdownTabs = (props: any) => {
               width: columnWidths[0],
             },
             {
-              title: "Category",
-              dataIndex: "category",
+              title: "",
+              dataIndex: "",
               key: "category",
               width: columnWidths[1],
             },
@@ -413,7 +856,36 @@ const YearBreakdownTabs = (props: any) => {
             {
               name: "Pension Plans",
               category: "Savings and Investments",
-              owner: "Mr, Mrs",
+              owner: (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                  </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                  </svg>
+                </span>
+              ),
               value:
                 "£" +
                 numberFormat(
@@ -457,8 +929,8 @@ const YearBreakdownTabs = (props: any) => {
               width: columnWidths[0],
             },
             {
-              title: "Category",
-              dataIndex: "category",
+              title: "",
+              dataIndex: "",
               key: "category",
               width: columnWidths[1],
             },
@@ -483,13 +955,71 @@ const YearBreakdownTabs = (props: any) => {
             {
               name: "Main House",
               category: "Property",
-              owner: "Mr, Mrs",
+              owner: (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                  </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                  </svg>
+                </span>
+              ),
               value: selectedSummaryAtIndex.property_analysis.property_details[0].amount,
             },
             {
               name: "Second Property",
               category: "Property",
-              owner: "Mr, Mrs",
+              owner: (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                  </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                  </svg>
+                </span>
+              ),
               value: selectedSummaryAtIndex.property_analysis.property_details[1].amount,
             },
           ]}
@@ -554,20 +1084,107 @@ const YearBreakdownTabs = (props: any) => {
               return {
                 name: m.name,
                 category: "Property",
-                owner: "Mr, Mrs",
+                owner: (
+                  <span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlnsXlink="http://www.w3.org/1999/xlink"
+                      aria-hidden="true"
+                      focusable="false"
+                      width="1em"
+                      height="1em"
+                      preserveAspectRatio="xMidYMid meet"
+                      viewBox="0 0 32 32"
+                    >
+                      <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                      <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                    </svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      xmlnsXlink="http://www.w3.org/1999/xlink"
+                      aria-hidden="true"
+                      focusable="false"
+                      width="1em"
+                      height="1em"
+                      preserveAspectRatio="xMidYMid meet"
+                      viewBox="0 0 32 32"
+                    >
+                      <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                      <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                    </svg>
+                  </span>
+                ),
                 value: Math.abs(m.amount),
               };
             }),
             {
               name: "Other Loans",
               category: "Property",
-              owner: "Mr, Mrs",
+              owner: (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                  </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                  </svg>
+                </span>
+              ),
               value: Math.abs(selectedSummaryAtIndex.assets_and_liabilities_analysis.total_other_loans),
             },
             {
               name: "Credit Card",
               category: "Property",
-              owner: "Mr, Mrs",
+              owner: (
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+                  </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlnsXlink="http://www.w3.org/1999/xlink"
+                    aria-hidden="true"
+                    focusable="false"
+                    width="1em"
+                    height="1em"
+                    preserveAspectRatio="xMidYMid meet"
+                    viewBox="0 0 32 32"
+                  >
+                    <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+                    <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+                  </svg>
+                </span>
+              ),
               value: Math.abs(selectedSummaryAtIndex.assets_and_liabilities_analysis.credit_card),
             },
           ]}

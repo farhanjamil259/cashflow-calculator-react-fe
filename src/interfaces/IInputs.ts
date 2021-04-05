@@ -1,4 +1,5 @@
 interface input {
+  _id: string;
   client_id: string;
   input_set_name: string;
   current_year: number;
@@ -270,15 +271,34 @@ interface input {
       }>;
       total: number;
     };
-    insurance_policies: Array<{
-      name: string;
-      annual_expense: number;
-      inflation: number;
-      start_year: number;
-      end_year: number;
-      rate_after_retirement: number;
-    }>;
+    insurance_policies: {
+      life_insurance: Array<{
+        name: string;
+        annual_expense: number;
+        inflation: number;
+        start_year: number;
+        end_year: number;
+        rate_after_retirement: number;
+      }>;
+      critical_illness_cover: Array<{
+        name: string;
+        annual_expense: number;
+        inflation: number;
+        start_year: number;
+        end_year: number;
+        rate_after_retirement: number;
+      }>;
+      family_income_benefit: Array<{
+        name: string;
+        annual_expense: number;
+        inflation: number;
+        start_year: number;
+        end_year: number;
+        rate_after_retirement: number;
+      }>;
+    };
     one_off_expenses: Array<{
+      _id: string;
       name: string;
       annual_payment_in_todays_terms: number;
       inflation: number;

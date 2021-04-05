@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import {  Form,   Modal,   Table } from "antd";
+import { Form, Modal, Table } from "antd";
 // @ts-ignore
 import CurrencyFormat from "react-currency-format";
-import { RootStateOrAny,  useSelector } from "react-redux";
+import { RootStateOrAny, useSelector } from "react-redux";
 import IInputs from "../../../../interfaces/IInputs";
 import Text from "antd/lib/typography/Text";
 import { firstColumnWidth, secondColumnWidth } from "../../CommonVariable";
@@ -60,11 +60,13 @@ const PensionPlan = () => {
               setActiveItemIndex(rowIndex!);
               setIsModelVisible(true);
             },
-            hidden:
-              !(inputs.current_year <= record.contribution_end_year &&
-                  inputs.current_year >= record.contribution_start_year),
+            hidden: !(
+              inputs.current_year <= record.contribution_end_year &&
+              inputs.current_year >= record.contribution_start_year
+            ),
           };
         }}
+        rowKey={(record) => record.name}
       />
       <Modal
         title="Pension details"

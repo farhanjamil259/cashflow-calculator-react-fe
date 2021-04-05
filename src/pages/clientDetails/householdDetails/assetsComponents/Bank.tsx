@@ -81,7 +81,7 @@ const Bank = () => {
             },
           };
         }}
-        rowKey="0"
+        rowKey={(record) => record._id}
       />
       <Modal
         title="Bank Account Details"

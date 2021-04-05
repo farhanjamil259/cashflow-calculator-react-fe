@@ -11,12 +11,13 @@ import { AlertAction } from "../../redux/general/alert";
 
 import dummyInputs from "../inputs/data/dummyInputs";
 import { IInputs } from "../../interfaces/ISubInputs";
-import { inputsRoute, summaryRoute } from "../../routes/apiRoutes";
+import { clientRoute, inputsRoute, summaryRoute } from "../../routes/apiRoutes";
 import { setSummaryAction } from "../../redux/summary/summary";
 import CalcRealSummary from "../../helpers/calcRealSummary";
 import IAssumptions from "../../interfaces/IAssumptions";
 import { setRealSummaryAction } from "../../redux/summary/realSummary";
 import { MoreOutlined } from "@ant-design/icons";
+import { GetClientsActions, setActiveClientAction } from "../../redux/clients/client";
 
 const { Text, Title } = Typography;
 const { TextArea } = Input;
@@ -25,6 +26,7 @@ const ClientDashboard = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const [isModalVisible2, setIsModelVisible2] = useState(false);
+  const [clientDeleteModalVisible, setClientDeleteModalVisible] = useState(false);
   const [isModalVisibleClone, setIsModelVisibleClone] = useState(false);
   const [selectedId, setSelectedId] = useState("");
 
@@ -52,7 +54,7 @@ const ClientDashboard = () => {
         <>
           {record.people.owner.map((o: any, i: any) => {
             return (
-              <span>
+              <span key={i}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -74,7 +76,7 @@ const ClientDashboard = () => {
           })}
           {record.people.child.map((c: any, i: any) => {
             return (
-              <span>
+              <span key={i}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -108,7 +110,7 @@ const ClientDashboard = () => {
           <Dropdown
             overlay={
               <Menu>
-                <Menu.Item key="1">
+                <Menu.Item key="2">
                   <Button
                     type="link"
                     onClick={async (e) => {
@@ -121,7 +123,7 @@ const ClientDashboard = () => {
                     Clone
                   </Button>
                 </Menu.Item>
-                <Menu.Item key="2">
+                <Menu.Item key="3">
                   <Button
                     type="link"
                     onClick={(e) => {
@@ -164,9 +166,13 @@ const ClientDashboard = () => {
     };
   });
 
+  const [notes, setNotes] = useState("");
+
   const assumptions: IAssumptions = useSelector((state: RootStateOrAny) => state.assumptionReducer);
 
   const [form] = Form.useForm();
+
+  const [newClient, setNewClient] = useState(client);
 
   return (
     <Layout className="layout" style={{ background: "white" }}>
@@ -174,44 +180,89 @@ const ClientDashboard = () => {
         <Row gutter={16}>
           <Col lg={8} md={24} sm={24} xs={24}>
             <Card>
-              <Row>
+              <Row justify="space-between">
                 <Col>
                   <Title level={3}>
-                    {client.fname} {client.lname}
+                    {newClient.fname} {newClient.lname}
                   </Title>
+                </Col>
+                <Col>
+                  <Dropdown
+                    overlay={
+                      <Menu>
+                        <Menu.Item key="3">
+                          <Button
+                            style={{
+                              color: "red",
+                            }}
+                            type="link"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setClientDeleteModalVisible(true);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </Menu.Item>
+                      </Menu>
+                    }
+                  >
+                    <Button
+                      size="small"
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                      }}
+                    >
+                      <MoreOutlined />
+                    </Button>
+                  </Dropdown>
                 </Col>
               </Row>
               <Row style={{ marginTop: "16px" }}>
                 <Col lg={12} md={24} sm={24} xs={24}>
                   <Text>Email</Text>
                   <br />
-                  <Text strong>{client.email}</Text>
+                  <Text strong>{newClient.email}</Text>
                 </Col>
 
                 <Col lg={12} md={24} sm={24} xs={24}>
                   <Text>Phone</Text>
                   <br />
-                  <Text strong>{client.phone}</Text>
+                  <Text strong>{newClient.phone}</Text>
                 </Col>
               </Row>
               <Row style={{ marginTop: "16px" }}>
                 <Col lg={12} md={24} sm={24} xs={24}>
                   <Text>Mobile</Text>
                   <br />
-                  <Text strong>{client.mobile}</Text>
+                  <Text strong>{newClient.mobile}</Text>
                 </Col>
 
                 <Col lg={12} md={24} sm={24} xs={24}>
                   <Text>Address</Text>
                   <br />
-                  <Text strong>{client.address}</Text>
+                  <Text strong>{newClient.address}</Text>
                 </Col>
               </Row>
               <Row style={{ marginTop: "16px" }}>
                 <Col span={24}>
                   <Text>Notes</Text>
                   <br />
-                  <TextArea rows={4} placeholder="No notes added" />
+                  <TextArea
+                    rows={4}
+                    placeholder="No notes added"
+                    defaultValue={newClient.notes}
+                    onChange={(e) => {
+                      setNewClient({ ...newClient, notes: e.target.value });
+                    }}
+                    onBlur={async (e) => {
+                      setLoading(true);
+                      const res = await axios.patch(clientRoute, newClient);
+                      await dispatch(GetClientsActions());
+                      await dispatch(setActiveClientAction(res.data));
+                      setLoading(false);
+                    }}
+                  />
                 </Col>
               </Row>
             </Card>
@@ -234,12 +285,15 @@ const ClientDashboard = () => {
                         console.log(res);
                         await dispatch(GetInputsAction(client._id));
                         setLoading(false);
-                      } catch (err) {}
+                      } catch (err) {
+                        console.log(err);
+                      }
                     }}
                   >
                     Create Dummy Plan
                   </Button>
                   <Button
+                    loading={loading}
                     type="primary"
                     onClick={() => {
                       history.push(inputsFormRoute);
@@ -262,6 +316,7 @@ const ClientDashboard = () => {
                     onClick: async () => {
                       setLoading(true);
                       dispatch(setCurrentInputSetAction(inputs[rowIndex]));
+
                       const res = await axios.get(summaryRoute + inputs[0]._id);
                       await dispatch(setSummaryAction(res.data));
                       await dispatch(setRealSummaryAction(CalcRealSummary(res.data, assumptions)));
@@ -345,6 +400,36 @@ const ClientDashboard = () => {
           }
         }}
         onCancel={() => setIsModelVisible2(false)}
+      >
+        <p>
+          <strong>Are you sure you want to delete the input set? </strong>
+        </p>
+        <p>
+          <strong>This action cannot be undone! </strong>
+        </p>
+      </Modal>
+
+      <Modal
+        title="Delete InputSet"
+        okType={"danger"}
+        visible={clientDeleteModalVisible}
+        okText="Delete"
+        confirmLoading={loading}
+        onOk={async () => {
+          try {
+            const res = await axios.delete(clientRoute + client._id);
+            if (res.status === 200) {
+              dispatch(GetClientsActions());
+              setClientDeleteModalVisible(false);
+              history.push("/dashboard");
+            } else {
+              console.log("Something went wrong");
+            }
+          } catch (err) {
+            console.log(err);
+          }
+        }}
+        onCancel={() => setClientDeleteModalVisible(false)}
       >
         <p>
           <strong>Are you sure you want to delete the input set? </strong>

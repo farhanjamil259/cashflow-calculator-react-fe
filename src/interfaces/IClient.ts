@@ -7,4 +7,5 @@ export default interface IClient {
   gender: string;
   is_retired: string;
   retirement_age: number;
+  notes: string;
 }

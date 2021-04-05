@@ -1,9 +1,9 @@
 import React, { Fragment, useState } from "react";
-import {   Form,   Modal,    Table } from "antd";
+import { Form, Modal, Table } from "antd";
 
 // @ts-ignore
 import CurrencyFormat from "react-currency-format";
-import { RootStateOrAny,  useSelector } from "react-redux";
+import { RootStateOrAny, useSelector } from "react-redux";
 import IInputs from "../../../../interfaces/IInputs";
 
 import Text from "antd/lib/typography/Text";
@@ -13,7 +13,6 @@ import { pound } from "../../../../components/currencySumbol";
 import { numberFormat } from "highcharts";
 
 const { useForm } = Form;
-
 
 const OtherLoan = () => {
   const inputs: IInputs = useSelector((state: RootStateOrAny) => state.currentInputSetReducer);
@@ -66,13 +65,13 @@ const OtherLoan = () => {
               setIsModelVisible(true);
               // console.log(properties[activeItemIndex]);
             },
-            hidden:
-              !(inputs.current_year <= record.end_year && inputs.current_year >= record.start_year),
+            hidden: !(inputs.current_year <= record.end_year && inputs.current_year >= record.start_year),
             style: {
               cursor: "pointer",
             },
           };
         }}
+        rowKey={(record) => record._id}
       />
       <Modal
         title="Other Loan Details"

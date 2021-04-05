@@ -12,13 +12,14 @@ import {
   Input,
   DatePicker,
   Select,
+  InputNumber,
 } from "antd";
 
 import Highcharts, { numberFormat } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import React, { useEffect, useMemo } from "react";
 import IInputs from "../../interfaces/IInputs";
-import { RootStateOrAny, useSelector } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import IForecastSummary from "../../interfaces/IForecastSummary";
 
@@ -29,12 +30,21 @@ import {
   hatIcon,
   startIcon,
   umbrellaIcon,
-  homeIcon,
+  HomeIcon,
   partyIcon,
 } from "../../components/iconSvg";
 import { pound } from "../../components/currencySumbol";
 
 import "./LifeMilestones.css";
+import axios from "axios";
+import TextInput from "../inputs/controls/TextInput";
+import MoneyInput from "../inputs/controls/MoneyInput";
+import moment from "moment";
+import { inputsRoute, summaryRoute } from "../../routes/apiRoutes";
+import RateInput from "../inputs/controls/RateInput";
+import { currentInputSetReducer, setCurrentInputSetAction } from "../../redux/inputs/inputs";
+import { setSummaryAction } from "../../redux/summary/summary";
+import { DeleteOutlined } from "@ant-design/icons";
 
 require("highcharts/highcharts-more")(Highcharts);
 require("highcharts/modules/dumbbell")(Highcharts);
@@ -43,6 +53,7 @@ require("highcharts/modules/lollipop")(Highcharts);
 const { Text } = Typography;
 
 interface ILifeGoals {
+  _id: string;
   name: string;
   start_year: number;
   end_year: number;
@@ -58,11 +69,41 @@ interface IEvents {
 }
 
 function LifeMilestones() {
+  const dispatch = useDispatch();
+
   const inputs: IInputs = useSelector((state: RootStateOrAny) => state.currentInputSetReducer);
   const summary: IForecastSummary[] = useSelector((state: RootStateOrAny) => state.summaryReducer);
 
+  const [shortfall, setShortfall] = useState<number[]>([
+    ...summary.map((s) => {
+      return s.expense_analysis.total_expenses - s.income_analysis.total_income <= 0
+        ? 0
+        : s.expense_analysis.total_expenses - s.income_analysis.total_income;
+    }),
+  ]);
+
+  const [goalInputs, setGoalInputs] = useState<{
+    name: string;
+    annual_payment_in_todays_terms: number;
+    inflation: number;
+    start_year: number;
+    end_year: number;
+  }>({
+    name: "Goal",
+    annual_payment_in_todays_terms: 0,
+    inflation: 0,
+    start_year: moment().year(),
+    end_year: moment().year(),
+  });
+
+  const [goalSelectedData, setGoalSelectedData] = useState({
+    _id: "",
+    name: "",
+  });
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalVisibleGoals, setIsModalVisibleGoals] = useState(false);
+  const [isModalVisibleDeletGoals, setIsModalVisibleDeletGoals] = useState(false);
 
   const handleCancel = () => {
     setIsModalVisible(false);
@@ -72,10 +113,11 @@ function LifeMilestones() {
   const lifeGoals: ILifeGoals[] = [
     ...inputs.household_expenses.one_off_expenses.map((g) => {
       return {
+        _id: g._id,
         name: g.name,
         start_year: g.start_year,
         end_year: g.end_year,
-        progress: Math.floor(Math.random() * 20 + 80),
+        progress: 100,
         amount: g.annual_payment_in_todays_terms,
       };
     }),
@@ -309,15 +351,31 @@ function LifeMilestones() {
       title: "Progress",
       dataIndex: "progress",
       key: "category",
-      width: "50%",
+      width: "30%",
       render: (text: any) => {
         return <Progress percent={text} />;
       },
     },
     {
+      title: "Start Year",
+      dataIndex: "start_year",
+      key: "year",
+      width: "10%",
+      align: "right",
+    },
+    {
+      title: "End Year",
+      dataIndex: "end_year",
+      key: "eyear",
+      width: "10%",
+      align: "right",
+    },
+    {
       title: "Amount",
       dataIndex: "amount",
       key: "amount",
+
+      width: "10%",
       render: (text: any) => (
         <Text>
           {pound}
@@ -325,6 +383,27 @@ function LifeMilestones() {
         </Text>
       ),
       align: "right",
+    },
+    {
+      title: "Action",
+      dataIndex: "action",
+      key: "action",
+      align: "right",
+      width: "10%",
+      render: (text: any, record: any) => {
+        return (
+          <DeleteOutlined
+            onClick={async () => {
+              setIsModalVisibleDeletGoals(true);
+              setGoalSelectedData(record);
+            }}
+            style={{
+              cursor: "pointer",
+              color: "red",
+            }}
+          />
+        );
+      },
     },
   ];
 
@@ -394,6 +473,7 @@ function LifeMilestones() {
               <Button
                 type="primary"
                 size="small"
+                disabled
                 onClick={() => {
                   setIsModalVisible(true);
                 }}
@@ -413,14 +493,76 @@ function LifeMilestones() {
         </Col>
       </Row>
 
-      <Modal title="Goal" visible={isModalVisibleGoals} okText="Save" onCancel={handleCancel}>
+      <Modal
+        title="Goal"
+        visible={isModalVisibleGoals}
+        okText="Save"
+        onCancel={handleCancel}
+        onOk={async () => {
+          const newInputs = JSON.parse(JSON.stringify(inputs));
+          newInputs.household_expenses.one_off_expenses.push({
+            name: goalInputs.name,
+            annual_payment_in_todays_terms: goalInputs.annual_payment_in_todays_terms,
+            inflation: goalInputs.inflation,
+            start_year: goalInputs.start_year,
+            end_year: goalInputs.end_year,
+          });
+          const res = await axios.put(inputsRoute + inputs._id, newInputs);
+
+          if (res.status === 200) {
+            //  await dispatch(setCurrentInputSetAction(res.data));
+            const newInputs = await axios.get(inputsRoute + res.data.id);
+            const newSummary = await axios.get(summaryRoute + res.data.id);
+            await dispatch(setCurrentInputSetAction(newInputs.data));
+            await dispatch(setSummaryAction(newSummary.data));
+            setIsModalVisibleGoals(false);
+          }
+        }}
+      >
         <Form form={form} labelAlign="left" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
           <Form.Item
             name="name"
             label="Name of Goal"
             rules={[{ required: true, message: "First name is required" }]}
           >
-            <Input name="fname" />
+            <Input
+              defaultValue={goalInputs.name}
+              onChange={(e) => {
+                setGoalInputs({ ...goalInputs, name: e.target.value });
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="amount"
+            label="Amount"
+            rules={[{ required: true, message: "An amount is required" }]}
+          >
+            <MoneyInput
+              value={goalInputs.annual_payment_in_todays_terms.toString()}
+              onBlur={(e) => setGoalInputs({ ...goalInputs, annual_payment_in_todays_terms: +e })}
+            />
+          </Form.Item>
+          <Form.Item
+            name="inflation"
+            label="Inflation"
+            rules={[{ required: true, message: "Inflation rate is required" }]}
+          >
+            <InputNumber
+              min={0}
+              max={100}
+              precision={2}
+              formatter={(value) => `${value}%`}
+              parser={(value: any) => value!.replace("%", "")}
+              value={`${+goalInputs.inflation * 100}`}
+              className="custom-input-fields"
+              onBlur={(e) => {
+                setGoalInputs({
+                  ...goalInputs,
+                  inflation: parseFloat(e.target.value.replace("%", "")) / 100,
+                });
+              }}
+            />
           </Form.Item>
 
           <Form.Item
@@ -428,91 +570,100 @@ function LifeMilestones() {
             label="Start Year"
             rules={[{ required: true, message: "Please select a year" }]}
           >
-            <DatePicker picker="year" name="year" style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item name="end_year" label="End Year">
-            <DatePicker picker="year" name="year" style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item
-            name="progress"
-            label="Progress"
-            rules={[{ required: true, message: "First name is required" }]}
-          >
-            <Input name="progress" />
+            <DatePicker
+              picker="year"
+              name="year"
+              style={{ width: "100%" }}
+              onChange={(date, dateString) => {
+                setGoalInputs({ ...goalInputs, start_year: +dateString });
+              }}
+            />
           </Form.Item>
           <Form.Item
-            name="amount"
-            label="Amount"
-            rules={[{ required: true, message: "First name is required" }]}
+            name="end_year"
+            label="End Year"
+            rules={[{ required: true, message: "Please select a year" }]}
           >
-            <Input name="amount" />
+            <DatePicker
+              picker="year"
+              name="year"
+              style={{ width: "100%" }}
+              onChange={(date, dateString) => {
+                setGoalInputs({ ...goalInputs, end_year: +dateString });
+              }}
+            />
           </Form.Item>
         </Form>
       </Modal>
 
-      <Modal title="Event" visible={isModalVisible} okText="Save" onCancel={handleCancel} width={1000}>
-        <Row justify="space-around">
-          <Col span={22}>
-            <Form form={form} layout="vertical" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
-              <Row>
-                <Col span={10}>
-                  <Form.Item
-                    name="name"
-                    label="Name of Event"
-                    rules={[{ required: true, message: "First name is required" }]}
-                  >
-                    <Input name="fname" />
-                  </Form.Item>
+      <Modal title="Event" visible={isModalVisible} okText="Save" onCancel={handleCancel}>
+        <Row>
+          <Form form={form} layout="vertical" style={{ width: "100%" }}>
+            <Row>
+              <Col span={24}>
+                <Form.Item
+                  name="name"
+                  label="Name of Event"
+                  rules={[{ required: true, message: "First name is required" }]}
+                >
+                  <Input name="fname" />
+                </Form.Item>
 
-                  <Form.Item name="owner" label="Owner">
-                    <Select style={{ width: "100%" }}>
-                      <Option value="mr">Mr</Option>
-                      <Option value="mrs">Mrs</Option>
-                    </Select>
-                  </Form.Item>
+                <Form.Item name="owner" label="Owner">
+                  <Select style={{ width: "100%" }}>
+                    <Option value="mr">Mr</Option>
+                    <Option value="mrs">Mrs</Option>
+                  </Select>
+                </Form.Item>
 
-                  <Form.Item
-                    name="year"
-                    label="Year"
-                    rules={[{ required: true, message: "Please select a year" }]}
-                  >
-                    <DatePicker picker="year" name="year" style={{ width: "100%" }} />
-                  </Form.Item>
-                </Col>
-                <Col span={14}>
-                  <Form.Item>
-                    <Row>
-                      <Col span={4} style={{ marginBottom: "16px" }}>
-                        <img src={homeIcon("black")} />
-                      </Col>
-                      <Col span={4} style={{ marginBottom: "16px" }}>
-                        <img src={partyIcon("black")} />
-                      </Col>
-                      <Col span={4} style={{ marginBottom: "16px" }}>
-                        <img src={homeIcon("black")} />
-                      </Col>
-                      <Col span={4} style={{ marginBottom: "16px" }}>
-                        <img src={homeIcon("black")} />
-                      </Col>
-                      <Col span={4} style={{ marginBottom: "16px" }}>
-                        <img src={homeIcon("black")} />
-                      </Col>
-                      <Col span={4} style={{ marginBottom: "16px" }}>
-                        <img src={homeIcon("black")} />
-                      </Col>
-                      <Col span={4} style={{ marginBottom: "16px" }}>
-                        <img src={homeIcon("black")} />
-                      </Col>
-                      <Col span={4} style={{ marginBottom: "16px" }}>
-                        <img src={homeIcon("black")} />
-                      </Col>
-                    </Row>
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Form>
-          </Col>
+                <Form.Item
+                  name="year"
+                  label="Year"
+                  rules={[{ required: true, message: "Please select a year" }]}
+                >
+                  <DatePicker picker="year" name="year" style={{ width: "100%" }} />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item>
+                  <Row>
+                    <HomeIcon />
+                  </Row>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
         </Row>
+      </Modal>
+
+      <Modal
+        title="Delete Goals"
+        okType={"danger"}
+        visible={isModalVisibleDeletGoals}
+        okText="Delete"
+        onOk={async () => {
+          const newInputs = JSON.parse(JSON.stringify(inputs));
+          const newGoals = newInputs.household_expenses.one_off_expenses.filter((e: any) => {
+            return e._id !== goalSelectedData._id;
+          });
+          newInputs.household_expenses.one_off_expenses = newGoals;
+          const res = await axios.put(inputsRoute + inputs._id, newInputs);
+          if (res.status === 200) {
+            const newInputs = await axios.get(inputsRoute + res.data.id);
+            const newSummary = await axios.get(summaryRoute + res.data.id);
+            await dispatch(setCurrentInputSetAction(newInputs.data));
+            await dispatch(setSummaryAction(newSummary.data));
+            setIsModalVisibleDeletGoals(false);
+          }
+        }}
+        onCancel={() => setIsModalVisibleDeletGoals(false)}
+      >
+        <p>
+          Are you sure you want to delete the Goal <strong>{goalSelectedData.name}</strong>
+        </p>
+        <p>
+          <strong>This action cannot be undone! </strong>
+        </p>
       </Modal>
     </Layout>
   );

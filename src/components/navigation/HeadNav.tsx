@@ -10,6 +10,15 @@ import React from "react";
 const HeadNav = () => {
   const user = useSelector((state: RootStateOrAny) => state.userReducer);
   const currentInputSet: IInputs = useSelector((state: RootStateOrAny) => state.currentInputSetReducer);
+
+  const planMenu = (
+    <Menu>
+      <Menu.Item key="1">
+        <Link to={"/dashboard/editPlan"}>Edit Plan</Link>
+      </Menu.Item>
+    </Menu>
+  );
+
   const userMenu = (
     <Menu>
       <Menu.Item key="1">
@@ -35,7 +44,12 @@ const HeadNav = () => {
   const PlanInfo = () => {
     return (
       <div>
-        {currentInputSet.input_set_name}
+        <Dropdown overlay={planMenu}>
+          <Button type={"link"} style={{ color: "black" }} onClick={(e) => e.preventDefault()}>
+            {currentInputSet.input_set_name}
+          </Button>
+        </Dropdown>
+
         <Divider type="vertical" />
         <Dropdown overlay={userMenu}>
           <Button type={"link"} style={{ color: "black" }} onClick={(e) => e.preventDefault()}>

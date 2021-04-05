@@ -118,6 +118,7 @@ const ClientsList = () => {
     created: moment(),
     modified: moment(),
     advisor: user.name,
+    notes: "",
   });
 
   const [form] = Form.useForm();

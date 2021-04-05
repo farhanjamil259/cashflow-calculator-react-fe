@@ -25,12 +25,14 @@ import ExpensesBreakdown from "./pages/clientDetails/ExpensesBreakdown";
 import Assumption from "./pages/assumptions/Assumption";
 import LifeMilestones from "./pages/clientDetails/LifeMilestones";
 import AssumptionFrom from "./pages/assumptions/AssumptionFrom";
+import InputsEditForm from "./pages/inputs/InputsEditForm";
 
 function App() {
   return (
     <Layout style={{ backgroundColor: "white" }}>
       <Route path="/dashboard" component={HeadNav} />
       <Route path="/assumption" component={HeadNav} />
+      <Route path="/createinputs" component={HeadNav} />
       <Content>
         <Layout>
           <Route path="/dashboard/clientDashboard/clientPlanDetails" component={SideNav} />
@@ -42,6 +44,7 @@ function App() {
               <Route exact path="/dashboard" component={ClientsList} />
               <Route exact path="/dashboard/clientDashboard" component={ClientDashboard} />
               <Route exact path={inputsFormRoute} component={InputsForm} />
+              <Route exact path={"/dashboard/editPlan"} component={InputsEditForm} />
               <Route exact path={"/assumption"} component={Assumption} />
               <Route exact path={"/assumption/assumptionForm"} component={AssumptionFrom} />
 

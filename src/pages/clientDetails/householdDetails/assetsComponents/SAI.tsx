@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import {  Form,   Modal,   Table } from "antd";
+import { Form, Modal, Table } from "antd";
 import IInputs from "../../../../interfaces/IInputs";
-import { RootStateOrAny,  useSelector } from "react-redux";
+import { RootStateOrAny, useSelector } from "react-redux";
 import Text from "antd/lib/typography/Text";
 
 // @ts-ignore
@@ -94,6 +94,7 @@ const SAI = () => {
             },
           };
         }}
+        rowKey={(record) => record.name}
       />
       <Text strong> General Investment Accounts </Text>
       <Table

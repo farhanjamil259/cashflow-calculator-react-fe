@@ -271,26 +271,26 @@ const Cashflow = () => {
           showInLegend: detailedView,
           name: "Property Sale",
           type: "column",
-          events: detailedView
-            ? {
-                legendItemClick: (e) => {
-                  setIncomeState({ ...incomeState, propertySaleState: !e.target.visible });
-                  if (e.target.visible) {
-                    setShortfall(
-                      shortfall.map((s, i) => {
-                        return s + summary[i].income_analysis.total_residential_sale_proceeds;
-                      })
-                    );
-                  } else {
-                    setShortfall(
-                      shortfall.map((s, i) => {
-                        return s - summary[i].income_analysis.total_residential_sale_proceeds;
-                      })
-                    );
-                  }
-                },
-              }
-            : {},
+          // events: detailedView
+          //   ? {
+          //       legendItemClick: (e) => {
+          //         setIncomeState({ ...incomeState, propertySaleState: !e.target.visible });
+          //         if (e.target.visible) {
+          //           setShortfall(
+          //             shortfall.map((s, i) => {
+          //               return s + summary[i].income_analysis.total_residential_sale_proceeds;
+          //             })
+          //           );
+          //         } else {
+          //           setShortfall(
+          //             shortfall.map((s, i) => {
+          //               return s - summary[i].income_analysis.total_residential_sale_proceeds;
+          //             })
+          //           );
+          //         }
+          //       },
+          //     }
+          //   : {},
           data: detailedView
             ? [
                 ...summary.map((s) => {
