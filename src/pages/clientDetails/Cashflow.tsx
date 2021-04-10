@@ -267,7 +267,40 @@ const Cashflow = () => {
           legendIndex: 8,
         },
         {
-          visible: false,
+          // visible: detailedView,
+          showInLegend: detailedView,
+          name: "Bank Accounts",
+          type: "column",
+          events: detailedView
+            ? {
+                legendItemClick: (e) => {
+                  setIncomeState({ ...incomeState, otherState: !e.target.visible });
+                  if (e.target.visible) {
+                    setShortfall(
+                      shortfall.map((s, i) => {
+                        return s + summary[i].income_analysis.total_other_income;
+                      })
+                    );
+                  } else {
+                    setShortfall(
+                      shortfall.map((s, i) => {
+                        return s - summary[i].income_analysis.total_other_income;
+                      })
+                    );
+                  }
+                },
+              }
+            : {},
+          data: detailedView
+            ? [
+                ...summary.map((s) => {
+                  return s.income_analysis.aggregated_bank_accounts;
+                }),
+              ]
+            : [],
+          legendIndex: 8,
+        },
+        {
           showInLegend: detailedView,
           name: "Property Sale",
           type: "column",
@@ -515,7 +548,7 @@ const Cashflow = () => {
           showInLegend: !detailedView,
           name: "Inflow",
           type: "column",
-          color: "#5c6bc0",
+          color: "#3f51b5",
           data: [
             ...summary.map((s) => {
               return s.income_analysis.total_income;

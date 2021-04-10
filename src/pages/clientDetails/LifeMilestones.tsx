@@ -13,6 +13,7 @@ import {
   DatePicker,
   Select,
   InputNumber,
+  Radio,
 } from "antd";
 
 import Highcharts, { numberFormat } from "highcharts";
@@ -23,16 +24,23 @@ import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import IForecastSummary from "../../interfaces/IForecastSummary";
 
-import {
-  bookIcon,
-  bottleIcon,
-  endIcon,
-  hatIcon,
-  startIcon,
-  umbrellaIcon,
-  HomeIcon,
-  partyIcon,
-} from "../../components/iconSvg";
+import { Icon, InlineIcon } from "@iconify/react";
+import sailboatFill from "@iconify-icons/ri/sailboat-fill";
+import baselineDirectionsBoatFilled from "@iconify-icons/ic/baseline-directions-boat-filled";
+import baselineSpeaker from "@iconify-icons/ic/baseline-speaker";
+import hatGraduation24Filled from "@iconify-icons/fluent/hat-graduation-24-filled";
+import baselineToys from "@iconify-icons/ic/baseline-toys";
+import baselineHouse from "@iconify-icons/ic/baseline-house";
+import money24Filled from "@iconify-icons/fluent/money-24-filled";
+import baselineDirectionsCarFilled from "@iconify-icons/ic/baseline-directions-car-filled";
+import sharpAccessTimeFilled from "@iconify-icons/ic/sharp-access-time-filled";
+import hammerWrench from "@iconify-icons/mdi/hammer-wrench";
+import roundStorefront from "@iconify-icons/ic/round-storefront";
+import airplane24Filled from "@iconify-icons/fluent/airplane-24-filled";
+import ringIcon from "@iconify-icons/mdi/ring";
+import shoppingIcon from "@iconify-icons/mdi/shopping";
+
+import { bookIcon, bottleIcon, endIcon, hatIcon, startIcon, umbrellaIcon } from "../../components/iconSvg";
 import { pound } from "../../components/currencySumbol";
 
 import "./LifeMilestones.css";
@@ -40,11 +48,12 @@ import axios from "axios";
 import TextInput from "../inputs/controls/TextInput";
 import MoneyInput from "../inputs/controls/MoneyInput";
 import moment from "moment";
-import { inputsRoute, summaryRoute } from "../../routes/apiRoutes";
+import { eventsRoute, inputsRoute, summaryRoute } from "../../routes/apiRoutes";
 import RateInput from "../inputs/controls/RateInput";
 import { currentInputSetReducer, setCurrentInputSetAction } from "../../redux/inputs/inputs";
 import { setSummaryAction } from "../../redux/summary/summary";
 import { DeleteOutlined } from "@ant-design/icons";
+import { getEventsAction } from "../../redux/events/events";
 
 require("highcharts/highcharts-more")(Highcharts);
 require("highcharts/modules/dumbbell")(Highcharts);
@@ -74,13 +83,7 @@ function LifeMilestones() {
   const inputs: IInputs = useSelector((state: RootStateOrAny) => state.currentInputSetReducer);
   const summary: IForecastSummary[] = useSelector((state: RootStateOrAny) => state.summaryReducer);
 
-  const [shortfall, setShortfall] = useState<number[]>([
-    ...summary.map((s) => {
-      return s.expense_analysis.total_expenses - s.income_analysis.total_income <= 0
-        ? 0
-        : s.expense_analysis.total_expenses - s.income_analysis.total_income;
-    }),
-  ]);
+  const [loading, setLoading] = useState(false);
 
   const [goalInputs, setGoalInputs] = useState<{
     name: string;
@@ -131,8 +134,18 @@ function LifeMilestones() {
     return ["#7e57c2", "#9575cd", "#b39ddb", "#d1c4e9", "#ede7f6"];
   }, []);
 
+  const allEvents: any = useSelector((state: RootStateOrAny) => state.eventsReducer);
+
   const lifeEvents: IEvents[] = useMemo(() => {
     return [
+      ...allEvents.map((e: any, i: number) => {
+        return {
+          name: e.name,
+          year: e.year,
+          owner: inputs.household_owners[e.owner].name,
+          icon: startIcon(planColor),
+        };
+      }),
       {
         name: "Plan Start",
         year: inputs.current_year,
@@ -431,6 +444,74 @@ function LifeMilestones() {
   const [form] = Form.useForm();
   const { Option } = Select;
 
+  const [event, setEvent] = useState<{
+    name: string;
+    owner: number;
+    year: number;
+    category: string;
+  }>({
+    name: "",
+    owner: 0,
+    year: 2021,
+    category: "",
+  });
+
+  const [categories, setCategories] = useState([
+    {
+      icon: baselineDirectionsBoatFilled,
+      category: "Boat",
+    },
+    {
+      icon: baselineSpeaker,
+      category: "Party",
+    },
+    {
+      icon: hatGraduation24Filled,
+      category: "University",
+    },
+
+    {
+      icon: baselineToys,
+      category: "Childcare",
+    },
+    {
+      icon: baselineHouse,
+      category: "House",
+    },
+    {
+      icon: money24Filled,
+      category: "Inheritance",
+    },
+    {
+      icon: baselineDirectionsCarFilled,
+      category: "Mid-life crisis",
+    },
+    {
+      icon: sharpAccessTimeFilled,
+      category: "Part-time job",
+    },
+    {
+      icon: hammerWrench,
+      category: "Remodel",
+    },
+    {
+      icon: roundStorefront,
+      category: "Start a business",
+    },
+    {
+      icon: airplane24Filled,
+      category: "Travel",
+    },
+    {
+      icon: ringIcon,
+      category: "Wedding",
+    },
+    {
+      icon: shoppingIcon,
+      category: "Other",
+    },
+  ]);
+
   return (
     <Layout style={{ backgroundColor: "white" }}>
       <Row justify="space-around">
@@ -473,7 +554,6 @@ function LifeMilestones() {
               <Button
                 type="primary"
                 size="small"
-                disabled
                 onClick={() => {
                   setIsModalVisible(true);
                 }}
@@ -497,8 +577,15 @@ function LifeMilestones() {
         title="Goal"
         visible={isModalVisibleGoals}
         okText="Save"
+        okButtonProps={{
+          loading: loading,
+        }}
+        cancelButtonProps={{
+          loading: loading,
+        }}
         onCancel={handleCancel}
         onOk={async () => {
+          setLoading(true);
           const newInputs = JSON.parse(JSON.stringify(inputs));
           newInputs.household_expenses.one_off_expenses.push({
             name: goalInputs.name,
@@ -516,7 +603,9 @@ function LifeMilestones() {
             await dispatch(setCurrentInputSetAction(newInputs.data));
             await dispatch(setSummaryAction(newSummary.data));
             setIsModalVisibleGoals(false);
+            setLoading(false);
           }
+          setLoading(false);
         }}
       >
         <Form form={form} labelAlign="left" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
@@ -596,7 +685,26 @@ function LifeMilestones() {
         </Form>
       </Modal>
 
-      <Modal title="Event" visible={isModalVisible} okText="Save" onCancel={handleCancel}>
+      <Modal
+        title="Event"
+        okButtonProps={{
+          loading: loading,
+        }}
+        cancelButtonProps={{
+          loading: loading,
+        }}
+        visible={isModalVisible}
+        okText="Save"
+        onOk={async () => {
+          setLoading(true);
+          const res = await axios.post(eventsRoute + inputs._id, event);
+          await dispatch(getEventsAction(inputs._id));
+          setIsModalVisible(false);
+          setLoading(false);
+        }}
+        onCancel={handleCancel}
+        width="1000px"
+      >
         <Row>
           <Form form={form} layout="vertical" style={{ width: "100%" }}>
             <Row>
@@ -606,13 +714,26 @@ function LifeMilestones() {
                   label="Name of Event"
                   rules={[{ required: true, message: "First name is required" }]}
                 >
-                  <Input name="fname" />
+                  <Input
+                    name="fname"
+                    value={event.name}
+                    onChange={(e) => {
+                      setEvent({ ...event, name: e.target.value });
+                    }}
+                  />
                 </Form.Item>
 
                 <Form.Item name="owner" label="Owner">
-                  <Select style={{ width: "100%" }}>
-                    <Option value="mr">Mr</Option>
-                    <Option value="mrs">Mrs</Option>
+                  <Select
+                    style={{ width: "100%" }}
+                    defaultValue={inputs.household_owners[0].name}
+                    onChange={(e) => {
+                      setEvent({ ...event, owner: +e });
+                    }}
+                  >
+                    {inputs.household_owners.map((o, i) => {
+                      return <Option value={i}>{o.name}</Option>;
+                    })}
                   </Select>
                 </Form.Item>
 
@@ -621,13 +742,50 @@ function LifeMilestones() {
                   label="Year"
                   rules={[{ required: true, message: "Please select a year" }]}
                 >
-                  <DatePicker picker="year" name="year" style={{ width: "100%" }} />
+                  <DatePicker
+                    picker="year"
+                    name="year"
+                    defaultValue={moment()}
+                    style={{ width: "100%" }}
+                    onChange={(date, dateString) => {
+                      setEvent({ ...event, year: +dateString });
+                    }}
+                  />
                 </Form.Item>
               </Col>
               <Col span={24}>
                 <Form.Item>
                   <Row>
-                    <HomeIcon />
+                    <Radio.Group
+                      buttonStyle="solid"
+                      onChange={(e) => {
+                        setEvent({ ...event, category: e.target.value });
+                      }}
+                    >
+                      {categories.map((c) => {
+                        return (
+                          <Radio.Button
+                            value={c.category}
+                            style={{
+                              padding: "5px",
+                              margin: "5px",
+                              width: "100px",
+                              height: "100px",
+                              textAlign: "center",
+                            }}
+                          >
+                            <Icon icon={c.icon} height="60" />
+                            <p
+                              style={{
+                                fontSize: "10px",
+                              }}
+                            >
+                              {c.category}
+                            </p>
+                          </Radio.Button>
+                        );
+                      })}
+                    </Radio.Group>
                   </Row>
                 </Form.Item>
               </Col>
@@ -640,6 +798,12 @@ function LifeMilestones() {
         title="Delete Goals"
         okType={"danger"}
         visible={isModalVisibleDeletGoals}
+        okButtonProps={{
+          loading: loading,
+        }}
+        cancelButtonProps={{
+          loading: loading,
+        }}
         okText="Delete"
         onOk={async () => {
           const newInputs = JSON.parse(JSON.stringify(inputs));
@@ -649,11 +813,13 @@ function LifeMilestones() {
           newInputs.household_expenses.one_off_expenses = newGoals;
           const res = await axios.put(inputsRoute + inputs._id, newInputs);
           if (res.status === 200) {
+            setLoading(true);
             const newInputs = await axios.get(inputsRoute + res.data.id);
             const newSummary = await axios.get(summaryRoute + res.data.id);
             await dispatch(setCurrentInputSetAction(newInputs.data));
             await dispatch(setSummaryAction(newSummary.data));
             setIsModalVisibleDeletGoals(false);
+            setLoading(false);
           }
         }}
         onCancel={() => setIsModalVisibleDeletGoals(false)}

@@ -11,7 +11,7 @@ import { inputsReducer, currentInputSetReducer } from "./inputs/inputs";
 import { activeClientReducer, clientsReducer } from "./clients/client";
 import { summaryReducer } from "./summary/summary";
 import { realSummaryReducer } from "./summary/realSummary";
-
+import { eventsReducer } from "./events/events";
 
 const rootReducers = combineReducers({
   userReducer,
@@ -22,7 +22,8 @@ const rootReducers = combineReducers({
   currentInputSetReducer,
   summaryReducer,
   activeClientReducer,
-  realSummaryReducer
+  realSummaryReducer,
+  eventsReducer,
 });
 
 //store

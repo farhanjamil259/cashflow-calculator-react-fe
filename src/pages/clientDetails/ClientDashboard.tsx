@@ -18,6 +18,7 @@ import IAssumptions from "../../interfaces/IAssumptions";
 import { setRealSummaryAction } from "../../redux/summary/realSummary";
 import { MoreOutlined } from "@ant-design/icons";
 import { GetClientsActions, setActiveClientAction } from "../../redux/clients/client";
+import { getEventsAction } from "../../redux/events/events";
 
 const { Text, Title } = Typography;
 const { TextArea } = Input;
@@ -316,6 +317,7 @@ const ClientDashboard = () => {
                     onClick: async () => {
                       setLoading(true);
                       dispatch(setCurrentInputSetAction(inputs[rowIndex]));
+                      await dispatch(getEventsAction(inputs[rowIndex]._id));
 
                       const res = await axios.get(summaryRoute + inputs[0]._id);
                       await dispatch(setSummaryAction(res.data));

@@ -19,7 +19,7 @@ const dummyInputs: IInputs = {
       retirement_age: 50,
     },
   ],
-  children: [{ id: uuid(), name: "Colin Myers", birth_year: 2024 }],
+  children: [{ id: uuid(), name: "Tom Myers", birth_year: 2024 }],
   assets: {
     properties: [
       {
@@ -28,7 +28,7 @@ const dummyInputs: IInputs = {
         original_price: 1000000,
         start_year: 2025,
         sell_in_future: true,
-        end_year: 2050,
+        end_year: 2095,
         type_of_property: "Main Home",
         on_mortgage: true,
         mortgage_rate: 0.9,
@@ -36,7 +36,7 @@ const dummyInputs: IInputs = {
       {
         id: uuid(),
         name: "Second Property",
-        original_price: 1000000,
+        original_price: 750000,
         start_year: 2050,
         sell_in_future: false,
         end_year: 2095,
@@ -47,7 +47,7 @@ const dummyInputs: IInputs = {
     ],
     bank_accounts: {
       original_balance: 50000,
-      minimum_cash_balance_acceptable: 10000,
+      minimum_cash_balance_acceptable: 20000,
     },
     savings_and_investments: {
       individual_savings_account: [
@@ -87,7 +87,7 @@ const dummyInputs: IInputs = {
     mortgages: [
       {
         interest_rate: 0.035,
-        mortgage_period: 20,
+        mortgage_period: 30,
         number_of_payments_per_year: 12,
       },
       {
@@ -117,7 +117,7 @@ const dummyInputs: IInputs = {
   household_income: {
     employment_income: [
       {
-        gross_anual_amount: 120000,
+        gross_anual_amount: 70000,
       },
       {
         gross_anual_amount: 0,
@@ -185,13 +185,6 @@ const dummyInputs: IInputs = {
             {
               id: uuid(),
               name: "Drawdown 4",
-              amount_to_drawn_down: 0,
-              start_year: 2032,
-              end_year: 2032,
-            },
-            {
-              id: uuid(),
-              name: "Drawdown 5",
               amount_to_drawn_down: 120000,
               start_year: 2025,
               end_year: 2025,
@@ -214,6 +207,13 @@ const dummyInputs: IInputs = {
               amount_to_drawn_down: 10000,
               start_year: 2050,
               end_year: 2095,
+            },
+            {
+              id: uuid(),
+              name: "Drawdown 3",
+              amount_to_drawn_down: 150000,
+              start_year: 2050,
+              end_year: 2050,
             },
           ],
         },
@@ -272,8 +272,38 @@ const dummyInputs: IInputs = {
       ],
     },
     other_income: {
-      other_taxable_income: [],
-      other_non_taxable_income: [],
+      other_taxable_income: [
+        {
+          name: "Mr Optimistic",
+          gross_annual_amount: 0,
+          inflation: 0,
+          start_year: 2021,
+          end_year: 2021,
+        },
+        {
+          name: "Mrs Optimistic",
+          gross_annual_amount: 0,
+          inflation: 0,
+          start_year: 2021,
+          end_year: 2021,
+        },
+      ],
+      other_non_taxable_income: [
+        {
+          name: "Mr Optimistic",
+          gross_annual_amount: 0,
+          inflation: 0,
+          start_year: 2021,
+          end_year: 2021,
+        },
+        {
+          name: "Mrs Optimistic",
+          gross_annual_amount: 0,
+          inflation: 0,
+          start_year: 2021,
+          end_year: 2021,
+        },
+      ],
     },
   },
   household_expenses: {
@@ -285,7 +315,7 @@ const dummyInputs: IInputs = {
           name: "Rent",
           annual_expense: 30000,
           start_year: 2021,
-          end_year: 2044,
+          end_year: 2024,
           rate_after_retirement: 0,
           type: "property",
         },
@@ -378,13 +408,13 @@ const dummyInputs: IInputs = {
           id: uuid(),
           name: "Travel Card - Husband",
           annual_expense: 1600,
-          rate_after_retirement: 0.2,
+          rate_after_retirement: 0.7,
         },
         {
           id: uuid(),
           name: "Travel Card - Wife",
           annual_expense: 1600,
-          rate_after_retirement: 0.2,
+          rate_after_retirement: 0.7,
         },
         {
           id: uuid(),
@@ -561,7 +591,7 @@ const dummyInputs: IInputs = {
         annual_payment_in_todays_terms: 2000,
         inflation: 0.01,
         start_year: 2021,
-        end_year: 2091,
+        end_year: 2095,
       },
     ],
     children_education_expenses: {
