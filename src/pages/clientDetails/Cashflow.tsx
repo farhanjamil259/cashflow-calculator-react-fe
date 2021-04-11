@@ -208,7 +208,7 @@ const Cashflow = () => {
         },
       },
     },
-    colors: ["#5c6bc0", "#ab47bc", "#7e57c2", "#26a69a", "#9ccc65", "#ffee58", "#ffa726"],
+    colors: ["#5c6bc0", "#ab47bc", "#7e57c2", "#7e57c2", "#26a69a", "#9ccc65", "#ffee58", "#ffa726"],
   });
 
   let chartRef: any = React.useRef(null);
