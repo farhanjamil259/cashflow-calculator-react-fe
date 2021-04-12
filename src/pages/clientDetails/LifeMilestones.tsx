@@ -113,19 +113,15 @@ function LifeMilestones() {
     setIsModalVisibleGoals(false);
   };
 
-  const lifeGoals: ILifeGoals[] = [
-    ...inputs.household_expenses.one_off_expenses.map((g) => {
-      return {
-        _id: g._id,
-        name: g.name,
-        start_year: g.start_year,
-        end_year: g.end_year,
-        progress: 100,
-        amount: g.annual_payment_in_todays_terms,
-      };
-    }),
-  ];
+  const [lifeGoals, setLifeGoans] = useState<ILifeGoals[]>([]);
 
+  const [shortfall, setShortfall] = useState<number[]>(
+    summary.map((s) => {
+      return s.expense_analysis.total_expenses - s.income_analysis.total_income;
+    })
+  );
+
+  //Math.round(100 - sumShortfall / goal.amount)
   const planColor: string = "#424242";
   const ownerColors: string[] = useMemo(() => {
     return ["#81d4fa", "#a5d6a7"];
@@ -511,6 +507,37 @@ function LifeMilestones() {
       category: "Other",
     },
   ]);
+
+  useEffect(() => {
+    const clone2: ILifeGoals[] = [];
+    inputs.household_expenses.one_off_expenses.map((g) => {
+      let newProgress = 0;
+      let calcShortfall = 0;
+      summary.map((s) => {
+        if (s.year >= g.start_year && s.year <= g.end_year) {
+          calcShortfall += s.expense_analysis.total_expenses - s.income_analysis.total_income;
+        }
+      });
+
+      let calculatedProgress = Math.round(100 - calcShortfall / g.annual_payment_in_todays_terms);
+      // if (Math.round(100 - calcShortfall / g.annual_payment_in_todays_terms) > 100) {
+      //   newProgress = 100;
+      // } else {
+      //   Math.round(100 - calcShortfall / g.annual_payment_in_todays_terms);
+      // }
+
+      clone2.push({
+        _id: g._id,
+        name: g.name,
+        start_year: g.start_year,
+        end_year: g.end_year,
+        progress: calculatedProgress,
+        amount: g.annual_payment_in_todays_terms,
+      });
+    });
+
+    setLifeGoans(clone2);
+  }, []);
 
   return (
     <Layout style={{ backgroundColor: "white" }}>

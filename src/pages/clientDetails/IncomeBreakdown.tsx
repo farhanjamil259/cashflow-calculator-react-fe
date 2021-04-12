@@ -1,6 +1,6 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import Layout from "antd/lib/layout/layout";
-import { Button, Card, Col,   Row, Slider, Switch } from "antd";
+import { Button, Card, Col, Row, Slider, Switch } from "antd";
 import IForecastSummary from "../../interfaces/IForecastSummary";
 import { RootStateOrAny, useSelector } from "react-redux";
 import highcharts, { numberFormat } from "highcharts";
@@ -189,7 +189,7 @@ const IncomeBreakdown = () => {
       {
         name: "Property Sale",
         type: "column",
-        visible: false,
+
         data: [
           ...summary.map((s) => {
             return s.income_analysis.total_residential_sale_proceeds;

@@ -45,6 +45,7 @@ const Cashflow = () => {
     chart: {
       alignTicks: false,
       ignoreHiddenSeries: true,
+      animation: false,
     },
     credits: {
       enabled: false,
@@ -179,6 +180,7 @@ const Cashflow = () => {
     },
     plotOptions: {
       series: {
+        animation: false,
         point: {
           events: {
             click: (e) => {
@@ -208,7 +210,17 @@ const Cashflow = () => {
         },
       },
     },
-    colors: ["#5c6bc0", "#ab47bc", "#7e57c2", "#7e57c2", "#26a69a", "#9ccc65", "#ffee58", "#ffa726"],
+    colors: [
+      "#e3f2fd", //other
+      "#bbdefb", // bank
+      "#90caf9", // property
+      "#64b5f6", // pension
+      "#42a5f5", // SAI
+      "#2196f3", //dividend
+      "#1e88e5", //rental
+      "#1976d2", //self
+      "#1565c0", // employ
+    ],
   });
 
   let chartRef: any = React.useRef(null);
@@ -229,8 +241,8 @@ const Cashflow = () => {
             : summary.map((s, i) => {
                 return s.expense_analysis.total_expenses - s.income_analysis.total_income;
               }),
-          color: "#d32f2f",
-          legendIndex: 10,
+          color: "#f44336",
+          legendIndex: 11,
         },
         {
           // visible: detailedView,
@@ -298,7 +310,7 @@ const Cashflow = () => {
                 }),
               ]
             : [],
-          legendIndex: 8,
+          legendIndex: 9,
         },
         {
           showInLegend: detailedView,
@@ -548,7 +560,7 @@ const Cashflow = () => {
           showInLegend: !detailedView,
           name: "Inflow",
           type: "column",
-          color: "#3f51b5",
+          color: "#1976d2",
           data: [
             ...summary.map((s) => {
               return s.income_analysis.total_income;
@@ -574,7 +586,7 @@ const Cashflow = () => {
           // pointPlacement: -0.5,
 
           lineWidth: 3,
-          legendIndex: 9,
+          legendIndex: 10,
         },
       ],
     });
@@ -615,8 +627,8 @@ const Cashflow = () => {
 
             <Switch
               style={{ marginRight: "16px" }}
-              checkedChildren="Nominal"
-              unCheckedChildren="Real"
+              checkedChildren="Real"
+              unCheckedChildren="Nominal"
               defaultChecked
               onChange={(e) => {
                 e ? setSummary(nominalSummary) : setSummary(realSummary);

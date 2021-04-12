@@ -24,6 +24,7 @@ const AssetsAndLiabilities = () => {
     chart: {
       alignTicks: false,
       ignoreHiddenSeries: true,
+      animation: false,
     },
     credits: {
       enabled: false,
@@ -200,6 +201,7 @@ const AssetsAndLiabilities = () => {
             return s.assets_and_liabilities_analysis.total_pension_plans;
           }),
         ],
+        animation: false,
       },
       {
         name: "Savings and Investments",
@@ -209,6 +211,7 @@ const AssetsAndLiabilities = () => {
             return s.assets_and_liabilities_analysis.total_savings_and_investments;
           }),
         ],
+        animation: false,
       },
       {
         name: "Aggregated Bank Accounts",
@@ -218,6 +221,7 @@ const AssetsAndLiabilities = () => {
             return s.assets_and_liabilities_analysis.aggregated_bank_accounts;
           }),
         ],
+        animation: false,
       },
       {
         name: "Property",
@@ -229,8 +233,8 @@ const AssetsAndLiabilities = () => {
             );
           }),
         ],
-        color: "pink",
-        visible: false,
+        animation: false,
+        color: "#7986cb",
       },
 
       {
@@ -246,6 +250,7 @@ const AssetsAndLiabilities = () => {
             );
           }),
         ],
+        animation: false,
         marker: {
           enabled: false,
         },
@@ -287,7 +292,7 @@ const AssetsAndLiabilities = () => {
               unCheckedChildren="Real"
               defaultChecked
               onChange={(e) => {
-                if (e) {
+                if (!e) {
                   setSummary(nominalSummary);
                   setAssetsAndLiabilityChartOptions({
                     ...assetsAndLiabilityChartOptions,
@@ -330,7 +335,7 @@ const AssetsAndLiabilities = () => {
                             );
                           }),
                         ],
-                        color: "pink",
+                        color: "#7986cb",
                       },
 
                       {
@@ -398,7 +403,7 @@ const AssetsAndLiabilities = () => {
                             );
                           }),
                         ],
-                        color: "pink",
+                        color: "#7986cb",
                       },
 
                       {
