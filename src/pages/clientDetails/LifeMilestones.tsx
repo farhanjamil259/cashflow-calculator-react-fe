@@ -14,6 +14,9 @@ import {
   Select,
   InputNumber,
   Radio,
+  Space,
+  Dropdown,
+  Menu,
 } from "antd";
 
 import Highcharts, { numberFormat } from "highcharts";
@@ -52,8 +55,8 @@ import { eventsRoute, inputsRoute, summaryRoute } from "../../routes/apiRoutes";
 import RateInput from "../inputs/controls/RateInput";
 import { currentInputSetReducer, setCurrentInputSetAction } from "../../redux/inputs/inputs";
 import { setSummaryAction } from "../../redux/summary/summary";
-import { DeleteOutlined } from "@ant-design/icons";
-import { getEventsAction } from "../../redux/events/events";
+import { DeleteOutlined, MoreOutlined } from "@ant-design/icons";
+import { eventsReducer, getEventsAction } from "../../redux/events/events";
 
 require("highcharts/highcharts-more")(Highcharts);
 require("highcharts/modules/dumbbell")(Highcharts);
@@ -103,14 +106,23 @@ function LifeMilestones() {
     _id: "",
     name: "",
   });
+  const [eventSelectedData, setEventSelectedData] = useState({
+    _id: "",
+    name: "",
+  });
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalVisibleGoals, setIsModalVisibleGoals] = useState(false);
   const [isModalVisibleDeletGoals, setIsModalVisibleDeletGoals] = useState(false);
+  const [isModalVisibleDeletEvent, setIsModalVisibleDeleltEvent] = useState(false);
+  const [isModalVisibleEditGoals, setIsModalVisibleEditGoals] = useState(false);
+  const [isModalVisibleEditEvent, setIsModalVisibleEditEvent] = useState(false);
 
   const handleCancel = () => {
     setIsModalVisible(false);
     setIsModalVisibleGoals(false);
+    setIsModalVisibleEditEvent(false);
+    setIsModalVisibleEditGoals(false);
   };
 
   const [lifeGoals, setLifeGoans] = useState<ILifeGoals[]>([]);
@@ -395,24 +407,52 @@ function LifeMilestones() {
     },
     {
       title: "Action",
-      dataIndex: "action",
       key: "action",
-      align: "right",
-      width: "10%",
-      render: (text: any, record: any) => {
-        return (
-          <DeleteOutlined
-            onClick={async () => {
-              setIsModalVisibleDeletGoals(true);
-              setGoalSelectedData(record);
-            }}
-            style={{
-              cursor: "pointer",
-              color: "red",
-            }}
-          />
-        );
-      },
+      render: (text: any, record: any) => (
+        <Space size="middle">
+          <Dropdown
+            overlay={
+              <Menu>
+                <Menu.Item key="2">
+                  <Button
+                    type="link"
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsModalVisibleEditGoals(true);
+                      setGoalSelectedData(record);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                </Menu.Item>
+                <Menu.Item key="3">
+                  <Button
+                    type="link"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsModalVisibleDeletGoals(true);
+                      setGoalSelectedData(record);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </Menu.Item>
+              </Menu>
+            }
+          >
+            <Button
+              size="small"
+              onClick={async (e) => {
+                e.stopPropagation();
+              }}
+            >
+              <MoreOutlined />
+            </Button>
+          </Dropdown>
+        </Space>
+      ),
     },
   ];
 
@@ -430,6 +470,55 @@ function LifeMilestones() {
     {
       title: "Year",
       dataIndex: "year",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (text: any, record: any) => (
+        <Space size="middle">
+          <Dropdown
+            overlay={
+              <Menu>
+                <Menu.Item key="2">
+                  <Button
+                    type="link"
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsModalVisibleEditEvent(true);
+                      setEventSelectedData(record);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                </Menu.Item>
+                <Menu.Item key="3">
+                  <Button
+                    type="link"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsModalVisibleDeleltEvent(true);
+                      setEventSelectedData(record);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </Menu.Item>
+              </Menu>
+            }
+          >
+            <Button
+              size="small"
+              onClick={async (e) => {
+                e.stopPropagation();
+              }}
+            >
+              <MoreOutlined />
+            </Button>
+          </Dropdown>
+        </Space>
+      ),
     },
   ];
 
@@ -599,7 +688,7 @@ function LifeMilestones() {
           </Card>
         </Col>
       </Row>
-
+      //Add Goals Modal
       <Modal
         title="Goal"
         visible={isModalVisibleGoals}
@@ -711,7 +800,102 @@ function LifeMilestones() {
           </Form.Item>
         </Form>
       </Modal>
+      //Edit Goals Modal
+      <Modal
+        title="Edit Goal"
+        visible={isModalVisibleEditGoals}
+        okText="Update"
+        okButtonProps={{
+          loading: loading,
+        }}
+        cancelButtonProps={{
+          loading: loading,
+        }}
+        onCancel={handleCancel}
+        onOk={async () => {
+          setLoading(true);
 
+          setIsModalVisibleEditGoals(false);
+          setLoading(false);
+        }}
+      >
+        <Form form={form} labelAlign="left" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
+          <Form.Item
+            name="name"
+            label="Name of Goal"
+            rules={[{ required: true, message: "First name is required" }]}
+          >
+            <Input
+              defaultValue={goalInputs.name}
+              onChange={(e) => {
+                setGoalInputs({ ...goalInputs, name: e.target.value });
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="amount"
+            label="Amount"
+            rules={[{ required: true, message: "An amount is required" }]}
+          >
+            <MoneyInput
+              value={goalInputs.annual_payment_in_todays_terms.toString()}
+              onBlur={(e) => setGoalInputs({ ...goalInputs, annual_payment_in_todays_terms: +e })}
+            />
+          </Form.Item>
+          <Form.Item
+            name="inflation"
+            label="Inflation"
+            rules={[{ required: true, message: "Inflation rate is required" }]}
+          >
+            <InputNumber
+              min={0}
+              max={100}
+              precision={2}
+              formatter={(value) => `${value}%`}
+              parser={(value: any) => value!.replace("%", "")}
+              value={`${+goalInputs.inflation * 100}`}
+              className="custom-input-fields"
+              onBlur={(e) => {
+                setGoalInputs({
+                  ...goalInputs,
+                  inflation: parseFloat(e.target.value.replace("%", "")) / 100,
+                });
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="start_year"
+            label="Start Year"
+            rules={[{ required: true, message: "Please select a year" }]}
+          >
+            <DatePicker
+              picker="year"
+              name="year"
+              style={{ width: "100%" }}
+              onChange={(date, dateString) => {
+                setGoalInputs({ ...goalInputs, start_year: +dateString });
+              }}
+            />
+          </Form.Item>
+          <Form.Item
+            name="end_year"
+            label="End Year"
+            rules={[{ required: true, message: "Please select a year" }]}
+          >
+            <DatePicker
+              picker="year"
+              name="year"
+              style={{ width: "100%" }}
+              onChange={(date, dateString) => {
+                setGoalInputs({ ...goalInputs, end_year: +dateString });
+              }}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+      //Add event modal
       <Modal
         title="Event"
         okButtonProps={{
@@ -820,9 +1004,118 @@ function LifeMilestones() {
           </Form>
         </Row>
       </Modal>
-
+      //Edit Event Modal
       <Modal
-        title="Delete Goals"
+        title="Edit Event"
+        okButtonProps={{
+          loading: loading,
+        }}
+        cancelButtonProps={{
+          loading: loading,
+        }}
+        visible={isModalVisibleEditEvent}
+        okText="Save"
+        onOk={async () => {
+          setLoading(true);
+          // const res = await axios.post(eventsRoute + inputs._id, event);
+          // await dispatch(getEventsAction(inputs._id));
+          setIsModalVisibleEditEvent(false);
+          setLoading(false);
+        }}
+        onCancel={handleCancel}
+        width="1000px"
+      >
+        <Row>
+          <Form form={form} layout="vertical" style={{ width: "100%" }}>
+            <Row>
+              <Col span={24}>
+                <Form.Item
+                  name="name"
+                  label="Name of Event"
+                  rules={[{ required: true, message: "First name is required" }]}
+                >
+                  <Input
+                    name="fname"
+                    value={eventSelectedData.name}
+                    onChange={(e) => {
+                      setEvent({ ...event, name: e.target.value });
+                    }}
+                  />
+                </Form.Item>
+
+                <Form.Item name="owner" label="Owner">
+                  <Select
+                    style={{ width: "100%" }}
+                    defaultValue={inputs.household_owners[0].name}
+                    onChange={(e) => {
+                      setEvent({ ...event, owner: +e });
+                    }}
+                  >
+                    {inputs.household_owners.map((o, i) => {
+                      return <Option value={i}>{o.name}</Option>;
+                    })}
+                  </Select>
+                </Form.Item>
+
+                <Form.Item
+                  name="year"
+                  label="Year"
+                  rules={[{ required: true, message: "Please select a year" }]}
+                >
+                  <DatePicker
+                    picker="year"
+                    name="year"
+                    defaultValue={moment()}
+                    style={{ width: "100%" }}
+                    onChange={(date, dateString) => {
+                      setEvent({ ...event, year: +dateString });
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item>
+                  <Row>
+                    <Radio.Group
+                      buttonStyle="solid"
+                      onChange={(e) => {
+                        setEvent({ ...event, category: e.target.value });
+                      }}
+                    >
+                      {categories.map((c) => {
+                        return (
+                          <Radio.Button
+                            value={c.category}
+                            style={{
+                              padding: "5px",
+                              margin: "5px",
+                              width: "100px",
+                              height: "100px",
+                              textAlign: "center",
+                            }}
+                          >
+                            <Icon icon={c.icon} height="60" />
+                            <p
+                              style={{
+                                fontSize: "10px",
+                              }}
+                            >
+                              {c.category}
+                            </p>
+                          </Radio.Button>
+                        );
+                      })}
+                    </Radio.Group>
+                  </Row>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        </Row>
+      </Modal>
+      // delete goals
+      <Modal
+        title="Delete Goal"
         okType={"danger"}
         visible={isModalVisibleDeletGoals}
         okButtonProps={{
@@ -853,6 +1146,43 @@ function LifeMilestones() {
       >
         <p>
           Are you sure you want to delete the Goal <strong>{goalSelectedData.name}</strong>
+        </p>
+        <p>
+          <strong>This action cannot be undone! </strong>
+        </p>
+      </Modal>
+      // delete event
+      <Modal
+        title="Delete Event"
+        okType={"danger"}
+        visible={isModalVisibleDeletEvent}
+        okButtonProps={{
+          loading: loading,
+        }}
+        cancelButtonProps={{
+          loading: loading,
+        }}
+        okText="Delete"
+        onOk={async () => {
+          const newInputs = JSON.parse(JSON.stringify(inputs));
+          const newGoals = newInputs.household_expenses.one_off_expenses.filter((e: any) => {
+            return e._id !== goalSelectedData._id;
+          });
+          newInputs.household_expenses.one_off_expenses = newGoals;
+          const res = await axios.put(inputsRoute + inputs._id, newInputs);
+          if (res.status === 200) {
+            setLoading(true);
+
+            // await axios.delete(eventsRoute + eventSelectedData._id);
+
+            setIsModalVisibleDeleltEvent(false);
+            setLoading(false);
+          }
+        }}
+        onCancel={() => setIsModalVisibleDeleltEvent(false)}
+      >
+        <p>
+          Are you sure you want to delete the Event <strong>{eventSelectedData.name}</strong>
         </p>
         <p>
           <strong>This action cannot be undone! </strong>

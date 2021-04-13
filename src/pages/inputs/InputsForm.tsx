@@ -327,7 +327,8 @@ const InputsForm = () => {
 
   const handleFinish = async () => {
     setLoading(true);
-    const res = await axios.post(inputsRoute + activeClient._id, initialInputs);
+    const config = {};
+    const res = await axios.post(inputsRoute + activeClient._id, initialInputs, {});
     if (res.status === 200) {
       await dispatch(AlertAction("Plan successfully created", "success"));
       await dispatch(GetInputsAction(activeClient._id));
