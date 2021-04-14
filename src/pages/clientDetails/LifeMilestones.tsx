@@ -106,9 +106,18 @@ function LifeMilestones() {
     _id: "",
     name: "",
   });
-  const [eventSelectedData, setEventSelectedData] = useState({
-    _id: "",
+  const [eventSelectedData, setEventSelectedData] = useState<{
+    id: string;
+    name: string;
+    year: number;
+    owner: string;
+    icon: string;
+  }>({
+    id: "",
     name: "",
+    icon: "",
+    owner: "",
+    year: 0,
   });
 
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -127,12 +136,6 @@ function LifeMilestones() {
 
   const [lifeGoals, setLifeGoans] = useState<ILifeGoals[]>([]);
 
-  const [shortfall, setShortfall] = useState<number[]>(
-    summary.map((s) => {
-      return s.expense_analysis.total_expenses - s.income_analysis.total_income;
-    })
-  );
-
   //Math.round(100 - sumShortfall / goal.amount)
   const planColor: string = "#424242";
   const ownerColors: string[] = useMemo(() => {
@@ -148,6 +151,7 @@ function LifeMilestones() {
     return [
       ...allEvents.map((e: any, i: number) => {
         return {
+          id: e._id,
           name: e.name,
           year: e.year,
           owner: inputs.household_owners[e.owner].name,
@@ -155,12 +159,14 @@ function LifeMilestones() {
         };
       }),
       {
+        id: "",
         name: "Plan Start",
         year: inputs.current_year,
         owner: "",
         icon: startIcon(planColor),
       },
       {
+        id: "",
         name: "Plan End",
         year:
           inputs.household_owners.length > 1
@@ -174,6 +180,7 @@ function LifeMilestones() {
       },
       ...inputs.household_owners.map((o, i) => {
         return {
+          id: "",
           name: "Retirement " + o.name,
           year: inputs.household_owners[i].retirement_year,
           owner: o.name,
@@ -182,6 +189,7 @@ function LifeMilestones() {
       }),
       ...inputs.children.map((c, i) => {
         return {
+          id: "",
           name: c.name + " born",
           year: c.birth_year,
           owner: c.name,
@@ -190,6 +198,7 @@ function LifeMilestones() {
       }),
       ...inputs.children.map((c, i) => {
         return {
+          id: "",
           name: "School " + c.name,
           year: c.primary_school_year,
           owner: c.name,
@@ -198,6 +207,7 @@ function LifeMilestones() {
       }),
       ...inputs.children.map((c, i) => {
         return {
+          id: "",
           name: "Graduation " + c.name,
           year: c.graduation_year,
           owner: c.name,
@@ -205,7 +215,7 @@ function LifeMilestones() {
         };
       }),
     ];
-  }, [childrenColors, inputs.children, inputs.household_owners, ownerColors, inputs.current_year]);
+  }, [childrenColors, inputs.children, inputs.household_owners, ownerColors, inputs.current_year, allEvents]);
 
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     chart: {
@@ -334,7 +344,7 @@ function LifeMilestones() {
     // });
 
     let tempArray: number[] = [];
-    let range = 2;
+    let range = 1;
 
     newClone.series.map((s: any) => {
       s.data.map((d: any, i: number) => {
@@ -345,14 +355,19 @@ function LifeMilestones() {
       });
       return null;
     });
+
+    let pVal = 1;
     tempArray.map((num, i) => {
       if (i > 0) {
         let previousNum = tempArray[i - 1];
         let diff = num - previousNum;
 
         if (diff <= range) {
-          newClone.series[i].data[num] += 3;
-          newClone.series[i].zIndex = -1;
+          pVal += 2;
+          newClone.series[i].data[num] = pVal;
+          newClone.series[i].zIndex = -i;
+        } else {
+          pVal = 1;
         }
       }
       return null;
@@ -476,47 +491,49 @@ function LifeMilestones() {
       key: "action",
       render: (text: any, record: any) => (
         <Space size="middle">
-          <Dropdown
-            overlay={
-              <Menu>
-                <Menu.Item key="2">
-                  <Button
-                    type="link"
-                    onClick={async (e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setIsModalVisibleEditEvent(true);
-                      setEventSelectedData(record);
-                    }}
-                  >
-                    Edit
-                  </Button>
-                </Menu.Item>
-                <Menu.Item key="3">
-                  <Button
-                    type="link"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setIsModalVisibleDeleltEvent(true);
-                      setEventSelectedData(record);
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </Menu.Item>
-              </Menu>
-            }
-          >
-            <Button
-              size="small"
-              onClick={async (e) => {
-                e.stopPropagation();
-              }}
+          {record.id !== "" && (
+            <Dropdown
+              overlay={
+                <Menu>
+                  <Menu.Item key="2">
+                    <Button
+                      type="link"
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsModalVisibleEditEvent(true);
+                        setEventSelectedData(record);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                  </Menu.Item>
+                  <Menu.Item key="3">
+                    <Button
+                      type="link"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsModalVisibleDeleltEvent(true);
+                        setEventSelectedData(record);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </Menu.Item>
+                </Menu>
+              }
             >
-              <MoreOutlined />
-            </Button>
-          </Dropdown>
+              <Button
+                size="small"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <MoreOutlined />
+              </Button>
+            </Dropdown>
+          )}
         </Space>
       ),
     },
@@ -597,8 +614,25 @@ function LifeMilestones() {
     },
   ]);
 
+  /*
+    [one_off_expense: {
+      inflation: 2.5 (decial)
+      startYear: 2012
+      endYear: 2095
+      afterRetirement: 0 
+    }]
+
+    [summary: {
+      incomeAnalysis: {
+        totalIncome: number
+      },
+      expenseAnalysis: {
+        totalExpenses: number
+      }
+    }]
+  */
   useEffect(() => {
-    const clone2: ILifeGoals[] = [];
+    const arr_LifeGoals: ILifeGoals[] = [];
     inputs.household_expenses.one_off_expenses.map((g) => {
       let newProgress = 0;
       let calcShortfall = 0;
@@ -607,15 +641,14 @@ function LifeMilestones() {
           calcShortfall += s.expense_analysis.total_expenses - s.income_analysis.total_income;
         }
       });
-
       let calculatedProgress = Math.round(100 - calcShortfall / g.annual_payment_in_todays_terms);
-      // if (Math.round(100 - calcShortfall / g.annual_payment_in_todays_terms) > 100) {
-      //   newProgress = 100;
-      // } else {
-      //   Math.round(100 - calcShortfall / g.annual_payment_in_todays_terms);
-      // }
+      if (Math.round(100 - calcShortfall / g.annual_payment_in_todays_terms) > 100) {
+        newProgress = 100;
+      } else {
+        Math.round(100 - calcShortfall / g.annual_payment_in_todays_terms);
+      }
 
-      clone2.push({
+      arr_LifeGoals.push({
         _id: g._id,
         name: g.name,
         start_year: g.start_year,
@@ -624,8 +657,7 @@ function LifeMilestones() {
         amount: g.annual_payment_in_todays_terms,
       });
     });
-
-    setLifeGoans(clone2);
+    setLifeGoans(arr_LifeGoals);
   }, []);
 
   return (
@@ -688,7 +720,7 @@ function LifeMilestones() {
           </Card>
         </Col>
       </Row>
-      //Add Goals Modal
+      {/* //Add Goals Modal */}
       <Modal
         title="Goal"
         visible={isModalVisibleGoals}
@@ -800,7 +832,7 @@ function LifeMilestones() {
           </Form.Item>
         </Form>
       </Modal>
-      //Edit Goals Modal
+      {/* //Edit Goals Modal */}
       <Modal
         title="Edit Goal"
         visible={isModalVisibleEditGoals}
@@ -895,7 +927,7 @@ function LifeMilestones() {
           </Form.Item>
         </Form>
       </Modal>
-      //Add event modal
+      {/* //Add event modal */}
       <Modal
         title="Event"
         okButtonProps={{
@@ -1004,7 +1036,7 @@ function LifeMilestones() {
           </Form>
         </Row>
       </Modal>
-      //Edit Event Modal
+      {/* //Edit Event Modal */}
       <Modal
         title="Edit Event"
         okButtonProps={{
@@ -1113,7 +1145,7 @@ function LifeMilestones() {
           </Form>
         </Row>
       </Modal>
-      // delete goals
+      {/* // delete goals */}
       <Modal
         title="Delete Goal"
         okType={"danger"}
@@ -1151,7 +1183,7 @@ function LifeMilestones() {
           <strong>This action cannot be undone! </strong>
         </p>
       </Modal>
-      // delete event
+      {/* // delete event */}
       <Modal
         title="Delete Event"
         okType={"danger"}
@@ -1164,20 +1196,11 @@ function LifeMilestones() {
         }}
         okText="Delete"
         onOk={async () => {
-          const newInputs = JSON.parse(JSON.stringify(inputs));
-          const newGoals = newInputs.household_expenses.one_off_expenses.filter((e: any) => {
-            return e._id !== goalSelectedData._id;
-          });
-          newInputs.household_expenses.one_off_expenses = newGoals;
-          const res = await axios.put(inputsRoute + inputs._id, newInputs);
-          if (res.status === 200) {
-            setLoading(true);
+          console.log(eventsRoute + eventSelectedData.id);
+          const res = await axios.delete(eventsRoute + eventSelectedData.id);
 
-            // await axios.delete(eventsRoute + eventSelectedData._id);
-
-            setIsModalVisibleDeleltEvent(false);
-            setLoading(false);
-          }
+          await dispatch(getEventsAction(inputs._id));
+          setIsModalVisibleDeleltEvent(false);
         }}
         onCancel={() => setIsModalVisibleDeleltEvent(false)}
       >
