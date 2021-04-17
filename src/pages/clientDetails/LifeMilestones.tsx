@@ -69,8 +69,9 @@ interface ILifeGoals {
   name: string;
   start_year: number;
   end_year: number;
+  inflation: number;
   progress: number;
-  amount: number;
+  annual_payment_in_todays_terms: number;
 }
 
 interface IEvents {
@@ -105,6 +106,10 @@ function LifeMilestones() {
   const [goalSelectedData, setGoalSelectedData] = useState({
     _id: "",
     name: "",
+    annual_payment_in_todays_terms: 0,
+    inflation: 0,
+    start_year: moment().year(),
+    end_year: moment().year(),
   });
   const [eventSelectedData, setEventSelectedData] = useState<{
     id: string;
@@ -408,7 +413,7 @@ function LifeMilestones() {
     },
     {
       title: "Amount",
-      dataIndex: "amount",
+      dataIndex: "annual_payment_in_todays_terms",
       key: "amount",
 
       width: "10%",
@@ -435,6 +440,9 @@ function LifeMilestones() {
                       e.preventDefault();
                       e.stopPropagation();
                       setIsModalVisibleEditGoals(true);
+
+                      console.log(lifeGoals);
+
                       setGoalSelectedData(record);
                     }}
                   >
@@ -653,8 +661,9 @@ function LifeMilestones() {
         name: g.name,
         start_year: g.start_year,
         end_year: g.end_year,
+        inflation: g.inflation,
         progress: calculatedProgress,
-        amount: g.annual_payment_in_todays_terms,
+        annual_payment_in_todays_terms: g.annual_payment_in_todays_terms,
       });
     });
     setLifeGoans(arr_LifeGoals);
@@ -846,82 +855,68 @@ function LifeMilestones() {
         onCancel={handleCancel}
         onOk={async () => {
           setLoading(true);
+          console.log(goalSelectedData);
 
-          setIsModalVisibleEditGoals(false);
+          // setIsModalVisibleEditGoals(false);
           setLoading(false);
         }}
       >
         <Form form={form} labelAlign="left" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
-          <Form.Item
-            name="name"
-            label="Name of Goal"
-            rules={[{ required: true, message: "First name is required" }]}
-          >
+          <Form.Item label="Name of Goal" rules={[{ required: true, message: "First name is required" }]}>
             <Input
-              defaultValue={goalInputs.name}
+              value={goalSelectedData.name}
               onChange={(e) => {
-                setGoalInputs({ ...goalInputs, name: e.target.value });
+                setGoalSelectedData({ ...goalSelectedData, name: e.target.value });
               }}
             />
           </Form.Item>
 
-          <Form.Item
-            name="amount"
-            label="Amount"
-            rules={[{ required: true, message: "An amount is required" }]}
-          >
-            <MoneyInput
-              value={goalInputs.annual_payment_in_todays_terms.toString()}
-              onBlur={(e) => setGoalInputs({ ...goalInputs, annual_payment_in_todays_terms: +e })}
+          <Form.Item label="Amount" rules={[{ required: true, message: "An amount is required" }]}>
+            <InputNumber
+              formatter={(value) => `${pound}${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+              parser={(value) => value!.replace(/£\s?|(,*)/g, "")}
+              value={`${goalSelectedData.annual_payment_in_todays_terms}`}
+              className="custom-input-fields"
+              onBlur={(e) => {
+                setGoalSelectedData({ ...goalSelectedData, annual_payment_in_todays_terms: +e.target.value });
+              }}
             />
           </Form.Item>
-          <Form.Item
-            name="inflation"
-            label="Inflation"
-            rules={[{ required: true, message: "Inflation rate is required" }]}
-          >
+          <Form.Item label="Inflation" rules={[{ required: true, message: "Inflation rate is required" }]}>
             <InputNumber
               min={0}
               max={100}
               precision={2}
               formatter={(value) => `${value}%`}
               parser={(value: any) => value!.replace("%", "")}
-              value={`${+goalInputs.inflation * 100}`}
+              value={`${+goalSelectedData.inflation * 100}`}
               className="custom-input-fields"
               onBlur={(e) => {
-                setGoalInputs({
-                  ...goalInputs,
+                setGoalSelectedData({
+                  ...goalSelectedData,
                   inflation: parseFloat(e.target.value.replace("%", "")) / 100,
                 });
               }}
             />
           </Form.Item>
 
-          <Form.Item
-            name="start_year"
-            label="Start Year"
-            rules={[{ required: true, message: "Please select a year" }]}
-          >
+          <Form.Item label="Start Year" rules={[{ required: true, message: "Please select a year" }]}>
             <DatePicker
               picker="year"
               name="year"
               style={{ width: "100%" }}
               onChange={(date, dateString) => {
-                setGoalInputs({ ...goalInputs, start_year: +dateString });
+                setGoalSelectedData({ ...goalSelectedData, start_year: +dateString });
               }}
             />
           </Form.Item>
-          <Form.Item
-            name="end_year"
-            label="End Year"
-            rules={[{ required: true, message: "Please select a year" }]}
-          >
+          <Form.Item label="End Year" rules={[{ required: true, message: "Please select a year" }]}>
             <DatePicker
               picker="year"
               name="year"
               style={{ width: "100%" }}
               onChange={(date, dateString) => {
-                setGoalInputs({ ...goalInputs, end_year: +dateString });
+                setGoalSelectedData({ ...goalSelectedData, end_year: +dateString });
               }}
             />
           </Form.Item>
