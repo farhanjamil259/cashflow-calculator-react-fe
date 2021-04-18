@@ -43,7 +43,15 @@ import airplane24Filled from "@iconify-icons/fluent/airplane-24-filled";
 import ringIcon from "@iconify-icons/mdi/ring";
 import shoppingIcon from "@iconify-icons/mdi/shopping";
 
-import { bookIcon, bottleIcon, endIcon, hatIcon, startIcon, umbrellaIcon } from "../../components/iconSvg";
+import {
+  boatIcon,
+  bookIcon,
+  bottleIcon,
+  endIcon,
+  hatIcon,
+  startIcon,
+  umbrellaIcon,
+} from "../../components/iconSvg";
 import { pound } from "../../components/currencySumbol";
 
 import "./LifeMilestones.css";
@@ -57,6 +65,7 @@ import { currentInputSetReducer, setCurrentInputSetAction } from "../../redux/in
 import { setSummaryAction } from "../../redux/summary/summary";
 import { DeleteOutlined, MoreOutlined } from "@ant-design/icons";
 import { eventsReducer, getEventsAction } from "../../redux/events/events";
+import { FormInstance, useForm } from "antd/lib/form/Form";
 
 require("highcharts/highcharts-more")(Highcharts);
 require("highcharts/modules/dumbbell")(Highcharts);
@@ -79,6 +88,7 @@ interface IEvents {
   year: number;
   icon: string;
   owner: string;
+  planid: string;
 }
 
 function LifeMilestones() {
@@ -115,14 +125,16 @@ function LifeMilestones() {
     id: string;
     name: string;
     year: number;
-    owner: string;
-    icon: string;
+    owner: number;
+    planid: string;
+    category: string;
   }>({
     id: "",
-    name: "",
-    icon: "",
-    owner: "",
+    name: "asd",
+    owner: 0,
     year: 0,
+    planid: "",
+    category: "",
   });
 
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -152,6 +164,18 @@ function LifeMilestones() {
 
   const allEvents: any = useSelector((state: RootStateOrAny) => state.eventsReducer);
 
+  const handleIcons = (category: string) => {
+    switch (category) {
+      case "value":
+        return boatIcon(planColor);
+      case "boat":
+        return boatIcon(planColor);
+
+      default:
+        break;
+    }
+  };
+
   const lifeEvents: IEvents[] = useMemo(() => {
     return [
       ...allEvents.map((e: any, i: number) => {
@@ -159,8 +183,11 @@ function LifeMilestones() {
           id: e._id,
           name: e.name,
           year: e.year,
-          owner: inputs.household_owners[e.owner].name,
-          icon: startIcon(planColor),
+          ownername: inputs.household_owners[e.owner].name,
+          owner: e.owner,
+          planid: e.planid,
+          category: e.category,
+          icon: handleIcons(e.category),
         };
       }),
       {
@@ -441,8 +468,6 @@ function LifeMilestones() {
                       e.stopPropagation();
                       setIsModalVisibleEditGoals(true);
 
-                      console.log(lifeGoals);
-
                       setGoalSelectedData(record);
                     }}
                   >
@@ -488,7 +513,7 @@ function LifeMilestones() {
     },
     {
       title: "Owner",
-      dataIndex: "owner",
+      dataIndex: "ownername",
     },
     {
       title: "Year",
@@ -559,7 +584,9 @@ function LifeMilestones() {
     owner: number;
     year: number;
     category: string;
+    planid: string;
   }>({
+    planid: "",
     name: "",
     owner: 0,
     year: 2021,
@@ -669,6 +696,7 @@ function LifeMilestones() {
     setLifeGoans(arr_LifeGoals);
   }, []);
 
+  const [eventEditForm] = useForm();
   return (
     <Layout style={{ backgroundColor: "white" }}>
       <Row justify="space-around">
@@ -855,7 +883,6 @@ function LifeMilestones() {
         onCancel={handleCancel}
         onOk={async () => {
           setLoading(true);
-          console.log(goalSelectedData);
 
           // setIsModalVisibleEditGoals(false);
           setLoading(false);
@@ -903,6 +930,7 @@ function LifeMilestones() {
           <Form.Item label="Start Year" rules={[{ required: true, message: "Please select a year" }]}>
             <DatePicker
               picker="year"
+              value={moment(goalSelectedData.start_year.toString())}
               name="year"
               style={{ width: "100%" }}
               onChange={(date, dateString) => {
@@ -914,6 +942,7 @@ function LifeMilestones() {
             <DatePicker
               picker="year"
               name="year"
+              value={moment(goalSelectedData.end_year.toString())}
               style={{ width: "100%" }}
               onChange={(date, dateString) => {
                 setGoalSelectedData({ ...goalSelectedData, end_year: +dateString });
@@ -948,7 +977,6 @@ function LifeMilestones() {
             <Row>
               <Col span={24}>
                 <Form.Item
-                  name="name"
                   label="Name of Event"
                   rules={[{ required: true, message: "First name is required" }]}
                 >
@@ -1044,20 +1072,26 @@ function LifeMilestones() {
         okText="Save"
         onOk={async () => {
           setLoading(true);
-          // const res = await axios.post(eventsRoute + inputs._id, event);
-          // await dispatch(getEventsAction(inputs._id));
-          setIsModalVisibleEditEvent(false);
+          await eventEditForm
+            .validateFields()
+            .then(async () => {
+              const res = await axios.patch(eventsRoute + eventSelectedData.id, eventSelectedData);
+              await dispatch(getEventsAction(inputs._id));
+              setIsModalVisibleEditEvent(false);
+            })
+            .catch(() => {
+              setLoading(false);
+            });
           setLoading(false);
         }}
         onCancel={handleCancel}
         width="1000px"
       >
         <Row>
-          <Form form={form} layout="vertical" style={{ width: "100%" }}>
+          <Form form={eventEditForm} layout="vertical" style={{ width: "100%" }}>
             <Row>
               <Col span={24}>
                 <Form.Item
-                  name="name"
                   label="Name of Event"
                   rules={[{ required: true, message: "First name is required" }]}
                 >
@@ -1065,17 +1099,17 @@ function LifeMilestones() {
                     name="fname"
                     value={eventSelectedData.name}
                     onChange={(e) => {
-                      setEvent({ ...event, name: e.target.value });
+                      setEventSelectedData({ ...eventSelectedData, name: e.target.value });
                     }}
                   />
                 </Form.Item>
 
-                <Form.Item name="owner" label="Owner">
+                <Form.Item label="Owner">
                   <Select
                     style={{ width: "100%" }}
-                    defaultValue={inputs.household_owners[0].name}
+                    value={inputs.household_owners[eventSelectedData.owner].name}
                     onChange={(e) => {
-                      setEvent({ ...event, owner: +e });
+                      setEventSelectedData({ ...eventSelectedData, owner: +e });
                     }}
                   >
                     {inputs.household_owners.map((o, i) => {
@@ -1084,29 +1118,26 @@ function LifeMilestones() {
                   </Select>
                 </Form.Item>
 
-                <Form.Item
-                  name="year"
-                  label="Year"
-                  rules={[{ required: true, message: "Please select a year" }]}
-                >
+                <Form.Item label="Year" rules={[{ required: true, message: "Please select a year" }]}>
                   <DatePicker
                     picker="year"
                     name="year"
-                    defaultValue={moment()}
+                    value={moment(eventSelectedData.year.toString())}
                     style={{ width: "100%" }}
                     onChange={(date, dateString) => {
-                      setEvent({ ...event, year: +dateString });
+                      setEventSelectedData({ ...eventSelectedData, year: +dateString });
                     }}
                   />
                 </Form.Item>
               </Col>
               <Col span={24}>
-                <Form.Item>
+                <Form.Item label="Category">
                   <Row>
                     <Radio.Group
                       buttonStyle="solid"
+                      value={eventSelectedData.category}
                       onChange={(e) => {
-                        setEvent({ ...event, category: e.target.value });
+                        setEventSelectedData({ ...eventSelectedData, category: e.target.value });
                       }}
                     >
                       {categories.map((c) => {
@@ -1191,7 +1222,6 @@ function LifeMilestones() {
         }}
         okText="Delete"
         onOk={async () => {
-          console.log(eventsRoute + eventSelectedData.id);
           const res = await axios.delete(eventsRoute + eventSelectedData.id);
 
           await dispatch(getEventsAction(inputs._id));
