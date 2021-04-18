@@ -48,6 +48,7 @@ const InputsForm = () => {
       await dispatch(GetInputsAction(activeClient._id));
       history.push("/dashboard/clientDashboard");
     }
+    setLoading(true);
   };
 
   return (

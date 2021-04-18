@@ -21,7 +21,7 @@ import {
 
 import Highcharts, { numberFormat } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import React, { useEffect, useMemo } from "react";
+import React, { cloneElement, useEffect, useMemo } from "react";
 import IInputs from "../../interfaces/IInputs";
 import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
@@ -47,10 +47,22 @@ import {
   boatIcon,
   bookIcon,
   bottleIcon,
+  childCareIcon,
   endIcon,
   hatIcon,
+  houseIcon,
+  inheritanceIcon,
+  midLifeCrisisIcon,
+  otherIcon,
+  partTimeJobIcon,
+  partyIcon,
+  remodelIcon,
+  startBusinessIcon,
   startIcon,
+  travelIcon,
   umbrellaIcon,
+  universityIcon,
+  weddingIcon,
 } from "../../components/iconSvg";
 import { pound } from "../../components/currencySumbol";
 
@@ -61,11 +73,12 @@ import MoneyInput from "../inputs/controls/MoneyInput";
 import moment from "moment";
 import { eventsRoute, inputsRoute, summaryRoute } from "../../routes/apiRoutes";
 import RateInput from "../inputs/controls/RateInput";
-import { currentInputSetReducer, setCurrentInputSetAction } from "../../redux/inputs/inputs";
+import { currentInputSetReducer, GetInputsAction, setCurrentInputSetAction } from "../../redux/inputs/inputs";
 import { setSummaryAction } from "../../redux/summary/summary";
 import { DeleteOutlined, MoreOutlined } from "@ant-design/icons";
 import { eventsReducer, getEventsAction } from "../../redux/events/events";
 import { FormInstance, useForm } from "antd/lib/form/Form";
+import { AlertAction } from "../../redux/general/alert";
 
 require("highcharts/highcharts-more")(Highcharts);
 require("highcharts/modules/dumbbell")(Highcharts);
@@ -96,6 +109,7 @@ function LifeMilestones() {
 
   const inputs: IInputs = useSelector((state: RootStateOrAny) => state.currentInputSetReducer);
   const summary: IForecastSummary[] = useSelector((state: RootStateOrAny) => state.summaryReducer);
+  const activeClient = useSelector((state: RootStateOrAny) => state.activeClientReducer);
 
   const [loading, setLoading] = useState(false);
 
@@ -166,10 +180,32 @@ function LifeMilestones() {
 
   const handleIcons = (category: string) => {
     switch (category) {
-      case "value":
-        return boatIcon(planColor);
-      case "boat":
-        return boatIcon(planColor);
+      case "Boat":
+        return boatIcon("#f48fb1");
+      case "Party":
+        return partyIcon("#f48fb1");
+      case "University":
+        return universityIcon("#f48fb1");
+      case "Childcare":
+        return childCareIcon("#f48fb1");
+      case "House":
+        return houseIcon("#f48fb1");
+      case "Inheritance":
+        return inheritanceIcon("#f48fb1");
+      case "Mid-life crisis":
+        return midLifeCrisisIcon("#f48fb1");
+      case "Part-time job":
+        return partTimeJobIcon("#f48fb1");
+      case "Remodel":
+        return remodelIcon("#f48fb1");
+      case "Start a business":
+        return startBusinessIcon("#f48fb1");
+      case "Travel":
+        return travelIcon("#f48fb1");
+      case "Wedding":
+        return weddingIcon("#f48fb1");
+      case "Other":
+        return otherIcon("#f48fb1");
 
       default:
         break;
@@ -247,7 +283,7 @@ function LifeMilestones() {
         };
       }),
     ];
-  }, [childrenColors, inputs.children, inputs.household_owners, ownerColors, inputs.current_year, allEvents]);
+  }, [childrenColors, inputs.children, inputs.household_owners, ownerColors, inputs.current_year]);
 
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     chart: {
@@ -504,7 +540,7 @@ function LifeMilestones() {
     },
   ];
 
-  const dataGoals = lifeGoals;
+  let dataGoals = lifeGoals;
 
   const columnsEvent = [
     {
@@ -574,6 +610,10 @@ function LifeMilestones() {
 
   const dataEvent = lifeEvents.sort((a: IEvents, b: IEvents) => {
     return a.year > b.year ? 1 : -1;
+  });
+
+  dataGoals = dataGoals.sort((a: ILifeGoals, b: ILifeGoals) => {
+    return a.start_year > b.start_year ? 1 : -1;
   });
 
   const [form] = Form.useForm();
@@ -694,7 +734,7 @@ function LifeMilestones() {
       });
     });
     setLifeGoans(arr_LifeGoals);
-  }, []);
+  }, [inputs]);
 
   const [eventEditForm] = useForm();
   return (
@@ -883,6 +923,29 @@ function LifeMilestones() {
         onCancel={handleCancel}
         onOk={async () => {
           setLoading(true);
+          const inputsClone: IInputs = JSON.parse(JSON.stringify(inputs));
+          inputsClone.household_expenses.one_off_expenses = inputsClone.household_expenses.one_off_expenses.filter(
+            (g) => {
+              return goalSelectedData._id !== g._id;
+            }
+          );
+
+          inputsClone.household_expenses.one_off_expenses.push(goalSelectedData);
+
+          try {
+            setLoading(true);
+            const res = await axios.patch(inputsRoute + activeClient._id, inputsClone);
+            if (res.status === 200) {
+              await dispatch(AlertAction("Plan successfully updated", "success"));
+              await dispatch(GetInputsAction(activeClient._id));
+              await dispatch(setCurrentInputSetAction(inputsClone));
+            }
+            setLoading(false);
+            handleCancel();
+          } catch (error) {
+            console.log(error);
+            handleCancel();
+          }
 
           // setIsModalVisibleEditGoals(false);
           setLoading(false);
