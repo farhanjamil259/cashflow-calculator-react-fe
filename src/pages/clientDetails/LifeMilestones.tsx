@@ -21,14 +21,13 @@ import {
 
 import Highcharts, { numberFormat } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import React, { cloneElement, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import IInputs from "../../interfaces/IInputs";
 import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import IForecastSummary from "../../interfaces/IForecastSummary";
 
 import { Icon, InlineIcon } from "@iconify/react";
-import sailboatFill from "@iconify-icons/ri/sailboat-fill";
 import baselineDirectionsBoatFilled from "@iconify-icons/ic/baseline-directions-boat-filled";
 import baselineSpeaker from "@iconify-icons/ic/baseline-speaker";
 import hatGraduation24Filled from "@iconify-icons/fluent/hat-graduation-24-filled";
@@ -68,17 +67,16 @@ import { pound } from "../../components/currencySumbol";
 
 import "./LifeMilestones.css";
 import axios from "axios";
-import TextInput from "../inputs/controls/TextInput";
 import MoneyInput from "../inputs/controls/MoneyInput";
 import moment from "moment";
 import { eventsRoute, inputsRoute, summaryRoute } from "../../routes/apiRoutes";
-import RateInput from "../inputs/controls/RateInput";
-import { currentInputSetReducer, GetInputsAction, setCurrentInputSetAction } from "../../redux/inputs/inputs";
+import { GetInputsAction, setCurrentInputSetAction } from "../../redux/inputs/inputs";
 import { setSummaryAction } from "../../redux/summary/summary";
-import { DeleteOutlined, MoreOutlined } from "@ant-design/icons";
-import { eventsReducer, getEventsAction } from "../../redux/events/events";
-import { FormInstance, useForm } from "antd/lib/form/Form";
+import { MoreOutlined } from "@ant-design/icons";
+import { getEventsAction } from "../../redux/events/events";
+import { useForm } from "antd/lib/form/Form";
 import { AlertAction } from "../../redux/general/alert";
+import { useHistory } from "react-router";
 
 require("highcharts/highcharts-more")(Highcharts);
 require("highcharts/modules/dumbbell")(Highcharts);
@@ -106,6 +104,7 @@ interface IEvents {
 
 function LifeMilestones() {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const inputs: IInputs = useSelector((state: RootStateOrAny) => state.currentInputSetReducer);
   const summary: IForecastSummary[] = useSelector((state: RootStateOrAny) => state.summaryReducer);
@@ -178,112 +177,183 @@ function LifeMilestones() {
 
   const allEvents: any = useSelector((state: RootStateOrAny) => state.eventsReducer);
 
-  const handleIcons = (category: string) => {
+  const handleIcons = (category: string, ownerIndex: number) => {
     switch (category) {
       case "Boat":
-        return boatIcon("#f48fb1");
+        return boatIcon(ownerColors[ownerIndex]);
       case "Party":
-        return partyIcon("#f48fb1");
+        return partyIcon(ownerColors[ownerIndex]);
       case "University":
-        return universityIcon("#f48fb1");
+        return universityIcon(ownerColors[ownerIndex]);
       case "Childcare":
-        return childCareIcon("#f48fb1");
+        return childCareIcon(ownerColors[ownerIndex]);
       case "House":
-        return houseIcon("#f48fb1");
+        return houseIcon(ownerColors[ownerIndex]);
       case "Inheritance":
-        return inheritanceIcon("#f48fb1");
+        return inheritanceIcon(ownerColors[ownerIndex]);
       case "Mid-life crisis":
-        return midLifeCrisisIcon("#f48fb1");
+        return midLifeCrisisIcon(ownerColors[ownerIndex]);
       case "Part-time job":
-        return partTimeJobIcon("#f48fb1");
+        return partTimeJobIcon(ownerColors[ownerIndex]);
       case "Remodel":
-        return remodelIcon("#f48fb1");
+        return remodelIcon(ownerColors[ownerIndex]);
       case "Start a business":
-        return startBusinessIcon("#f48fb1");
+        return startBusinessIcon(ownerColors[ownerIndex]);
       case "Travel":
-        return travelIcon("#f48fb1");
+        return travelIcon(ownerColors[ownerIndex]);
       case "Wedding":
-        return weddingIcon("#f48fb1");
+        return weddingIcon(ownerColors[ownerIndex]);
       case "Other":
-        return otherIcon("#f48fb1");
+        return otherIcon(ownerColors[ownerIndex]);
 
       default:
         break;
     }
   };
 
-  const lifeEvents: IEvents[] = useMemo(() => {
-    return [
-      ...allEvents.map((e: any, i: number) => {
-        return {
-          id: e._id,
-          name: e.name,
-          year: e.year,
-          ownername: inputs.household_owners[e.owner].name,
-          owner: e.owner,
-          planid: e.planid,
-          category: e.category,
-          icon: handleIcons(e.category),
-        };
-      }),
-      {
+  // const lifeEvents: IEvents[] = useMemo(() => {
+  //   return [
+  //     ...allEvents.map((e: any, i: number) => {
+  //       return {
+  //         id: e._id,
+  //         name: e.name,
+  //         year: e.year,
+  //         ownername: inputs.household_owners[e.owner].name,
+  //         owner: e.owner,
+  //         planid: e.planid,
+  //         category: e.category,
+  //         icon: handleIcons(e.category, e.owner),
+  //       };
+  //     }),
+  //     {
+  //       id: "",
+  //       name: "Plan Start",
+  //       year: inputs.current_year,
+  //       owner: "",
+  //       icon: startIcon(planColor),
+  //     },
+  //     {
+  //       id: "",
+  //       name: "Plan End",
+  //       year:
+  //         inputs.household_owners.length > 1
+  //           ? Math.max(
+  //               inputs.household_owners[0].end_of_forecast_year - 1,
+  //               inputs.household_owners[1].end_of_forecast_year - 1
+  //             )
+  //           : inputs.household_owners[0].end_of_forecast_year - 1,
+  //       owner: "",
+  //       icon: endIcon(planColor),
+  //     },
+  //     ...inputs.household_owners.map((o, i) => {
+  //       return {
+  //         id: "",
+  //         name: "Retirement " + o.name,
+  //         year: inputs.household_owners[i].retirement_year,
+  //         owner: o.name,
+  //         icon: umbrellaIcon(ownerColors[i]),
+  //       };
+  //     }),
+  //     ...inputs.children.map((c, i) => {
+  //       return {
+  //         id: "",
+  //         name: c.name + " born",
+  //         year: c.birth_year,
+  //         owner: c.name,
+  //         icon: bottleIcon(childrenColors[i]),
+  //       };
+  //     }),
+  //     ...inputs.children.map((c, i) => {
+  //       return {
+  //         id: "",
+  //         name: "School " + c.name,
+  //         year: c.primary_school_year,
+  //         owner: c.name,
+  //         icon: bookIcon(childrenColors[i]),
+  //       };
+  //     }),
+  //     ...inputs.children.map((c, i) => {
+  //       return {
+  //         id: "",
+  //         name: "Graduation " + c.name,
+  //         year: c.graduation_year,
+  //         owner: c.name,
+  //         icon: hatIcon(childrenColors[i]),
+  //       };
+  //     }),
+  //   ];
+  // }, [childrenColors, inputs.children, inputs.household_owners, ownerColors, inputs.current_year]);
+
+  const [lifeEvents, setLifeEvents] = useState([
+    ...allEvents.map((e: any, i: number) => {
+      return {
+        id: e._id,
+        name: e.name,
+        year: e.year,
+        ownername: inputs.household_owners[e.owner].name,
+        owner: e.owner,
+        planid: e.planid,
+        category: e.category,
+        icon: handleIcons(e.category, e.owner),
+      };
+    }),
+    {
+      id: "",
+      name: "Plan Start",
+      year: inputs.current_year,
+      owner: "",
+      icon: startIcon(planColor),
+    },
+    {
+      id: "",
+      name: "Plan End",
+      year:
+        inputs.household_owners.length > 1
+          ? Math.max(
+              inputs.household_owners[0].end_of_forecast_year - 1,
+              inputs.household_owners[1].end_of_forecast_year - 1
+            )
+          : inputs.household_owners[0].end_of_forecast_year - 1,
+      owner: "",
+      icon: endIcon(planColor),
+    },
+    ...inputs.household_owners.map((o, i) => {
+      return {
         id: "",
-        name: "Plan Start",
-        year: inputs.current_year,
-        owner: "",
-        icon: startIcon(planColor),
-      },
-      {
+        name: "Retirement " + o.name,
+        year: inputs.household_owners[i].retirement_year,
+        owner: o.name,
+        icon: umbrellaIcon(ownerColors[i]),
+      };
+    }),
+    ...inputs.children.map((c, i) => {
+      return {
         id: "",
-        name: "Plan End",
-        year:
-          inputs.household_owners.length > 1
-            ? Math.max(
-                inputs.household_owners[0].end_of_forecast_year - 1,
-                inputs.household_owners[1].end_of_forecast_year - 1
-              )
-            : inputs.household_owners[0].end_of_forecast_year - 1,
-        owner: "",
-        icon: endIcon(planColor),
-      },
-      ...inputs.household_owners.map((o, i) => {
-        return {
-          id: "",
-          name: "Retirement " + o.name,
-          year: inputs.household_owners[i].retirement_year,
-          owner: o.name,
-          icon: umbrellaIcon(ownerColors[i]),
-        };
-      }),
-      ...inputs.children.map((c, i) => {
-        return {
-          id: "",
-          name: c.name + " born",
-          year: c.birth_year,
-          owner: c.name,
-          icon: bottleIcon(childrenColors[i]),
-        };
-      }),
-      ...inputs.children.map((c, i) => {
-        return {
-          id: "",
-          name: "School " + c.name,
-          year: c.primary_school_year,
-          owner: c.name,
-          icon: bookIcon(childrenColors[i]),
-        };
-      }),
-      ...inputs.children.map((c, i) => {
-        return {
-          id: "",
-          name: "Graduation " + c.name,
-          year: c.graduation_year,
-          owner: c.name,
-          icon: hatIcon(childrenColors[i]),
-        };
-      }),
-    ];
-  }, [childrenColors, inputs.children, inputs.household_owners, ownerColors, inputs.current_year]);
+        name: c.name + " born",
+        year: c.birth_year,
+        owner: c.name,
+        icon: bottleIcon(childrenColors[i]),
+      };
+    }),
+    ...inputs.children.map((c, i) => {
+      return {
+        id: "",
+        name: "School " + c.name,
+        year: c.primary_school_year,
+        owner: c.name,
+        icon: bookIcon(childrenColors[i]),
+      };
+    }),
+    ...inputs.children.map((c, i) => {
+      return {
+        id: "",
+        name: "Graduation " + c.name,
+        year: c.graduation_year,
+        owner: c.name,
+        icon: hatIcon(childrenColors[i]),
+      };
+    }),
+  ]);
 
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     chart: {
@@ -368,9 +438,10 @@ function LifeMilestones() {
   useEffect(() => {
     const newSeries: any = [];
 
-    lifeEvents.map((goal) => {
+    lifeEvents.map((goal, i) => {
       newSeries.push({
         type: "lollipop",
+        zindex: -i,
         data: [
           ...summary.map(() => {
             return -1;
@@ -400,16 +471,6 @@ function LifeMilestones() {
       });
       return null;
     });
-
-    // summary.map((s, index) => {
-    //     lifeEvents.map((goal, i) => {
-    //         if (s.year === goal.year) {
-    //             if(newClone.series[i].data[index -1] === newClone.series[i].data[index]){
-    //                 newClone.series[i].data[index] = 3;
-    //             }
-    //         }
-    //     });
-    // });
 
     let tempArray: number[] = [];
     let range = 1;
@@ -442,7 +503,7 @@ function LifeMilestones() {
     });
 
     setChartOptions(newClone);
-  }, []);
+  }, [allEvents]);
 
   const columnsGoals = [
     {
@@ -689,23 +750,6 @@ function LifeMilestones() {
     },
   ]);
 
-  /*
-    [one_off_expense: {
-      inflation: 2.5 (decial)
-      startYear: 2012
-      endYear: 2095
-      afterRetirement: 0 
-    }]
-
-    [summary: {
-      incomeAnalysis: {
-        totalIncome: number
-      },
-      expenseAnalysis: {
-        totalExpenses: number
-      }
-    }]
-  */
   useEffect(() => {
     const arr_LifeGoals: ILifeGoals[] = [];
     inputs.household_expenses.one_off_expenses.map((g) => {
@@ -739,6 +783,13 @@ function LifeMilestones() {
   const [eventEditForm] = useForm();
   return (
     <Layout style={{ backgroundColor: "white" }}>
+      <button
+        onClick={() => {
+          console.log(allEvents);
+        }}
+      >
+        asd
+      </button>
       <Row justify="space-around">
         <Col span={23}>
           <HighchartsReact highcharts={Highcharts} options={chartOptions} />
