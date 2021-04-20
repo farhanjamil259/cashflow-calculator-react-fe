@@ -484,7 +484,7 @@ function LifeMilestones() {
       plotBands: [
         {
           from: 0,
-          to: 30,
+          to: 0,
         },
       ],
     },
@@ -899,8 +899,8 @@ function LifeMilestones() {
 
                     const clone: any = { ...chartOptions };
                     clone.xAxis.plotBands[0] = {
-                      from: record.start_year - inputs.current_year,
-                      to: record.end_year - inputs.current_year,
+                      from: record.start_year - inputs.current_year - 1,
+                      to: record.end_year - inputs.current_year + 1,
 
                       zIndex: 2,
                     };
