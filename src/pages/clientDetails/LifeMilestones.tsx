@@ -284,7 +284,7 @@ function LifeMilestones() {
   //   ];
   // }, [childrenColors, inputs.children, inputs.household_owners, ownerColors, inputs.current_year]);
 
-  const [lifeEvents, setLifeEvents] = useState([
+  const [lifeEvents, setLifeEvents] = useState<IEvents[]>([
     ...allEvents.map((e: any, i: number) => {
       return {
         id: e._id,
@@ -355,6 +355,82 @@ function LifeMilestones() {
     }),
   ]);
 
+  const [tempState, setTempState] = useState(false);
+
+  useEffect(() => {
+    setLifeEvents([
+      ...allEvents.map((e: any, i: number) => {
+        return {
+          id: e._id,
+          name: e.name,
+          year: e.year,
+          ownername: inputs.household_owners[e.owner].name,
+          owner: e.owner,
+          planid: e.planid,
+          category: e.category,
+          icon: handleIcons(e.category, e.owner),
+        };
+      }),
+      {
+        id: "",
+        name: "Plan Start",
+        year: inputs.current_year,
+        owner: "",
+        icon: startIcon(planColor),
+      },
+      {
+        id: "",
+        name: "Plan End",
+        year:
+          inputs.household_owners.length > 1
+            ? Math.max(
+                inputs.household_owners[0].end_of_forecast_year - 1,
+                inputs.household_owners[1].end_of_forecast_year - 1
+              )
+            : inputs.household_owners[0].end_of_forecast_year - 1,
+        owner: "",
+        icon: endIcon(planColor),
+      },
+      ...inputs.household_owners.map((o, i) => {
+        return {
+          id: "",
+          name: "Retirement " + o.name,
+          year: inputs.household_owners[i].retirement_year,
+          owner: o.name,
+          icon: umbrellaIcon(ownerColors[i]),
+        };
+      }),
+      ...inputs.children.map((c, i) => {
+        return {
+          id: "",
+          name: c.name + " born",
+          year: c.birth_year,
+          owner: c.name,
+          icon: bottleIcon(childrenColors[i]),
+        };
+      }),
+      ...inputs.children.map((c, i) => {
+        return {
+          id: "",
+          name: "School " + c.name,
+          year: c.primary_school_year,
+          owner: c.name,
+          icon: bookIcon(childrenColors[i]),
+        };
+      }),
+      ...inputs.children.map((c, i) => {
+        return {
+          id: "",
+          name: "Graduation " + c.name,
+          year: c.graduation_year,
+          owner: c.name,
+          icon: hatIcon(childrenColors[i]),
+        };
+      }),
+    ]);
+    setTempState(!tempState);
+  }, [allEvents]);
+
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     chart: {
       height: 400,
@@ -405,6 +481,12 @@ function LifeMilestones() {
         autoRotation: false,
         step: 5,
       },
+      plotBands: [
+        {
+          from: 0,
+          to: 30,
+        },
+      ],
     },
     yAxis: {
       labels: {
@@ -428,6 +510,7 @@ function LifeMilestones() {
         groupPadding: 0.5,
       },
     },
+
     series: [
       {
         type: "lollipop",
@@ -436,10 +519,9 @@ function LifeMilestones() {
   });
 
   useEffect(() => {
-    const newSeries: any = [];
-
-    lifeEvents.map((goal, i) => {
-      newSeries.push({
+    const clone = { ...chartOptions };
+    clone.series = lifeEvents.map((goal, i) => {
+      return {
         type: "lollipop",
         zindex: -i,
         data: [
@@ -453,12 +535,8 @@ function LifeMilestones() {
           width: 40,
           height: 40,
         },
-      });
-      return null;
+      };
     });
-
-    const clone = { ...chartOptions };
-    clone.series = [...newSeries];
 
     const newClone: any = { ...clone };
 
@@ -503,7 +581,7 @@ function LifeMilestones() {
     });
 
     setChartOptions(newClone);
-  }, [allEvents]);
+  }, [tempState]);
 
   const columnsGoals = [
     {
@@ -781,15 +859,9 @@ function LifeMilestones() {
   }, [inputs]);
 
   const [eventEditForm] = useForm();
+
   return (
     <Layout style={{ backgroundColor: "white" }}>
-      <button
-        onClick={() => {
-          console.log(allEvents);
-        }}
-      >
-        asd
-      </button>
       <Row justify="space-around">
         <Col span={23}>
           <HighchartsReact highcharts={Highcharts} options={chartOptions} />
@@ -819,6 +891,31 @@ function LifeMilestones() {
               dataSource={dataGoals}
               bordered={false}
               pagination={false}
+              onRow={(record) => {
+                return {
+                  onMouseEnter: () => {
+                    console.log(record.start_year - inputs.current_year);
+                    console.log(record.end_year - inputs.current_year);
+
+                    const clone: any = { ...chartOptions };
+                    clone.xAxis.plotBands[0] = {
+                      from: record.start_year - inputs.current_year,
+                      to: record.end_year - inputs.current_year,
+
+                      zIndex: 2,
+                    };
+                    setChartOptions(clone);
+                  },
+                  onMouseLeave: () => {
+                    const clone: any = { ...chartOptions };
+                    clone.xAxis.plotBands[0] = {
+                      from: 0,
+                      to: 0,
+                    };
+                    setChartOptions(clone);
+                  },
+                };
+              }}
             />
           </Card>
         </Col>
@@ -1078,8 +1175,9 @@ function LifeMilestones() {
         okText="Save"
         onOk={async () => {
           setLoading(true);
-          const res = await axios.post(eventsRoute + inputs._id, event);
+          await axios.post(eventsRoute + inputs._id, event);
           await dispatch(getEventsAction(inputs._id));
+
           setIsModalVisible(false);
           setLoading(false);
         }}
