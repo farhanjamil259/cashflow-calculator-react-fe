@@ -523,7 +523,7 @@ function LifeMilestones() {
     clone.series = lifeEvents.map((goal, i) => {
       return {
         type: "lollipop",
-        zindex: -i,
+
         data: [
           ...summary.map(() => {
             return -1;
@@ -572,7 +572,7 @@ function LifeMilestones() {
         if (diff <= range) {
           pVal += 2;
           newClone.series[i].data[num] = pVal;
-          newClone.series[i].zIndex = -i;
+          // newClone.series[i].zIndex = -i;
         } else {
           pVal = 1;
         }
@@ -894,9 +894,6 @@ function LifeMilestones() {
               onRow={(record) => {
                 return {
                   onMouseEnter: () => {
-                    console.log(record.start_year - inputs.current_year);
-                    console.log(record.end_year - inputs.current_year);
-
                     const clone: any = { ...chartOptions };
                     clone.xAxis.plotBands[0] = {
                       from: record.start_year - inputs.current_year,
