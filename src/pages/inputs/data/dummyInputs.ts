@@ -593,6 +593,14 @@ const dummyInputs: IInputs = {
         start_year: 2021,
         end_year: 2095,
       },
+      {
+        id: uuid(),
+        name: "Test",
+        annual_payment_in_todays_terms: 50000,
+        inflation: 0,
+        start_year: 2051,
+        end_year: 2089,
+      },
     ],
     children_education_expenses: {
       primary_school_fees: {
