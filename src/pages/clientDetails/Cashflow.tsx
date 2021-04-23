@@ -13,19 +13,20 @@ import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import YearBreakdownTabs from "../../components/YearBreakdownTabs";
 import { setSummaryAction } from "../../redux/summary/summary";
 import IChartsData from "../../interfaces/IChartsData";
-import IInputs from "../../interfaces/IInputs";
+
+import store from "../../redux/store";
 
 const Cashflow = () => {
   const dispatch = useDispatch();
-  const nominalSummary: IChartsData = useSelector((state: RootStateOrAny) => state.summaryReducer);
-  const realSummary: IChartsData = useSelector((state: RootStateOrAny) => state.realSummaryReducer);
-  const inputs: IInputs = useSelector((state: RootStateOrAny) => state.inputsReducer);
+  const nominalSummary: IChartsData = store.getState().summaryReducer;
+  const realSummary: IChartsData = store.getState().realSummaryReducer;
+
   const [summary, setSummary] = useState<IChartsData>(nominalSummary);
   const [sliderValue, setSliderValue] = useState([summary.years[0], summary.years[summary.years.length - 1]]);
 
   const [selectedSummaryAtIndexNumber, setSelectedSummaryAtIndexNumber] = useState(0);
 
-  const [selectedSummaryAtIndex, setSelectedSummaryAtIndex] = useState(summary.years[0]);
+  const [selectedSummaryAtIndex, setSelectedSummaryAtIndex] = useState(0);
 
   const [shortfall, setShortfall] = useState<number[]>(summary.cashflow.shortfall);
 
@@ -44,7 +45,7 @@ const Cashflow = () => {
     chart: {
       alignTicks: false,
       ignoreHiddenSeries: true,
-      animation: false,
+      // animation: false,
     },
     credits: {
       enabled: false,
@@ -63,15 +64,9 @@ const Cashflow = () => {
       },
       categories: [
         ...summary.years.map((s, i) => {
-          // return `<b>${s}</b> <br> ${
-          //   s - inputs.household_owners[0].birth_year <= 100
-          //     ? s - s - inputs.household_owners[0].birth_year
-          //     : "-"
-          // }<br>${
-          //   s - inputs.household_owners[1].birth_year <= 100 ? s - inputs.household_owners[1].birth_year : "-"
-          // }`;
-
-          return `<b>${s}</b>`;
+          return `<b>${s}</b> <br> ${summary.ages.owners[0][i] <= 100 ? summary.ages.owners[0][i] : "-"}<br>${
+            summary.ages.owners[1][i] <= 100 ? summary.ages.owners[1][i] : "-"
+          }`;
         }),
       ],
       min: 0,
@@ -80,21 +75,21 @@ const Cashflow = () => {
         {
           color: "#ffffff",
           from: 0,
-          to: 2055,
+          to: summary.years[0] - summary.years[0] + 0.5,
           label: {
             text: "",
             align: "right",
           },
           events: {
             click: () => {
-              setSliderValue([summary.years[0], inputs.household_owners[0].retirement_year]);
+              setSliderValue([summary.years[0], summary.years[0]]);
 
               setCashFlowChartOptions({
                 ...cashFlowChartOptions,
                 xAxis: {
                   ...cashFlowChartOptions.xAxis,
                   min: 0,
-                  max: inputs.household_owners[0].retirement_year - summary.years[0] + 0.5 + 1,
+                  max: summary.years[0] - summary.years[0] + 0.5 + 1,
                 },
               });
             },
@@ -102,25 +97,22 @@ const Cashflow = () => {
         },
         {
           color: "#eeeeee",
-          from: 0,
-          to: 0,
+          from: summary.years[0] - summary.years[0] + 0.5,
+          to: summary.years[0] - summary.years[0] + 0.5,
           label: {
             align: "right",
             text: "",
           },
           events: {
             click: (e) => {
-              setSliderValue([
-                inputs.household_owners[0].retirement_year,
-                summary.years[summary.years.length - 1],
-              ]);
+              setSliderValue([summary.years[0], summary.years[0]]);
 
               setCashFlowChartOptions({
                 ...cashFlowChartOptions,
                 xAxis: {
                   ...cashFlowChartOptions.xAxis,
-                  min: inputs.household_owners[0].retirement_year - summary.years[0] + 0.5 - 1,
-                  max: summary.years[summary.years.length - 1] - summary.years[0] + 0.5,
+                  min: summary.years[0] - summary.years[0] + 0.5 - 1,
+                  max: summary.years[0] - summary.years[0] + 0.5,
                 },
               });
             },
@@ -188,7 +180,7 @@ const Cashflow = () => {
     },
     plotOptions: {
       series: {
-        animation: false,
+        // animation: false,
         point: {
           events: {
             click: (e) => {
@@ -212,7 +204,7 @@ const Cashflow = () => {
         point: {
           events: {
             select: (event) => {
-              console.log(event);
+              // console.log(event);
             },
           },
         },
@@ -236,6 +228,7 @@ const Cashflow = () => {
   const [detailedView, setDetailedVliew] = useState<boolean>(true);
   const [nominalView, setNominalView] = useState<boolean>(true);
 
+  //problem state
   useEffect(() => {
     setCashFlowChartOptions({
       series: [
@@ -244,7 +237,11 @@ const Cashflow = () => {
           showInLegend: true,
           name: "Shortfall",
           type: "column",
-          data: detailedView ? shortfall : summary.cashflow.shortfall,
+          data: detailedView
+            ? shortfall
+            : summary.cashflow.shortfall.map((s, i) => {
+                return s;
+              }),
           color: "#f44336",
           legendIndex: 11,
         },
@@ -273,7 +270,13 @@ const Cashflow = () => {
                 },
               }
             : {},
-          data: detailedView ? summary.cashflow.other_income : [],
+          data: detailedView
+            ? [
+                ...summary.cashflow.other_income.map((s) => {
+                  return s;
+                }),
+              ]
+            : [],
           legendIndex: 8,
         },
         {
@@ -301,7 +304,13 @@ const Cashflow = () => {
                 },
               }
             : {},
-          data: detailedView ? summary.cashflow.bank_accounts : [],
+          data: detailedView
+            ? [
+                ...summary.cashflow.bank_accounts.map((s) => {
+                  return s;
+                }),
+              ]
+            : [],
           legendIndex: 9,
         },
         {
@@ -328,7 +337,13 @@ const Cashflow = () => {
                 },
               }
             : {},
-          data: detailedView ? summary.cashflow.residential_property_sales_proceeds : [],
+          data: detailedView
+            ? [
+                ...summary.cashflow.residential_property_sales_proceeds.map((s) => {
+                  return s;
+                }),
+              ]
+            : [],
           legendIndex: 7,
         },
         {
@@ -356,7 +371,13 @@ const Cashflow = () => {
                 },
               }
             : {},
-          data: detailedView ? summary.cashflow.pension_income : [],
+          data: detailedView
+            ? [
+                ...summary.cashflow.pension_income.map((s) => {
+                  return s;
+                }),
+              ]
+            : [],
           legendIndex: 6,
         },
         {
@@ -384,7 +405,13 @@ const Cashflow = () => {
                 },
               }
             : {},
-          data: detailedView ? summary.cashflow.savings_and_investments_drawdowns : [],
+          data: detailedView
+            ? [
+                ...summary.cashflow.savings_and_investments_drawdowns.map((s) => {
+                  return s;
+                }),
+              ]
+            : [],
           legendIndex: 5,
         },
         {
@@ -412,7 +439,13 @@ const Cashflow = () => {
                 },
               }
             : {},
-          data: detailedView ? summary.cashflow.dividend_income : [],
+          data: detailedView
+            ? [
+                ...summary.cashflow.dividend_income.map((s) => {
+                  return s;
+                }),
+              ]
+            : [],
           legendIndex: 4,
         },
         {
@@ -440,7 +473,13 @@ const Cashflow = () => {
                 },
               }
             : {},
-          data: detailedView ? summary.cashflow.rental_income : [],
+          data: detailedView
+            ? [
+                ...summary.cashflow.rental_income.map((s) => {
+                  return s;
+                }),
+              ]
+            : [],
           legendIndex: 3,
         },
         {
@@ -468,7 +507,13 @@ const Cashflow = () => {
                 },
               }
             : {},
-          data: detailedView ? summary.cashflow.self_employment_income : [],
+          data: detailedView
+            ? [
+                ...summary.cashflow.self_employment_income.map((s) => {
+                  return s;
+                }),
+              ]
+            : [],
           legendIndex: 2,
         },
         {
@@ -478,7 +523,6 @@ const Cashflow = () => {
           events: detailedView
             ? {
                 legendItemClick: (e) => {
-                  console.log(e);
                   setIncomeState({ ...incomeState, employmentState: e.target.visible });
                   if (detailedView) {
                     if (e.target.visible) {
@@ -496,7 +540,13 @@ const Cashflow = () => {
                 },
               }
             : {},
-          data: detailedView ? summary.cashflow.employment_income : [],
+          data: detailedView
+            ? [
+                ...summary.cashflow.employment_income.map((s) => {
+                  return s;
+                }),
+              ]
+            : [],
           legendIndex: 1,
 
           // ...(!detailedView
@@ -511,7 +561,7 @@ const Cashflow = () => {
           name: "Inflow",
           type: "column",
           color: "#1976d2",
-          data: summary.income.total_income,
+          data: [...summary.income.total_income],
         },
         {
           zIndex: 99,
@@ -520,7 +570,7 @@ const Cashflow = () => {
           type: "line",
           name: "Total Expenses",
           step: "center",
-          data: summary.cashflow.expenses,
+          data: [...summary.cashflow.expenses],
           color: "#212121",
           marker: {
             enabled: false,
@@ -599,15 +649,14 @@ const Cashflow = () => {
               <Slider
                 range={{ draggableTrack: true }}
                 min={summary.years[0]}
-                max={summary.years[summary.years.length - 1]}
-                defaultValue={[summary.years[0], summary.years[summary.years.length - 1]]}
+                max={summary.years[0]}
+                defaultValue={[summary.years[0], summary.years[0]]}
                 value={[sliderValue[0], sliderValue[1]]}
-                tipFormatter={(value) => {
+                tipFormatter={(value: any) => {
                   if (chartControls.label === "years") {
                     return `${value}`;
                   } else {
-                    // return `${summary[value! - summary.years[0]].ages.owner_ages[0].age}`;
-                    return 0;
+                    return summary.ages.owners[0][value! - summary.years[0]].toString();
                   }
                 }}
                 onChange={(e: number[]) => {
@@ -628,7 +677,7 @@ const Cashflow = () => {
             <Col>
               <Button
                 onClick={(e) => {
-                  setSliderValue([summary.years[0], summary.years[summary.years.length - 1]]);
+                  setSliderValue([summary.years[0], summary.years[0]]);
                   setCashFlowChartOptions({
                     ...cashFlowChartOptions,
                     xAxis: {
@@ -685,8 +734,8 @@ const Cashflow = () => {
         {/* Table */}
         <Row style={{ marginTop: "16px" }}>
           <Col span={24}>
-            {/* <YearBreakdownTabs
-              summary={summary}
+            <YearBreakdownTabs
+              selectedSummaryAtIndex={summary}
               onLeftClick={() => {
                 if (selectedSummaryAtIndexNumber > 0) {
                   setSelectedSummaryAtIndexNumber(selectedSummaryAtIndexNumber - 1);
@@ -699,8 +748,8 @@ const Cashflow = () => {
                   setSelectedSummaryAtIndex(summary.years[selectedSummaryAtIndexNumber + 1]);
                 }
               }}
-              selectedSummaryAtIndex={selectedSummaryAtIndex}
-            /> */}
+              index={selectedSummaryAtIndexNumber}
+            />
           </Col>
         </Row>
       </Card>

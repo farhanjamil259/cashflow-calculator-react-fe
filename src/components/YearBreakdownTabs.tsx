@@ -2,12 +2,14 @@ import { numberFormat } from "highcharts";
 import { Table, Tabs, Typography } from "antd";
 import Title from "antd/lib/typography/Title";
 import { CaretLeftOutlined, CaretRightOutlined } from "@ant-design/icons/lib/icons";
+import IChartsData from "../interfaces/IChartsData";
 
 const { TabPane } = Tabs;
 const { Text } = Typography;
 
 const YearBreakdownTabs = (props: any) => {
-  const selectedSummaryAtIndex = props.selectedSummaryAtIndex;
+  const index: number = props.index;
+  const newSummary: IChartsData = props.selectedSummaryAtIndex;
 
   const columnWidths = ["25%", "25%", "25%", "25%"];
 
@@ -29,7 +31,7 @@ const YearBreakdownTabs = (props: any) => {
               <CaretLeftOutlined />{" "}
             </a>
 
-            {selectedSummaryAtIndex.year}
+            {newSummary.years[index]}
 
             <a
               href={"#!"}
@@ -95,9 +97,7 @@ const YearBreakdownTabs = (props: any) => {
                   </svg>
                 </span>
               ),
-              value:
-                "£" +
-                numberFormat(selectedSummaryAtIndex.income_analysis.total_employment_income, 0, ".", ","),
+              value: "£" + numberFormat(newSummary.cashflow.employment_income[index], 0, ".", ","),
             },
             {
               name: "Self-Employment Income",
@@ -117,14 +117,7 @@ const YearBreakdownTabs = (props: any) => {
                   <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
                 </svg>
               ),
-              value:
-                "£" +
-                numberFormat(
-                  selectedSummaryAtIndex.income_analysis.total_self_employment_income,
-                  0,
-                  ".",
-                  ","
-                ),
+              value: "£" + numberFormat(newSummary.cashflow.self_employment_income[index], 0, ".", ","),
             },
             {
               name: "Rental Income",
@@ -159,8 +152,7 @@ const YearBreakdownTabs = (props: any) => {
                   </svg>
                 </span>
               ),
-              value:
-                "£" + numberFormat(selectedSummaryAtIndex.income_analysis.total_rental_income, 0, ".", ","),
+              value: "£" + numberFormat(newSummary.cashflow.rental_income[index], 0, ".", ","),
             },
             {
               name: "Dividend Income",
@@ -195,8 +187,7 @@ const YearBreakdownTabs = (props: any) => {
                   </svg>
                 </span>
               ),
-              value:
-                "£" + numberFormat(selectedSummaryAtIndex.income_analysis.total_dividend_income, 0, ".", ","),
+              value: "£" + numberFormat(newSummary.cashflow.dividend_income[index], 0, ".", ","),
             },
             {
               name: "Savings and Investments Drawdowns",
@@ -232,13 +223,7 @@ const YearBreakdownTabs = (props: any) => {
                 </span>
               ),
               value:
-                "£" +
-                numberFormat(
-                  selectedSummaryAtIndex.income_analysis.total_savings_and_investments_drawdowns,
-                  0,
-                  ".",
-                  ","
-                ),
+                "£" + numberFormat(newSummary.cashflow.savings_and_investments_drawdowns[index], 0, ".", ","),
             },
             {
               name: "Pension Income",
@@ -273,8 +258,7 @@ const YearBreakdownTabs = (props: any) => {
                   </svg>
                 </span>
               ),
-              value:
-                "£" + numberFormat(selectedSummaryAtIndex.income_analysis.total_pension_income, 0, ".", ","),
+              value: "£" + numberFormat(newSummary.cashflow.pension_income[index], 0, ".", ","),
             },
             {
               name: "Other Income",
@@ -309,24 +293,9 @@ const YearBreakdownTabs = (props: any) => {
                   </svg>
                 </span>
               ),
-              value:
-                "£" + numberFormat(selectedSummaryAtIndex.income_analysis.total_other_income, 0, ".", ","),
+              value: "£" + numberFormat(newSummary.cashflow.other_income[index], 0, ".", ","),
             },
           ]}
-          summary={() => (
-            <Table.Summary.Row>
-              <Table.Summary.Cell index={0}>
-                <Text strong>Total</Text>
-              </Table.Summary.Cell>
-              <Table.Summary.Cell index={1} align={"right"} />
-              <Table.Summary.Cell index={2} align={"right"} />
-              <Table.Summary.Cell index={3} align={"right"}>
-                <Text strong>
-                  £ {numberFormat(selectedSummaryAtIndex.income_analysis.total_income, 0, ".", ",")}
-                </Text>
-              </Table.Summary.Cell>
-            </Table.Summary.Row>
-          )}
           pagination={false}
         />
       </TabPane>
@@ -393,9 +362,7 @@ const YearBreakdownTabs = (props: any) => {
                   </svg>
                 </span>
               ),
-              value:
-                "£" +
-                numberFormat(selectedSummaryAtIndex.expense_analysis.total_housing_expenses, 0, ".", ","),
+              value: "£" + numberFormat(newSummary.expenses.housing[index], 0, ".", ","),
             },
             {
               name: "Consumables Expenses",
@@ -430,9 +397,7 @@ const YearBreakdownTabs = (props: any) => {
                   </svg>
                 </span>
               ),
-              value:
-                "£" +
-                numberFormat(selectedSummaryAtIndex.expense_analysis.total_consumables_expenses, 0, ".", ","),
+              value: "£" + numberFormat(newSummary.expenses.consumables[index], 0, ".", ","),
             },
             {
               name: "Travel Expenses",
@@ -467,9 +432,7 @@ const YearBreakdownTabs = (props: any) => {
                   </svg>
                 </span>
               ),
-              value:
-                "£" +
-                numberFormat(selectedSummaryAtIndex.expense_analysis.total_travel_expenses, 0, ".", ","),
+              value: "£" + numberFormat(newSummary.expenses.travel[index], 0, ".", ","),
             },
             {
               name: "Shopping Expenses",
@@ -504,9 +467,7 @@ const YearBreakdownTabs = (props: any) => {
                   </svg>
                 </span>
               ),
-              value:
-                "£" +
-                numberFormat(selectedSummaryAtIndex.expense_analysis.total_shopping_expenses, 0, ".", ","),
+              value: "£" + numberFormat(newSummary.expenses.shopping[index], 0, ".", ","),
             },
             {
               name: "Entertainment Expenses",
@@ -541,14 +502,7 @@ const YearBreakdownTabs = (props: any) => {
                   </svg>
                 </span>
               ),
-              value:
-                "£" +
-                numberFormat(
-                  selectedSummaryAtIndex.expense_analysis.total_entertainment_expenses,
-                  0,
-                  ".",
-                  ","
-                ),
+              value: "£" + numberFormat(newSummary.expenses.entertainment[index], 0, ".", ","),
             },
             {
               name: "Holiday Expenses",
@@ -583,9 +537,7 @@ const YearBreakdownTabs = (props: any) => {
                   </svg>
                 </span>
               ),
-              value:
-                "£" +
-                numberFormat(selectedSummaryAtIndex.expense_analysis.total_holiday_expenses, 0, ".", ","),
+              value: "£" + numberFormat(newSummary.expenses.holiday[index], 0, ".", ","),
             },
 
             {
@@ -621,14 +573,7 @@ const YearBreakdownTabs = (props: any) => {
                   </svg>
                 </span>
               ),
-              value:
-                "£" +
-                numberFormat(
-                  selectedSummaryAtIndex.expense_analysis.total_children_education_expenses,
-                  0,
-                  ".",
-                  ","
-                ),
+              value: "£" + numberFormat(newSummary.expenses.children_education[index], 0, ".", ","),
             },
             {
               name: "Financials Expenses",
@@ -663,9 +608,7 @@ const YearBreakdownTabs = (props: any) => {
                   </svg>
                 </span>
               ),
-              value:
-                "£" +
-                numberFormat(selectedSummaryAtIndex.expense_analysis.total_financial_expenses, 0, ".", ","),
+              value: "£" + numberFormat(newSummary.expenses.financial[index], 0, ".", ","),
             },
             {
               name: "Additional Tax Charge",
@@ -700,30 +643,9 @@ const YearBreakdownTabs = (props: any) => {
                   </svg>
                 </span>
               ),
-              value:
-                "£" +
-                numberFormat(
-                  selectedSummaryAtIndex.expense_analysis.total_additional_tax_charge,
-                  0,
-                  ".",
-                  ","
-                ),
+              value: "£" + numberFormat(newSummary.expenses.additional_tax_charge[index], 0, ".", ","),
             },
           ]}
-          summary={() => (
-            <Table.Summary.Row>
-              <Table.Summary.Cell index={0}>
-                <Text strong>Total</Text>
-              </Table.Summary.Cell>
-              <Table.Summary.Cell index={1} align={"right"} />
-              <Table.Summary.Cell index={2} align={"right"} />
-              <Table.Summary.Cell index={3} align={"right"}>
-                <Text strong>
-                  £ {numberFormat(selectedSummaryAtIndex.expense_analysis.total_expenses, 0, ".", ",")}
-                </Text>
-              </Table.Summary.Cell>
-            </Table.Summary.Row>
-          )}
           pagination={false}
         />
       </TabPane>
@@ -792,34 +714,9 @@ const YearBreakdownTabs = (props: any) => {
               ),
               value:
                 "£" +
-                numberFormat(
-                  selectedSummaryAtIndex.assets_and_liabilities_analysis.total_savings_and_investments,
-                  0,
-                  ".",
-                  ","
-                ),
+                numberFormat(newSummary.assets_and_liabilities.savings_and_investments[index], 0, ".", ","),
             },
           ]}
-          summary={() => (
-            <Table.Summary.Row>
-              <Table.Summary.Cell index={0}>
-                <Text strong>Total</Text>
-              </Table.Summary.Cell>
-              <Table.Summary.Cell index={1} align={"right"} />
-              <Table.Summary.Cell index={2} align={"right"} />
-              <Table.Summary.Cell index={3} align={"right"}>
-                <Text strong>
-                  £
-                  {numberFormat(
-                    selectedSummaryAtIndex.assets_and_liabilities_analysis.total_savings_and_investments,
-                    0,
-                    ".",
-                    ","
-                  )}
-                </Text>
-              </Table.Summary.Cell>
-            </Table.Summary.Row>
-          )}
           pagination={false}
         />
       </TabPane>
@@ -886,36 +783,9 @@ const YearBreakdownTabs = (props: any) => {
                   </svg>
                 </span>
               ),
-              value:
-                "£" +
-                numberFormat(
-                  selectedSummaryAtIndex.assets_and_liabilities_analysis.total_pension_plans,
-                  0,
-                  ".",
-                  ","
-                ),
+              value: "£" + numberFormat(newSummary.assets_and_liabilities.pension_plans[index], 0, ".", ","),
             },
           ]}
-          summary={() => (
-            <Table.Summary.Row>
-              <Table.Summary.Cell index={0}>
-                <Text strong>Total</Text>
-              </Table.Summary.Cell>
-              <Table.Summary.Cell index={1} align={"right"} />
-              <Table.Summary.Cell index={2} align={"right"} />
-              <Table.Summary.Cell index={3} align={"right"}>
-                <Text strong>
-                  £
-                  {numberFormat(
-                    selectedSummaryAtIndex.assets_and_liabilities_analysis.total_pension_plans,
-                    0,
-                    ".",
-                    ","
-                  )}
-                </Text>
-              </Table.Summary.Cell>
-            </Table.Summary.Row>
-          )}
           pagination={false}
         />
       </TabPane>
@@ -985,7 +855,7 @@ const YearBreakdownTabs = (props: any) => {
                   </svg>
                 </span>
               ),
-              value: selectedSummaryAtIndex.property_analysis.property_details[0].amount,
+              // value: selectedSummaryAtIndex.property_analysis.property_details[0].amount,
             },
             {
               name: "Second Property",
@@ -1020,7 +890,7 @@ const YearBreakdownTabs = (props: any) => {
                   </svg>
                 </span>
               ),
-              value: selectedSummaryAtIndex.property_analysis.property_details[1].amount,
+              // value: selectedSummaryAtIndex.property_analysis.property_details[1].amount,
             },
           ]}
           summary={(tableData) => {
@@ -1080,43 +950,43 @@ const YearBreakdownTabs = (props: any) => {
             },
           ]}
           dataSource={[
-            ...selectedSummaryAtIndex.property_analysis.mortgage_details.map((m: any) => {
-              return {
-                name: m.name,
-                category: "Property",
-                owner: (
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      xmlnsXlink="http://www.w3.org/1999/xlink"
-                      aria-hidden="true"
-                      focusable="false"
-                      width="1em"
-                      height="1em"
-                      preserveAspectRatio="xMidYMid meet"
-                      viewBox="0 0 32 32"
-                    >
-                      <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
-                      <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      xmlnsXlink="http://www.w3.org/1999/xlink"
-                      aria-hidden="true"
-                      focusable="false"
-                      width="1em"
-                      height="1em"
-                      preserveAspectRatio="xMidYMid meet"
-                      viewBox="0 0 32 32"
-                    >
-                      <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
-                      <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
-                    </svg>
-                  </span>
-                ),
-                value: Math.abs(m.amount),
-              };
-            }),
+            // ...selectedSummaryAtIndex.property_analysis.mortgage_details.map((m: any) => {
+            //   return {
+            //     name: m.name,
+            //     category: "Property",
+            //     owner: (
+            //       <span>
+            //         <svg
+            //           xmlns="http://www.w3.org/2000/svg"
+            //           xmlnsXlink="http://www.w3.org/1999/xlink"
+            //           aria-hidden="true"
+            //           focusable="false"
+            //           width="1em"
+            //           height="1em"
+            //           preserveAspectRatio="xMidYMid meet"
+            //           viewBox="0 0 32 32"
+            //         >
+            //           <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#a5d6a7" />
+            //           <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#a5d6a7" />
+            //         </svg>
+            //         <svg
+            //           xmlns="http://www.w3.org/2000/svg"
+            //           xmlnsXlink="http://www.w3.org/1999/xlink"
+            //           aria-hidden="true"
+            //           focusable="false"
+            //           width="1em"
+            //           height="1em"
+            //           preserveAspectRatio="xMidYMid meet"
+            //           viewBox="0 0 32 32"
+            //         >
+            //           <path d="M6 30h20v-5a7.008 7.008 0 0 0-7-7h-6a7.008 7.008 0 0 0-7 7z" fill="#b39ddb" />
+            //           <path d="M9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7z" fill="#b39ddb" />
+            //         </svg>
+            //       </span>
+            //     ),
+            //     value: Math.abs(m.amount),
+            //   };
+            // }),
             {
               name: "Other Loans",
               category: "Property",
@@ -1150,7 +1020,7 @@ const YearBreakdownTabs = (props: any) => {
                   </svg>
                 </span>
               ),
-              value: Math.abs(selectedSummaryAtIndex.assets_and_liabilities_analysis.total_other_loans),
+              // value: Math.abs(selectedSummaryAtIndex.assets_and_liabilities_analysis.total_other_loans),
             },
             {
               name: "Credit Card",
@@ -1185,7 +1055,7 @@ const YearBreakdownTabs = (props: any) => {
                   </svg>
                 </span>
               ),
-              value: Math.abs(selectedSummaryAtIndex.assets_and_liabilities_analysis.credit_card),
+              // value: Math.abs(selectedSummaryAtIndex.assets_and_liabilities_analysis.credit_card),
             },
           ]}
           summary={(tableData) => {
