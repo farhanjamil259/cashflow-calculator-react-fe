@@ -12,23 +12,22 @@ import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 
 import YearBreakdownTabs from "../../components/YearBreakdownTabs";
 import { setSummaryAction } from "../../redux/summary/summary";
+import IChartsData from "../../interfaces/IChartsData";
+import IInputs from "../../interfaces/IInputs";
 
 const Cashflow = () => {
   const dispatch = useDispatch();
-  const nominalSummary: IForecastSummary[] = useSelector((state: RootStateOrAny) => state.summaryReducer);
-  const realSummary: IForecastSummary[] = useSelector((state: RootStateOrAny) => state.realSummaryReducer);
-  const [summary, setSummary] = useState<IForecastSummary[]>(nominalSummary);
-  const [sliderValue, setSliderValue] = useState([summary[0].year, summary[summary.length - 1].year]);
+  const nominalSummary: IChartsData = useSelector((state: RootStateOrAny) => state.summaryReducer);
+  const realSummary: IChartsData = useSelector((state: RootStateOrAny) => state.realSummaryReducer);
+  const inputs: IInputs = useSelector((state: RootStateOrAny) => state.inputsReducer);
+  const [summary, setSummary] = useState<IChartsData>(nominalSummary);
+  const [sliderValue, setSliderValue] = useState([summary.years[0], summary.years[summary.years.length - 1]]);
 
   const [selectedSummaryAtIndexNumber, setSelectedSummaryAtIndexNumber] = useState(0);
 
-  const [selectedSummaryAtIndex, setSelectedSummaryAtIndex] = useState(summary[0]);
+  const [selectedSummaryAtIndex, setSelectedSummaryAtIndex] = useState(summary.years[0]);
 
-  const [shortfall, setShortfall] = useState<number[]>(
-    summary.map((s) => {
-      return s.expense_analysis.total_expenses - s.income_analysis.total_income;
-    })
-  );
+  const [shortfall, setShortfall] = useState<number[]>(summary.cashflow.shortfall);
 
   const [incomeState, setIncomeState] = useState({
     employmentState: false,
@@ -63,33 +62,39 @@ const Cashflow = () => {
         step: 4,
       },
       categories: [
-        ...summary.map((s) => {
-          return `<b>${s.year}</b> <br> ${
-            s.ages.owner_ages[0].age <= 100 ? s.ages.owner_ages[0].age : "-"
-          }<br>${s.ages.owner_ages[1].age <= 100 ? s.ages.owner_ages[1].age : "-"}`;
+        ...summary.years.map((s, i) => {
+          // return `<b>${s}</b> <br> ${
+          //   s - inputs.household_owners[0].birth_year <= 100
+          //     ? s - s - inputs.household_owners[0].birth_year
+          //     : "-"
+          // }<br>${
+          //   s - inputs.household_owners[1].birth_year <= 100 ? s - inputs.household_owners[1].birth_year : "-"
+          // }`;
+
+          return `<b>${s}</b>`;
         }),
       ],
       min: 0,
-      max: summary.length - 1,
+      max: summary.years.length - 1,
       plotBands: [
         {
           color: "#ffffff",
           from: 0,
-          to: summary[0].retirement_ages[0] - summary[0].year + 0.5,
+          to: 2055,
           label: {
             text: "",
             align: "right",
           },
           events: {
             click: () => {
-              setSliderValue([summary[0].year, summary[0].retirement_ages[0]]);
+              setSliderValue([summary.years[0], inputs.household_owners[0].retirement_year]);
 
               setCashFlowChartOptions({
                 ...cashFlowChartOptions,
                 xAxis: {
                   ...cashFlowChartOptions.xAxis,
                   min: 0,
-                  max: summary[0].retirement_ages[0] - summary[0].year + 0.5 + 1,
+                  max: inputs.household_owners[0].retirement_year - summary.years[0] + 0.5 + 1,
                 },
               });
             },
@@ -97,22 +102,25 @@ const Cashflow = () => {
         },
         {
           color: "#eeeeee",
-          from: summary[0].retirement_ages[0] - summary[0].year + 0.5,
-          to: summary[summary.length - 1].year - summary[0].year + 0.5,
+          from: 0,
+          to: 0,
           label: {
             align: "right",
             text: "",
           },
           events: {
             click: (e) => {
-              setSliderValue([summary[0].retirement_ages[0], summary[summary.length - 1].year]);
+              setSliderValue([
+                inputs.household_owners[0].retirement_year,
+                summary.years[summary.years.length - 1],
+              ]);
 
               setCashFlowChartOptions({
                 ...cashFlowChartOptions,
                 xAxis: {
                   ...cashFlowChartOptions.xAxis,
-                  min: summary[0].retirement_ages[0] - summary[0].year + 0.5 - 1,
-                  max: summary[summary.length - 1].year - summary[0].year + 0.5,
+                  min: inputs.household_owners[0].retirement_year - summary.years[0] + 0.5 - 1,
+                  max: summary.years[summary.years.length - 1] - summary.years[0] + 0.5,
                 },
               });
             },
@@ -185,7 +193,7 @@ const Cashflow = () => {
           events: {
             click: (e) => {
               setSelectedSummaryAtIndexNumber(e.point.x);
-              setSelectedSummaryAtIndex(summary[e.point.x]);
+              setSelectedSummaryAtIndex(summary.years[e.point.x]);
             },
           },
         },
@@ -236,11 +244,7 @@ const Cashflow = () => {
           showInLegend: true,
           name: "Shortfall",
           type: "column",
-          data: detailedView
-            ? shortfall
-            : summary.map((s, i) => {
-                return s.expense_analysis.total_expenses - s.income_analysis.total_income;
-              }),
+          data: detailedView ? shortfall : summary.cashflow.shortfall,
           color: "#f44336",
           legendIndex: 11,
         },
@@ -256,26 +260,20 @@ const Cashflow = () => {
                   if (e.target.visible) {
                     setShortfall(
                       shortfall.map((s, i) => {
-                        return s + summary[i].income_analysis.total_other_income;
+                        return s + summary.cashflow.other_income[i];
                       })
                     );
                   } else {
                     setShortfall(
                       shortfall.map((s, i) => {
-                        return s - summary[i].income_analysis.total_other_income;
+                        return s - summary.cashflow.other_income[i];
                       })
                     );
                   }
                 },
               }
             : {},
-          data: detailedView
-            ? [
-                ...summary.map((s) => {
-                  return s.income_analysis.total_other_income;
-                }),
-              ]
-            : [],
+          data: detailedView ? summary.cashflow.other_income : [],
           legendIndex: 8,
         },
         {
@@ -290,59 +288,47 @@ const Cashflow = () => {
                   if (e.target.visible) {
                     setShortfall(
                       shortfall.map((s, i) => {
-                        return s + summary[i].income_analysis.total_other_income;
+                        return s + summary.cashflow.bank_accounts[i];
                       })
                     );
                   } else {
                     setShortfall(
                       shortfall.map((s, i) => {
-                        return s - summary[i].income_analysis.total_other_income;
+                        return s - summary.cashflow.bank_accounts[i];
                       })
                     );
                   }
                 },
               }
             : {},
-          data: detailedView
-            ? [
-                ...summary.map((s) => {
-                  return s.income_analysis.aggregated_bank_accounts;
-                }),
-              ]
-            : [],
+          data: detailedView ? summary.cashflow.bank_accounts : [],
           legendIndex: 9,
         },
         {
           showInLegend: detailedView,
           name: "Property Sale",
           type: "column",
-          // events: detailedView
-          //   ? {
-          //       legendItemClick: (e) => {
-          //         setIncomeState({ ...incomeState, propertySaleState: !e.target.visible });
-          //         if (e.target.visible) {
-          //           setShortfall(
-          //             shortfall.map((s, i) => {
-          //               return s + summary[i].income_analysis.total_residential_sale_proceeds;
-          //             })
-          //           );
-          //         } else {
-          //           setShortfall(
-          //             shortfall.map((s, i) => {
-          //               return s - summary[i].income_analysis.total_residential_sale_proceeds;
-          //             })
-          //           );
-          //         }
-          //       },
-          //     }
-          //   : {},
-          data: detailedView
-            ? [
-                ...summary.map((s) => {
-                  return s.income_analysis.total_residential_sale_proceeds;
-                }),
-              ]
-            : [],
+          events: detailedView
+            ? {
+                legendItemClick: (e) => {
+                  setIncomeState({ ...incomeState, otherState: !e.target.visible });
+                  if (e.target.visible) {
+                    setShortfall(
+                      shortfall.map((s, i) => {
+                        return s + summary.cashflow.residential_property_sales_proceeds[i];
+                      })
+                    );
+                  } else {
+                    setShortfall(
+                      shortfall.map((s, i) => {
+                        return s - summary.cashflow.residential_property_sales_proceeds[i];
+                      })
+                    );
+                  }
+                },
+              }
+            : {},
+          data: detailedView ? summary.cashflow.residential_property_sales_proceeds : [],
           legendIndex: 7,
         },
         {
@@ -357,26 +343,20 @@ const Cashflow = () => {
                   if (e.target.visible) {
                     setShortfall(
                       shortfall.map((s, i) => {
-                        return s + summary[i].income_analysis.total_pension_income;
+                        return s + summary.cashflow.pension_income[i];
                       })
                     );
                   } else {
                     setShortfall(
                       shortfall.map((s, i) => {
-                        return s - summary[i].income_analysis.total_pension_income;
+                        return s - summary.cashflow.pension_income[i];
                       })
                     );
                   }
                 },
               }
             : {},
-          data: detailedView
-            ? [
-                ...summary.map((s) => {
-                  return s.income_analysis.total_pension_income;
-                }),
-              ]
-            : [],
+          data: detailedView ? summary.cashflow.pension_income : [],
           legendIndex: 6,
         },
         {
@@ -391,26 +371,20 @@ const Cashflow = () => {
                   if (e.target.visible) {
                     setShortfall(
                       shortfall.map((s, i) => {
-                        return s + summary[i].income_analysis.total_savings_and_investments_drawdowns;
+                        return s + summary.cashflow.savings_and_investments_drawdowns[i];
                       })
                     );
                   } else {
                     setShortfall(
                       shortfall.map((s, i) => {
-                        return s - summary[i].income_analysis.total_savings_and_investments_drawdowns;
+                        return s - summary.cashflow.savings_and_investments_drawdowns[i];
                       })
                     );
                   }
                 },
               }
             : {},
-          data: detailedView
-            ? [
-                ...summary.map((s) => {
-                  return s.income_analysis.total_savings_and_investments_drawdowns;
-                }),
-              ]
-            : [],
+          data: detailedView ? summary.cashflow.savings_and_investments_drawdowns : [],
           legendIndex: 5,
         },
         {
@@ -425,26 +399,20 @@ const Cashflow = () => {
                   if (e.target.visible) {
                     setShortfall(
                       shortfall.map((s, i) => {
-                        return s + summary[i].income_analysis.total_dividend_income;
+                        return s + summary.cashflow.dividend_income[i];
                       })
                     );
                   } else {
                     setShortfall(
                       shortfall.map((s, i) => {
-                        return s - summary[i].income_analysis.total_dividend_income;
+                        return s - summary.cashflow.dividend_income[i];
                       })
                     );
                   }
                 },
               }
             : {},
-          data: detailedView
-            ? [
-                ...summary.map((s) => {
-                  return s.income_analysis.total_dividend_income;
-                }),
-              ]
-            : [],
+          data: detailedView ? summary.cashflow.dividend_income : [],
           legendIndex: 4,
         },
         {
@@ -459,26 +427,20 @@ const Cashflow = () => {
                   if (e.target.visible) {
                     setShortfall(
                       shortfall.map((s, i) => {
-                        return s + summary[i].income_analysis.total_rental_income;
+                        return s + summary.cashflow.rental_income[i];
                       })
                     );
                   } else {
                     setShortfall(
                       shortfall.map((s, i) => {
-                        return s - summary[i].income_analysis.total_rental_income;
+                        return s - summary.cashflow.rental_income[i];
                       })
                     );
                   }
                 },
               }
             : {},
-          data: detailedView
-            ? [
-                ...summary.map((s) => {
-                  return s.income_analysis.total_rental_income;
-                }),
-              ]
-            : [],
+          data: detailedView ? summary.cashflow.rental_income : [],
           legendIndex: 3,
         },
         {
@@ -493,26 +455,20 @@ const Cashflow = () => {
                   if (e.target.visible) {
                     setShortfall(
                       shortfall.map((s, i) => {
-                        return s + summary[i].income_analysis.total_self_employment_income;
+                        return s + summary.cashflow.self_employment_income[i];
                       })
                     );
                   } else {
                     setShortfall(
                       shortfall.map((s, i) => {
-                        return s - summary[i].income_analysis.total_self_employment_income;
+                        return s - summary.cashflow.self_employment_income[i];
                       })
                     );
                   }
                 },
               }
             : {},
-          data: detailedView
-            ? [
-                ...summary.map((s) => {
-                  return s.income_analysis.total_self_employment_income;
-                }),
-              ]
-            : [],
+          data: detailedView ? summary.cashflow.self_employment_income : [],
           legendIndex: 2,
         },
         {
@@ -527,12 +483,12 @@ const Cashflow = () => {
                   if (detailedView) {
                     if (e.target.visible) {
                       let v = shortfall.map((s, i) => {
-                        return s + summary[i].income_analysis.total_employment_income;
+                        return s + summary.cashflow.employment_income[i];
                       });
                       setShortfall(v);
                     } else {
                       let v = shortfall.map((s, i) => {
-                        return s - summary[i].income_analysis.total_employment_income;
+                        return s - summary.cashflow.employment_income[i];
                       });
                       setShortfall(v);
                     }
@@ -540,13 +496,7 @@ const Cashflow = () => {
                 },
               }
             : {},
-          data: detailedView
-            ? [
-                ...summary.map((s) => {
-                  return s.income_analysis.total_employment_income;
-                }),
-              ]
-            : [],
+          data: detailedView ? summary.cashflow.employment_income : [],
           legendIndex: 1,
 
           // ...(!detailedView
@@ -561,11 +511,7 @@ const Cashflow = () => {
           name: "Inflow",
           type: "column",
           color: "#1976d2",
-          data: [
-            ...summary.map((s) => {
-              return s.income_analysis.total_income;
-            }),
-          ],
+          data: summary.income.total_income,
         },
         {
           zIndex: 99,
@@ -574,11 +520,7 @@ const Cashflow = () => {
           type: "line",
           name: "Total Expenses",
           step: "center",
-          data: [
-            ...summary.map((s) => {
-              return s.expense_analysis.total_expenses;
-            }),
-          ],
+          data: summary.cashflow.expenses,
           color: "#212121",
           marker: {
             enabled: false,
@@ -593,11 +535,7 @@ const Cashflow = () => {
   }, [summary, detailedView, shortfall]);
 
   useEffect(() => {
-    setShortfall(
-      summary.map((s, i) => {
-        return s.expense_analysis.total_expenses - s.income_analysis.total_income;
-      })
-    );
+    setShortfall(summary.cashflow.shortfall);
   }, [nominalView]);
 
   const [chartControls, setChartControls] = useState({
@@ -660,15 +598,16 @@ const Cashflow = () => {
             <Col span={22}>
               <Slider
                 range={{ draggableTrack: true }}
-                min={summary[0].year}
-                max={summary[summary.length - 1].year}
-                defaultValue={[summary[0].year, summary[summary.length - 1].year]}
+                min={summary.years[0]}
+                max={summary.years[summary.years.length - 1]}
+                defaultValue={[summary.years[0], summary.years[summary.years.length - 1]]}
                 value={[sliderValue[0], sliderValue[1]]}
                 tipFormatter={(value) => {
                   if (chartControls.label === "years") {
                     return `${value}`;
                   } else {
-                    return `${summary[value! - summary[0].year].ages.owner_ages[0].age}`;
+                    // return `${summary[value! - summary.years[0]].ages.owner_ages[0].age}`;
+                    return 0;
                   }
                 }}
                 onChange={(e: number[]) => {
@@ -679,8 +618,8 @@ const Cashflow = () => {
                     ...cashFlowChartOptions,
                     xAxis: {
                       ...cashFlowChartOptions.xAxis,
-                      min: e[0] - summary[0].year,
-                      max: e[1] - summary[0].year,
+                      min: e[0] - summary.years[0],
+                      max: e[1] - summary.years[0],
                     },
                   });
                 }}
@@ -689,13 +628,13 @@ const Cashflow = () => {
             <Col>
               <Button
                 onClick={(e) => {
-                  setSliderValue([summary[0].year, summary[summary.length - 1].year]);
+                  setSliderValue([summary.years[0], summary.years[summary.years.length - 1]]);
                   setCashFlowChartOptions({
                     ...cashFlowChartOptions,
                     xAxis: {
                       ...cashFlowChartOptions.xAxis,
                       min: 0,
-                      max: summary.length - 1,
+                      max: summary.years.length - 1,
                     },
                     yAxis: {
                       ...cashFlowChartOptions.yAxis,
@@ -746,22 +685,22 @@ const Cashflow = () => {
         {/* Table */}
         <Row style={{ marginTop: "16px" }}>
           <Col span={24}>
-            <YearBreakdownTabs
+            {/* <YearBreakdownTabs
               summary={summary}
               onLeftClick={() => {
                 if (selectedSummaryAtIndexNumber > 0) {
                   setSelectedSummaryAtIndexNumber(selectedSummaryAtIndexNumber - 1);
-                  setSelectedSummaryAtIndex(summary[selectedSummaryAtIndexNumber - 1]);
+                  setSelectedSummaryAtIndex(summary.years[selectedSummaryAtIndexNumber - 1]);
                 }
               }}
               onRightClick={() => {
-                if (selectedSummaryAtIndexNumber <= summary.length - 2) {
+                if (selectedSummaryAtIndexNumber <= summary.years.length - 2) {
                   setSelectedSummaryAtIndexNumber(selectedSummaryAtIndexNumber + 1);
-                  setSelectedSummaryAtIndex(summary[selectedSummaryAtIndexNumber + 1]);
+                  setSelectedSummaryAtIndex(summary.years[selectedSummaryAtIndexNumber + 1]);
                 }
               }}
               selectedSummaryAtIndex={selectedSummaryAtIndex}
-            />
+            /> */}
           </Col>
         </Row>
       </Card>
