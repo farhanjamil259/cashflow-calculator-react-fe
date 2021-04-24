@@ -7,18 +7,19 @@ import { RootStateOrAny, useSelector } from "react-redux";
 import highcharts, { numberFormat } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import YearBreakdownTabs from "../../components/YearBreakdownTabs";
+import IChartsData from "../../interfaces/IChartsData";
 const AssetsAndLiabilities = () => {
-  const nominalSummary: IForecastSummary[] = useSelector((state: RootStateOrAny) => state.summaryReducer);
+  const nominalSummary: IChartsData = useSelector((state: RootStateOrAny) => state.summaryReducer);
 
-  const realSummary: IForecastSummary[] = useSelector((state: RootStateOrAny) => state.realSummaryReducer);
+  const realSummary: IChartsData = useSelector((state: RootStateOrAny) => state.realSummaryReducer);
 
-  const [summary, setSummary] = useState<IForecastSummary[]>(nominalSummary);
+  const [summary, setSummary] = useState<IChartsData>(nominalSummary);
 
-  const [sliderValue, setSliderValue] = useState([summary[0].year, summary[summary.length - 1].year]);
+  const [sliderValue, setSliderValue] = useState([summary.years[0], summary.years[summary.years.length - 1]]);
 
   const [selectedSummaryAtIndexNumber, setSelectedSummaryAtIndexNumber] = useState(0);
 
-  const [selectedSummaryAtIndex, setSelectedSummaryAtIndex] = useState(summary[0]);
+  const [selectedSummaryAtIndex, setSelectedSummaryAtIndex] = useState(summary.years[0]);
 
   const [assetsAndLiabilityChartOptions, setAssetsAndLiabilityChartOptions] = useState<highcharts.Options>({
     chart: {
@@ -43,33 +44,33 @@ const AssetsAndLiabilities = () => {
         step: 4,
       },
       categories: [
-        ...summary.map((s) => {
-          return `<b>${s.year}</b> <br> ${
-            s.ages.owner_ages[0].age <= 100 ? s.ages.owner_ages[0].age : "-"
-          }<br>${s.ages.owner_ages[1].age <= 100 ? s.ages.owner_ages[1].age : "-"}`;
+        ...summary.years.map((s, i) => {
+          return `<b>${s}</b> <br> ${summary.ages.owners[0][i] <= 100 ? summary.ages.owners[0][i] : "-"}<br>${
+            summary.ages.owners[1][i] <= 100 ? summary.ages.owners[1][i] : "-"
+          }`;
         }),
       ],
       min: 0,
-      max: summary.length - 1,
+      max: summary.years.length - 1,
       plotBands: [
         {
           color: "#ffffff",
           from: 0,
-          to: summary[0].retirement_ages[0] - summary[0].year + 0.5,
+          to: summary.retirement_ages[0] - summary.years[0] + 0.5,
           label: {
             text: "",
             align: "right",
           },
           events: {
             click: () => {
-              setSliderValue([summary[0].year, summary[0].retirement_ages[0]]);
+              setSliderValue([summary.years[0], summary.retirement_ages[0]]);
 
               setAssetsAndLiabilityChartOptions({
                 ...assetsAndLiabilityChartOptions,
                 xAxis: {
                   ...assetsAndLiabilityChartOptions.xAxis,
                   min: 0,
-                  max: summary[0].retirement_ages[0] - summary[0].year + 0.5 + 1,
+                  max: summary.retirement_ages[0] - summary.years[0] + 0.5 + 1,
                 },
               });
             },
@@ -77,22 +78,22 @@ const AssetsAndLiabilities = () => {
         },
         {
           color: "#eeeeee",
-          from: summary[0].retirement_ages[0] - summary[0].year + 0.5,
-          to: summary[summary.length - 1].year - summary[0].year + 0.5,
+          from: summary.retirement_ages[0] - summary.years[0] + 0.5,
+          to: summary.years[summary.years.length - 1] - summary.years[0] + 0.5,
           label: {
             align: "right",
             text: "",
           },
           events: {
             click: () => {
-              setSliderValue([summary[0].retirement_ages[0], summary[summary.length - 1].year]);
+              setSliderValue([summary.retirement_ages[0], summary.years[summary.years.length - 1]]);
 
               setAssetsAndLiabilityChartOptions({
                 ...assetsAndLiabilityChartOptions,
                 xAxis: {
                   ...assetsAndLiabilityChartOptions.xAxis,
-                  min: summary[0].retirement_ages[0] - summary[0].year + 0.5 - 1,
-                  max: summary[summary.length - 1].year - summary[0].year + 0.5,
+                  min: summary.retirement_ages[0] - summary.years[0] + 0.5 - 1,
+                  max: summary.years[summary.years.length - 1] - summary.years[0] + 0.5,
                 },
               });
             },
@@ -167,7 +168,7 @@ const AssetsAndLiabilities = () => {
           events: {
             click: (e) => {
               setSelectedSummaryAtIndexNumber(e.point.x);
-              setSelectedSummaryAtIndex(summary[e.point.x]);
+              setSelectedSummaryAtIndex(summary.years[e.point.x]);
             },
           },
         },
@@ -197,8 +198,8 @@ const AssetsAndLiabilities = () => {
         name: "Pension Plans",
         type: "column",
         data: [
-          ...summary.map((s) => {
-            return s.assets_and_liabilities_analysis.total_pension_plans;
+          ...summary.assets_and_liabilities.pension_plans.map((s) => {
+            return s;
           }),
         ],
         animation: false,
@@ -207,8 +208,8 @@ const AssetsAndLiabilities = () => {
         name: "Savings and Investments",
         type: "column",
         data: [
-          ...summary.map((s) => {
-            return s.assets_and_liabilities_analysis.total_savings_and_investments;
+          ...summary.assets_and_liabilities.savings_and_investments.map((s) => {
+            return s;
           }),
         ],
         animation: false,
@@ -217,8 +218,8 @@ const AssetsAndLiabilities = () => {
         name: "Aggregated Bank Accounts",
         type: "column",
         data: [
-          ...summary.map((s) => {
-            return s.assets_and_liabilities_analysis.aggregated_bank_accounts;
+          ...summary.assets_and_liabilities.aggregated_bank_accounts.map((s) => {
+            return s;
           }),
         ],
         animation: false,
@@ -227,10 +228,8 @@ const AssetsAndLiabilities = () => {
         name: "Property",
         type: "column",
         data: [
-          ...summary.map((s) => {
-            return (
-              s.property_analysis.property_details[0].amount + s.property_analysis.property_details[1].amount
-            );
+          ...summary.assets_and_liabilities.properties.map((s) => {
+            return s;
           }),
         ],
         animation: false,
@@ -242,12 +241,8 @@ const AssetsAndLiabilities = () => {
         type: "line",
         step: "left",
         data: [
-          ...summary.map((s) => {
-            return (
-              s.assets_and_liabilities_analysis.total_mortgages * -1 +
-              s.assets_and_liabilities_analysis.total_other_loans * -1 +
-              s.assets_and_liabilities_analysis.credit_card * -1
-            );
+          ...summary.assets_and_liabilities.liabilities.map((s) => {
+            return s;
           }),
         ],
         animation: false,
@@ -301,8 +296,8 @@ const AssetsAndLiabilities = () => {
                         name: "Pension Plans",
                         type: "column",
                         data: [
-                          ...summary.map((s) => {
-                            return s.assets_and_liabilities_analysis.total_pension_plans;
+                          ...summary.assets_and_liabilities.pension_plans.map((s) => {
+                            return s;
                           }),
                         ],
                       },
@@ -310,8 +305,8 @@ const AssetsAndLiabilities = () => {
                         name: "Savings and Investments",
                         type: "column",
                         data: [
-                          ...summary.map((s) => {
-                            return s.assets_and_liabilities_analysis.total_savings_and_investments;
+                          ...summary.assets_and_liabilities.savings_and_investments.map((s) => {
+                            return s;
                           }),
                         ],
                       },
@@ -319,8 +314,8 @@ const AssetsAndLiabilities = () => {
                         name: "Aggregated Bank Accounts",
                         type: "column",
                         data: [
-                          ...summary.map((s) => {
-                            return s.assets_and_liabilities_analysis.aggregated_bank_accounts;
+                          ...summary.assets_and_liabilities.aggregated_bank_accounts.map((s) => {
+                            return s;
                           }),
                         ],
                       },
@@ -328,27 +323,20 @@ const AssetsAndLiabilities = () => {
                         name: "Property",
                         type: "column",
                         data: [
-                          ...summary.map((s) => {
-                            return (
-                              s.property_analysis.property_details[0].amount +
-                              s.property_analysis.property_details[1].amount
-                            );
+                          ...summary.assets_and_liabilities.properties.map((s) => {
+                            return s;
                           }),
                         ],
+                        animation: false,
                         color: "#7986cb",
                       },
-
                       {
                         name: "Liabilities",
                         type: "line",
                         step: "left",
                         data: [
-                          ...summary.map((s) => {
-                            return (
-                              s.assets_and_liabilities_analysis.total_mortgages * -1 +
-                              s.assets_and_liabilities_analysis.total_other_loans * -1 +
-                              s.assets_and_liabilities_analysis.credit_card * -1
-                            );
+                          ...summary.assets_and_liabilities.liabilities.map((s) => {
+                            return s;
                           }),
                         ],
                         marker: {
@@ -369,8 +357,8 @@ const AssetsAndLiabilities = () => {
                         name: "Pension Plans",
                         type: "column",
                         data: [
-                          ...summary.map((s) => {
-                            return s.assets_and_liabilities_analysis.total_pension_plans;
+                          ...summary.assets_and_liabilities.pension_plans.map((s) => {
+                            return s;
                           }),
                         ],
                       },
@@ -378,8 +366,8 @@ const AssetsAndLiabilities = () => {
                         name: "Savings and Investments",
                         type: "column",
                         data: [
-                          ...summary.map((s) => {
-                            return s.assets_and_liabilities_analysis.total_savings_and_investments;
+                          ...summary.assets_and_liabilities.savings_and_investments.map((s) => {
+                            return s;
                           }),
                         ],
                       },
@@ -387,8 +375,8 @@ const AssetsAndLiabilities = () => {
                         name: "Aggregated Bank Accounts",
                         type: "column",
                         data: [
-                          ...summary.map((s) => {
-                            return s.assets_and_liabilities_analysis.aggregated_bank_accounts;
+                          ...summary.assets_and_liabilities.aggregated_bank_accounts.map((s) => {
+                            return s;
                           }),
                         ],
                       },
@@ -396,27 +384,20 @@ const AssetsAndLiabilities = () => {
                         name: "Property",
                         type: "column",
                         data: [
-                          ...summary.map((s) => {
-                            return (
-                              s.property_analysis.property_details[0].amount +
-                              s.property_analysis.property_details[1].amount
-                            );
+                          ...summary.assets_and_liabilities.properties.map((s) => {
+                            return s;
                           }),
                         ],
+                        animation: false,
                         color: "#7986cb",
                       },
-
                       {
                         name: "Liabilities",
                         type: "line",
                         step: "left",
                         data: [
-                          ...summary.map((s) => {
-                            return (
-                              s.assets_and_liabilities_analysis.total_mortgages * -1 +
-                              s.assets_and_liabilities_analysis.total_other_loans * -1 +
-                              s.assets_and_liabilities_analysis.credit_card * -1
-                            );
+                          ...summary.assets_and_liabilities.liabilities.map((s) => {
+                            return s;
                           }),
                         ],
                         marker: {
@@ -439,15 +420,15 @@ const AssetsAndLiabilities = () => {
             <Col span={22}>
               <Slider
                 range={{ draggableTrack: true }}
-                min={summary[0].year}
-                max={summary[summary.length - 1].year}
-                defaultValue={[summary[0].year, summary[summary.length - 1].year]}
+                min={summary.years[0]}
+                max={summary.years[summary.years.length - 1]}
+                defaultValue={[summary.years[0], summary.years[summary.years.length - 1]]}
                 value={[sliderValue[0], sliderValue[1]]}
                 tipFormatter={(value) => {
                   if (chartControls.label === "years") {
                     return `${value}`;
                   } else {
-                    return `${summary[value! - summary[0].year].ages.owner_ages[0].age}`;
+                    return summary.ages.owners[0][value! - summary.years[0]].toString();
                   }
                 }}
                 onChange={(e: number[]) => {
@@ -458,8 +439,8 @@ const AssetsAndLiabilities = () => {
                     ...assetsAndLiabilityChartOptions,
                     xAxis: {
                       ...assetsAndLiabilityChartOptions.xAxis,
-                      min: e[0] - summary[0].year,
-                      max: e[1] - summary[0].year,
+                      min: e[0] - summary.years[0],
+                      max: e[1] - summary.years[0],
                     },
                   });
                 }}
@@ -468,13 +449,13 @@ const AssetsAndLiabilities = () => {
             <Col>
               <Button
                 onClick={() => {
-                  setSliderValue([summary[0].year, summary[summary.length - 1].year]);
+                  setSliderValue([summary.years[0], summary.years[summary.years.length - 1]]);
                   setAssetsAndLiabilityChartOptions({
                     ...assetsAndLiabilityChartOptions,
                     xAxis: {
                       ...assetsAndLiabilityChartOptions.xAxis,
                       min: 0,
-                      max: summary.length - 1,
+                      max: summary.years.length - 1,
                     },
                     yAxis: {
                       ...assetsAndLiabilityChartOptions.yAxis,
@@ -524,20 +505,20 @@ const AssetsAndLiabilities = () => {
         <Row style={{ marginTop: "16px" }}>
           <Col span={24}>
             <YearBreakdownTabs
-              summary={summary}
+              selectedSummaryAtIndex={summary}
               onLeftClick={() => {
                 if (selectedSummaryAtIndexNumber > 0) {
                   setSelectedSummaryAtIndexNumber(selectedSummaryAtIndexNumber - 1);
-                  setSelectedSummaryAtIndex(summary[selectedSummaryAtIndexNumber - 1]);
+                  setSelectedSummaryAtIndex(summary.years[selectedSummaryAtIndexNumber - 1]);
                 }
               }}
               onRightClick={() => {
-                if (selectedSummaryAtIndexNumber <= summary.length - 2) {
+                if (selectedSummaryAtIndexNumber <= summary.years.length - 2) {
                   setSelectedSummaryAtIndexNumber(selectedSummaryAtIndexNumber + 1);
-                  setSelectedSummaryAtIndex(summary[selectedSummaryAtIndexNumber + 1]);
+                  setSelectedSummaryAtIndex(summary.years[selectedSummaryAtIndexNumber + 1]);
                 }
               }}
-              selectedSummaryAtIndex={selectedSummaryAtIndex}
+              index={selectedSummaryAtIndexNumber}
             />
           </Col>
         </Row>

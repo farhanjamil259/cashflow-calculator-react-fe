@@ -228,7 +228,6 @@ const Cashflow = () => {
   const [detailedView, setDetailedVliew] = useState<boolean>(true);
   const [nominalView, setNominalView] = useState<boolean>(true);
 
-  //problem state
   useEffect(() => {
     setCashFlowChartOptions({
       series: [
@@ -239,9 +238,11 @@ const Cashflow = () => {
           type: "column",
           data: detailedView
             ? shortfall
-            : summary.cashflow.shortfall.map((s, i) => {
-                return s;
-              }),
+            : [
+                ...summary.cashflow.shortfall.map((s, i) => {
+                  return s;
+                }),
+              ],
           color: "#f44336",
           legendIndex: 11,
         },

@@ -77,6 +77,7 @@ import { getEventsAction } from "../../redux/events/events";
 import { useForm } from "antd/lib/form/Form";
 import { AlertAction } from "../../redux/general/alert";
 import { useHistory } from "react-router";
+import IChartsData from "../../interfaces/IChartsData";
 
 require("highcharts/highcharts-more")(Highcharts);
 require("highcharts/modules/dumbbell")(Highcharts);
@@ -107,7 +108,7 @@ function LifeMilestones() {
   const history = useHistory();
 
   const inputs: IInputs = useSelector((state: RootStateOrAny) => state.currentInputSetReducer);
-  const summary: IForecastSummary[] = useSelector((state: RootStateOrAny) => state.summaryReducer);
+  const summary: IChartsData = useSelector((state: RootStateOrAny) => state.summaryReducer);
   const activeClient = useSelector((state: RootStateOrAny) => state.activeClientReducer);
 
   const [loading, setLoading] = useState(false);
@@ -468,10 +469,10 @@ function LifeMilestones() {
     },
     xAxis: {
       categories: [
-        ...summary.map((s) => {
-          return `<b>${s.year}</b> <br> ${
-            s.ages.owner_ages[0].age <= 100 ? s.ages.owner_ages[0].age : "-"
-          }<br>${s.ages.owner_ages[1].age <= 100 ? s.ages.owner_ages[1].age : "-"}`;
+        ...summary.years.map((s, i) => {
+          return `<b>${s}</b> <br> ${summary.ages.owners[0][i] <= 100 ? summary.ages.owners[0][i] : "-"}<br>${
+            summary.ages.owners[1][i] <= 100 ? summary.ages.owners[1][i] : "-"
+          }`;
         }),
       ],
       gridLineWidth: 10,
@@ -525,7 +526,7 @@ function LifeMilestones() {
         type: "lollipop",
 
         data: [
-          ...summary.map(() => {
+          ...summary.years.map(() => {
             return -1;
           }),
         ],
@@ -540,9 +541,9 @@ function LifeMilestones() {
 
     const newClone: any = { ...clone };
 
-    summary.map((s, index) => {
+    summary.years.map((s, index) => {
       lifeEvents.map((goal, i) => {
-        if (s.year === goal.year) {
+        if (s === goal.year) {
           newClone.series[i].data[index] = 1;
         }
         return null;
@@ -833,9 +834,9 @@ function LifeMilestones() {
     inputs.household_expenses.one_off_expenses.map((g) => {
       let newProgress = 0;
       let calcShortfall = 0;
-      summary.map((s) => {
-        if (s.year >= g.start_year && s.year <= g.end_year) {
-          calcShortfall += s.expense_analysis.total_expenses - s.income_analysis.total_income;
+      summary.years.map((s, i) => {
+        if (s >= g.start_year && s <= g.end_year) {
+          calcShortfall += summary.cashflow.expenses[i] - summary.income.total_income[i];
         }
       });
       let calculatedProgress = Math.round(100 - calcShortfall / g.annual_payment_in_todays_terms);
@@ -1109,7 +1110,7 @@ function LifeMilestones() {
           <Form.Item label="Amount" rules={[{ required: true, message: "An amount is required" }]}>
             <InputNumber
               formatter={(value) => `${pound}${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-              parser={(value) => value!.replace(/£\s?|(,*)/g, "")}
+              parser={(value: any) => value!.replace(/£\s?|(,*)/g, "")}
               value={`${goalSelectedData.annual_payment_in_todays_terms}`}
               className="custom-input-fields"
               onBlur={(e) => {

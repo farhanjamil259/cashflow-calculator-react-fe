@@ -73,7 +73,11 @@ const CalcRealSummary = (summary: IChartsData, assumptions: IAssumptions) => {
       savings_and_investments: summary.assets_and_liabilities.savings_and_investments.map((income, i) => {
         return realFormula(income, i);
       }),
+
       pension_plans: summary.assets_and_liabilities.pension_plans.map((income, i) => {
+        return realFormula(income, i);
+      }),
+      properties: summary.assets_and_liabilities.properties.map((income, i) => {
         return realFormula(income, i);
       }),
       liabilities: summary.assets_and_liabilities.liabilities.map((income, i) => {

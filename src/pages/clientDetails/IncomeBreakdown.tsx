@@ -6,16 +6,17 @@ import { RootStateOrAny, useSelector } from "react-redux";
 import highcharts, { numberFormat } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import YearBreakdownTabs from "../../components/YearBreakdownTabs";
+import IChartsData from "../../interfaces/IChartsData";
 
 const IncomeBreakdown = () => {
-  const nominalSummary: IForecastSummary[] = useSelector((state: RootStateOrAny) => state.summaryReducer);
-  const realSummary: IForecastSummary[] = useSelector((state: RootStateOrAny) => state.realSummaryReducer);
-  const [summary, setSummary] = useState<IForecastSummary[]>(nominalSummary);
-  const [sliderValue, setSliderValue] = useState([summary[0].year, summary[summary.length - 1].year]);
+  const nominalSummary: IChartsData = useSelector((state: RootStateOrAny) => state.summaryReducer);
+  const realSummary: IChartsData = useSelector((state: RootStateOrAny) => state.realSummaryReducer);
+  const [summary, setSummary] = useState<IChartsData>(nominalSummary);
+  const [sliderValue, setSliderValue] = useState([summary.years[0], summary.years[summary.years.length - 1]]);
 
   const [selectedSummaryAtIndexNumber, setSelectedSummaryAtIndexNumber] = useState(0);
 
-  const [selectedSummaryAtIndex, setSelectedSummaryAtIndex] = useState(summary[0]);
+  const [selectedSummaryAtIndex, setSelectedSummaryAtIndex] = useState(summary.years[0]);
 
   const [incomeBreakdownOptions, setIncomeBreakdownOptions] = useState<highcharts.Options>({
     chart: {
@@ -38,33 +39,33 @@ const IncomeBreakdown = () => {
         step: 4,
       },
       categories: [
-        ...summary.map((s) => {
-          return `<b>${s.year}</b> <br> ${
-            s.ages.owner_ages[0].age <= 100 ? s.ages.owner_ages[0].age : "-"
-          }<br>${s.ages.owner_ages[1].age <= 100 ? s.ages.owner_ages[1].age : "-"}`;
+        ...summary.years.map((s, i) => {
+          return `<b>${s}</b> <br> ${summary.ages.owners[0][i] <= 100 ? summary.ages.owners[0][i] : "-"}<br>${
+            summary.ages.owners[1][i] <= 100 ? summary.ages.owners[1][i] : "-"
+          }`;
         }),
       ],
       min: 0,
-      max: summary.length - 1,
+      max: summary.years.length - 1,
       plotBands: [
         {
           color: "#ffffff",
           from: 0,
-          to: summary[0].retirement_ages[0] - summary[0].year + 0.5,
+          to: summary.retirement_ages[0] - summary.years[0] + 0.5,
           label: {
             text: "",
             align: "right",
           },
           events: {
             click: () => {
-              setSliderValue([summary[0].year, summary[0].retirement_ages[0]]);
+              setSliderValue([summary.years[0], summary.retirement_ages[0]]);
 
               setIncomeBreakdownOptions({
                 ...incomeBreakdownOptions,
                 xAxis: {
                   ...incomeBreakdownOptions.xAxis,
                   min: 0,
-                  max: summary[0].retirement_ages[0] - summary[0].year + 0.5 + 1,
+                  max: summary.retirement_ages[0] - summary.years[0] + 0.5 + 1,
                 },
               });
             },
@@ -72,22 +73,22 @@ const IncomeBreakdown = () => {
         },
         {
           color: "#eeeeee",
-          from: summary[0].retirement_ages[0] - summary[0].year + 0.5,
-          to: summary[summary.length - 1].year - summary[0].year + 0.5,
+          from: summary.retirement_ages[0] - summary.years[0] + 0.5,
+          to: summary.years[summary.years.length - 1] - summary.years[0] + 0.5,
           label: {
             align: "right",
             text: "",
           },
           events: {
             click: () => {
-              setSliderValue([summary[0].retirement_ages[0], summary[summary.length - 1].year]);
+              setSliderValue([summary.retirement_ages[0], summary.years[summary.years.length - 1]]);
 
               setIncomeBreakdownOptions({
                 ...incomeBreakdownOptions,
                 xAxis: {
                   ...incomeBreakdownOptions.xAxis,
-                  min: summary[0].retirement_ages[0] - summary[0].year + 0.5 - 1,
-                  max: summary[summary.length - 1].year - summary[0].year + 0.5,
+                  min: summary.retirement_ages[0] - summary.years[0] + 0.5 - 1,
+                  max: summary.years[summary.years.length - 1] - summary.years[0] + 0.5,
                 },
               });
             },
@@ -159,7 +160,7 @@ const IncomeBreakdown = () => {
           events: {
             click: (e) => {
               setSelectedSummaryAtIndexNumber(e.point.x);
-              setSelectedSummaryAtIndex(summary[e.point.x]);
+              setSelectedSummaryAtIndex(summary.years[e.point.x]);
             },
           },
         },
@@ -191,8 +192,8 @@ const IncomeBreakdown = () => {
         type: "column",
 
         data: [
-          ...summary.map((s) => {
-            return s.income_analysis.total_residential_sale_proceeds;
+          ...summary.cashflow.residential_property_sales_proceeds.map((s) => {
+            return s;
           }),
         ],
       },
@@ -200,8 +201,8 @@ const IncomeBreakdown = () => {
         name: "Other",
         type: "column",
         data: [
-          ...summary.map((s) => {
-            return s.income_analysis.total_other_income;
+          ...summary.income.other_income.map((s) => {
+            return s;
           }),
         ],
       },
@@ -210,8 +211,8 @@ const IncomeBreakdown = () => {
         name: "Pension",
         type: "column",
         data: [
-          ...summary.map((s) => {
-            return s.income_analysis.total_pension_income;
+          ...summary.income.pension_income.map((s) => {
+            return s;
           }),
         ],
       },
@@ -219,8 +220,8 @@ const IncomeBreakdown = () => {
         name: "Savings and Investments",
         type: "column",
         data: [
-          ...summary.map((s) => {
-            return s.income_analysis.total_savings_and_investments_drawdowns;
+          ...summary.income.savings_and_investments_drawdowns.map((s) => {
+            return s;
           }),
         ],
       },
@@ -228,8 +229,8 @@ const IncomeBreakdown = () => {
         name: "Dividend",
         type: "column",
         data: [
-          ...summary.map((s) => {
-            return s.income_analysis.total_dividend_income;
+          ...summary.income.dividend_income.map((s) => {
+            return s;
           }),
         ],
       },
@@ -237,8 +238,8 @@ const IncomeBreakdown = () => {
         name: "Rental",
         type: "column",
         data: [
-          ...summary.map((s) => {
-            return s.income_analysis.total_rental_income;
+          ...summary.income.rental_income.map((s) => {
+            return s;
           }),
         ],
       },
@@ -247,8 +248,8 @@ const IncomeBreakdown = () => {
         name: "Self-Employment",
         type: "column",
         data: [
-          ...summary.map((s) => {
-            return s.income_analysis.total_self_employment_income;
+          ...summary.income.self_employment_income.map((s) => {
+            return s;
           }),
         ],
       },
@@ -256,8 +257,8 @@ const IncomeBreakdown = () => {
         name: "Employment",
         type: "column",
         data: [
-          ...summary.map((s) => {
-            return s.income_analysis.total_employment_income;
+          ...summary.income.employment_income.map((s) => {
+            return s;
           }),
         ],
       },
@@ -304,9 +305,10 @@ const IncomeBreakdown = () => {
                       {
                         name: "Property Sale",
                         type: "column",
+
                         data: [
-                          ...summary.map((s) => {
-                            return s.income_analysis.total_residential_sale_proceeds;
+                          ...summary.cashflow.residential_property_sales_proceeds.map((s) => {
+                            return s;
                           }),
                         ],
                       },
@@ -314,17 +316,18 @@ const IncomeBreakdown = () => {
                         name: "Other",
                         type: "column",
                         data: [
-                          ...summary.map((s) => {
-                            return s.income_analysis.total_other_income;
+                          ...summary.income.other_income.map((s) => {
+                            return s;
                           }),
                         ],
                       },
+
                       {
                         name: "Pension",
                         type: "column",
                         data: [
-                          ...nominalSummary.map((s) => {
-                            return s.income_analysis.total_pension_income;
+                          ...summary.income.pension_income.map((s) => {
+                            return s;
                           }),
                         ],
                       },
@@ -332,8 +335,8 @@ const IncomeBreakdown = () => {
                         name: "Savings and Investments",
                         type: "column",
                         data: [
-                          ...nominalSummary.map((s) => {
-                            return s.income_analysis.total_savings_and_investments_drawdowns;
+                          ...summary.income.savings_and_investments_drawdowns.map((s) => {
+                            return s;
                           }),
                         ],
                       },
@@ -341,8 +344,8 @@ const IncomeBreakdown = () => {
                         name: "Dividend",
                         type: "column",
                         data: [
-                          ...nominalSummary.map((s) => {
-                            return s.income_analysis.total_dividend_income;
+                          ...summary.income.dividend_income.map((s) => {
+                            return s;
                           }),
                         ],
                       },
@@ -350,8 +353,8 @@ const IncomeBreakdown = () => {
                         name: "Rental",
                         type: "column",
                         data: [
-                          ...nominalSummary.map((s) => {
-                            return s.income_analysis.total_rental_income;
+                          ...summary.income.rental_income.map((s) => {
+                            return s;
                           }),
                         ],
                       },
@@ -360,8 +363,8 @@ const IncomeBreakdown = () => {
                         name: "Self-Employment",
                         type: "column",
                         data: [
-                          ...nominalSummary.map((s) => {
-                            return s.income_analysis.total_self_employment_income;
+                          ...summary.income.self_employment_income.map((s) => {
+                            return s;
                           }),
                         ],
                       },
@@ -369,8 +372,8 @@ const IncomeBreakdown = () => {
                         name: "Employment",
                         type: "column",
                         data: [
-                          ...nominalSummary.map((s) => {
-                            return s.income_analysis.total_employment_income;
+                          ...summary.income.employment_income.map((s) => {
+                            return s;
                           }),
                         ],
                       },
@@ -384,9 +387,10 @@ const IncomeBreakdown = () => {
                       {
                         name: "Property Sale",
                         type: "column",
+
                         data: [
-                          ...summary.map((s) => {
-                            return s.income_analysis.total_residential_sale_proceeds;
+                          ...summary.cashflow.residential_property_sales_proceeds.map((s) => {
+                            return s;
                           }),
                         ],
                       },
@@ -394,17 +398,18 @@ const IncomeBreakdown = () => {
                         name: "Other",
                         type: "column",
                         data: [
-                          ...summary.map((s) => {
-                            return s.income_analysis.total_other_income;
+                          ...summary.income.other_income.map((s) => {
+                            return s;
                           }),
                         ],
                       },
+
                       {
                         name: "Pension",
                         type: "column",
                         data: [
-                          ...realSummary.map((s) => {
-                            return s.income_analysis.total_pension_income;
+                          ...summary.income.pension_income.map((s) => {
+                            return s;
                           }),
                         ],
                       },
@@ -412,8 +417,8 @@ const IncomeBreakdown = () => {
                         name: "Savings and Investments",
                         type: "column",
                         data: [
-                          ...realSummary.map((s) => {
-                            return s.income_analysis.total_savings_and_investments_drawdowns;
+                          ...summary.income.savings_and_investments_drawdowns.map((s) => {
+                            return s;
                           }),
                         ],
                       },
@@ -421,8 +426,8 @@ const IncomeBreakdown = () => {
                         name: "Dividend",
                         type: "column",
                         data: [
-                          ...realSummary.map((s) => {
-                            return s.income_analysis.total_dividend_income;
+                          ...summary.income.dividend_income.map((s) => {
+                            return s;
                           }),
                         ],
                       },
@@ -430,8 +435,8 @@ const IncomeBreakdown = () => {
                         name: "Rental",
                         type: "column",
                         data: [
-                          ...realSummary.map((s) => {
-                            return s.income_analysis.total_rental_income;
+                          ...summary.income.rental_income.map((s) => {
+                            return s;
                           }),
                         ],
                       },
@@ -440,8 +445,8 @@ const IncomeBreakdown = () => {
                         name: "Self-Employment",
                         type: "column",
                         data: [
-                          ...realSummary.map((s) => {
-                            return s.income_analysis.total_self_employment_income;
+                          ...summary.income.self_employment_income.map((s) => {
+                            return s;
                           }),
                         ],
                       },
@@ -449,8 +454,8 @@ const IncomeBreakdown = () => {
                         name: "Employment",
                         type: "column",
                         data: [
-                          ...realSummary.map((s) => {
-                            return s.income_analysis.total_employment_income;
+                          ...summary.income.employment_income.map((s) => {
+                            return s;
                           }),
                         ],
                       },
@@ -467,15 +472,15 @@ const IncomeBreakdown = () => {
             <Col span={22}>
               <Slider
                 range={{ draggableTrack: true }}
-                min={summary[0].year}
-                max={summary[summary.length - 1].year}
-                defaultValue={[summary[0].year, summary[summary.length - 1].year]}
+                min={summary.years[0]}
+                max={summary.years[summary.years.length - 1]}
+                defaultValue={[summary.years[0], summary.years[summary.years.length - 1]]}
                 value={[sliderValue[0], sliderValue[1]]}
                 tipFormatter={(value) => {
                   if (chartControls.label === "years") {
                     return `${value}`;
                   } else {
-                    return `${summary[value! - summary[0].year].ages.owner_ages[0].age}`;
+                    return summary.ages.owners[0][value! - summary.years[0]].toString();
                   }
                 }}
                 onChange={(e: number[]) => {
@@ -486,8 +491,8 @@ const IncomeBreakdown = () => {
                     ...incomeBreakdownOptions,
                     xAxis: {
                       ...incomeBreakdownOptions.xAxis,
-                      min: e[0] - summary[0].year,
-                      max: e[1] - summary[0].year,
+                      min: e[0] - summary.years[0],
+                      max: e[1] - summary.years[0],
                     },
                   });
                 }}
@@ -496,13 +501,13 @@ const IncomeBreakdown = () => {
             <Col>
               <Button
                 onClick={() => {
-                  setSliderValue([summary[0].year, summary[summary.length - 1].year]);
+                  setSliderValue([summary.years[0], summary.years[summary.years.length - 1]]);
                   setIncomeBreakdownOptions({
                     ...incomeBreakdownOptions,
                     xAxis: {
                       ...incomeBreakdownOptions.xAxis,
                       min: 0,
-                      max: summary.length - 1,
+                      max: summary.years.length - 1,
                     },
                     yAxis: {
                       ...incomeBreakdownOptions.yAxis,
@@ -552,20 +557,20 @@ const IncomeBreakdown = () => {
         <Row style={{ marginTop: "16px" }}>
           <Col span={24}>
             <YearBreakdownTabs
-              summary={summary}
+              selectedSummaryAtIndex={summary}
               onLeftClick={() => {
                 if (selectedSummaryAtIndexNumber > 0) {
                   setSelectedSummaryAtIndexNumber(selectedSummaryAtIndexNumber - 1);
-                  setSelectedSummaryAtIndex(summary[selectedSummaryAtIndexNumber - 1]);
+                  setSelectedSummaryAtIndex(summary.years[selectedSummaryAtIndexNumber - 1]);
                 }
               }}
               onRightClick={() => {
-                if (selectedSummaryAtIndexNumber <= summary.length - 2) {
+                if (selectedSummaryAtIndexNumber <= summary.years.length - 2) {
                   setSelectedSummaryAtIndexNumber(selectedSummaryAtIndexNumber + 1);
-                  setSelectedSummaryAtIndex(summary[selectedSummaryAtIndexNumber + 1]);
+                  setSelectedSummaryAtIndex(summary.years[selectedSummaryAtIndexNumber + 1]);
                 }
               }}
-              selectedSummaryAtIndex={selectedSummaryAtIndex}
+              index={selectedSummaryAtIndexNumber}
             />
           </Col>
         </Row>
