@@ -1,29 +1,38 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import Layout from "antd/lib/layout/layout";
-import { Button, Card, Col, Row, Slider, Switch } from "antd";
-import IForecastSummary from "../../interfaces/IForecastSummary";
-
-import { RootStateOrAny, useSelector } from "react-redux";
+import { Card, Button, Row, Col, Switch, Slider } from "antd";
 
 import highcharts, { numberFormat } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+
+import "rc-slider/assets/index.css";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+
 import YearBreakdownTabs from "../../components/YearBreakdownTabs";
 import IChartsData from "../../interfaces/IChartsData";
 
-const ExpensesBreakdown = () => {
-  const nominalSummary: IChartsData = useSelector((state: RootStateOrAny) => state.summaryReducer);
-  const realSummary: IChartsData = useSelector((state: RootStateOrAny) => state.realSummaryReducer);
+import store from "../../redux/store";
+import IInputs from "../../interfaces/IInputs";
+
+const IncomeBreakdown = () => {
+  const dispatch = useDispatch();
+  const nominalSummary: IChartsData = store.getState().summaryReducer;
+  const realSummary: IChartsData = store.getState().realSummaryReducer;
+  const inputs: IInputs = store.getState().currentInputSetReducer;
+
   const [summary, setSummary] = useState<IChartsData>(nominalSummary);
   const [sliderValue, setSliderValue] = useState([summary.years[0], summary.years[summary.years.length - 1]]);
 
   const [selectedSummaryAtIndexNumber, setSelectedSummaryAtIndexNumber] = useState(0);
 
-  const [selectedSummaryAtIndex, setSelectedSummaryAtIndex] = useState(summary.years[0]);
+  const [selectedSummaryAtIndex, setSelectedSummaryAtIndex] = useState(0);
 
-  const [expensesBreakdownOptions, setExpensesBreakdownOptions] = useState<highcharts.Options>({
+  const [chartOptions, setChartOptions] = useState<highcharts.Options>({
     chart: {
       alignTicks: false,
       ignoreHiddenSeries: true,
+      animation: false,
     },
     credits: {
       enabled: false,
@@ -52,22 +61,24 @@ const ExpensesBreakdown = () => {
       plotBands: [
         {
           color: "#ffffff",
-          from: 0,
-          to: summary.retirement_ages[0] - summary.years[0] + 0.5,
+          // color: "red",
+          from: -1,
+          to: inputs.household_owners[0].retirement_year - inputs.current_year + 0.5,
           label: {
             text: "",
             align: "right",
           },
           events: {
-            click: (e) => {
-              setSliderValue([summary.years[0], summary.retirement_ages[0]]);
+            click: () => {
+              console.log(summary.retirement_ages[0]);
+              setSliderValue([summary.years[0], inputs.household_owners[0].retirement_year + 3]);
 
-              setExpensesBreakdownOptions({
-                ...expensesBreakdownOptions,
+              setChartOptions({
+                ...chartOptions,
                 xAxis: {
-                  ...expensesBreakdownOptions.xAxis,
+                  ...chartOptions.xAxis,
                   min: 0,
-                  max: summary.retirement_ages[0] - summary.years[0] + 0.5 + 1,
+                  max: inputs.household_owners[0].retirement_year - inputs.current_year + 2,
                 },
               });
             },
@@ -75,22 +86,25 @@ const ExpensesBreakdown = () => {
         },
         {
           color: "#eeeeee",
-          from: summary.retirement_ages[0] - summary.years[0] + 0.5,
-          to: summary.years[summary.years.length - 1] - summary.years[0] + 0.5,
+          from: inputs.household_owners[0].retirement_year - inputs.current_year + 0.5,
+          to: summary.years.length,
           label: {
             align: "right",
             text: "",
           },
           events: {
             click: (e) => {
-              setSliderValue([summary.retirement_ages[0], summary.years[summary.years.length - 1]]);
+              setSliderValue([
+                inputs.household_owners[0].retirement_year,
+                summary.years[summary.years.length - 1],
+              ]);
 
-              setExpensesBreakdownOptions({
-                ...expensesBreakdownOptions,
+              setChartOptions({
+                ...chartOptions,
                 xAxis: {
-                  ...expensesBreakdownOptions.xAxis,
-                  min: summary.retirement_ages[0] - summary.years[0] + 0.5 - 1,
-                  max: summary.years[summary.years.length - 1] - summary.years[0] + 0.5,
+                  ...chartOptions.xAxis,
+                  min: inputs.household_owners[0].retirement_year - inputs.current_year - 1,
+                  max: summary.years.length - 1,
                 },
               });
             },
@@ -141,7 +155,7 @@ const ExpensesBreakdown = () => {
                 entry.series.color +
                 '">' +
                 entry.series.name +
-                ':</td><td style="text-align: right"> ' +
+                '</td><td style="text-align: right"> ' +
                 "£" +
                 numberFormat(entry.y, 0, ".", ",") +
                 "</td></tr>";
@@ -158,6 +172,7 @@ const ExpensesBreakdown = () => {
     },
     plotOptions: {
       series: {
+        animation: false,
         point: {
           events: {
             click: (e) => {
@@ -181,107 +196,84 @@ const ExpensesBreakdown = () => {
         point: {
           events: {
             select: (event) => {
-              console.log(event);
+              // console.log(event);
             },
           },
         },
       },
     },
-    series: [
-      {
-        name: "Housing",
-        type: "column",
-        data: [
-          ...summary.expenses.housing.map((s) => {
-            return s;
-          }),
-        ],
-      },
-      {
-        name: "Consumables",
-        type: "column",
-        data: [
-          ...summary.expenses.consumables.map((s) => {
-            return s;
-          }),
-        ],
-      },
-      {
-        name: "Travel",
-        type: "column",
-        data: [
-          ...summary.expenses.travel.map((s) => {
-            return s;
-          }),
-        ],
-      },
-      {
-        name: "Shopping",
-        type: "column",
-        data: [
-          ...summary.expenses.shopping.map((s) => {
-            return s;
-          }),
-        ],
-      },
-      {
-        name: "Entertainment",
-        type: "column",
-        data: [
-          ...summary.expenses.entertainment.map((s) => {
-            return s;
-          }),
-        ],
-      },
-      {
-        name: "Holiday",
-        type: "column",
-        data: [
-          ...summary.expenses.holiday.map((s) => {
-            return s;
-          }),
-        ],
-      },
-      {
-        name: "One-Off",
-        type: "column",
-        data: [
-          ...summary.expenses.one_off.map((s) => {
-            return s;
-          }),
-        ],
-      },
-      {
-        name: "Children",
-        type: "column",
-        data: [
-          ...summary.expenses.children_education.map((s) => {
-            return s;
-          }),
-        ],
-      },
-      {
-        name: "Financial",
-        type: "column",
-        data: [
-          ...summary.expenses.financial.map((s) => {
-            return s;
-          }),
-        ],
-      },
-      {
-        name: "Additional Tax",
-        type: "column",
-        data: [
-          ...summary.expenses.additional_tax_charge.map((s) => {
-            return s;
-          }),
-        ],
-      },
-    ],
   });
 
   let chartRef: any = React.useRef(null);
+
+  const [nominalView, setNominalView] = useState<boolean>(true);
+
+  useEffect(() => {
+    setChartOptions({
+      series: [
+        {
+          name: "Additional Tax Charge",
+          type: "column",
+          data: [...summary.expenses.additional_tax_charge],
+          legendIndex: 9,
+        },
+        {
+          name: "Financial",
+          type: "column",
+          data: [...summary.expenses.financial],
+          legendIndex: 8,
+        },
+        {
+          name: "Children",
+          type: "column",
+          data: [...summary.expenses.children_education],
+          legendIndex: 7,
+        },
+        {
+          name: "Onf-Off",
+          type: "column",
+          data: [...summary.expenses.one_off],
+          legendIndex: 6,
+        },
+        {
+          name: "Holiday",
+          type: "column",
+          data: [...summary.expenses.holiday],
+          legendIndex: 5,
+        },
+        {
+          name: "Entertainment",
+          type: "column",
+          data: [...summary.expenses.entertainment],
+          legendIndex: 4,
+        },
+        {
+          name: "Shopping",
+          type: "column",
+          data: [...summary.expenses.shopping],
+          legendIndex: 3,
+        },
+        {
+          name: "Travel",
+          type: "column",
+          data: [...summary.expenses.travel],
+          legendIndex: 2,
+        },
+        {
+          name: "Consumables",
+          type: "column",
+          data: [...summary.expenses.consumables],
+          legendIndex: 1,
+        },
+        {
+          name: "Housing",
+          type: "column",
+          data: [...summary.expenses.housing],
+          legendIndex: 0,
+        },
+      ],
+    });
+  }, [summary]);
 
   const [chartControls, setChartControls] = useState({
     label: "years",
@@ -289,224 +281,32 @@ const ExpensesBreakdown = () => {
   });
 
   const [some, setSome] = useState(0);
+
   return (
     <Layout style={{ backgroundColor: "white" }}>
       <Card
-        title="Expenses"
+        title="Cashflow"
         style={{ margin: "16px" }}
         bordered={false}
         extra={
           <div>
             <Switch
               style={{ marginRight: "16px" }}
-              checkedChildren="Zoom"
-              unCheckedChildren="Static"
-              defaultChecked={false}
+              checkedChildren="Real"
+              unCheckedChildren="Nominal"
+              defaultChecked
               onChange={(e) => {
-                setChartControls({ ...chartControls, zoomable: e });
+                e ? setSummary(nominalSummary) : setSummary(realSummary);
+                setNominalView(e);
               }}
             />
             <Switch
               style={{ marginRight: "16px" }}
-              checkedChildren="Nominal"
-              unCheckedChildren="Real"
-              defaultChecked
+              checkedChildren="Zoom"
+              unCheckedChildren="Zoom"
+              defaultChecked={false}
               onChange={(e) => {
-                if (e) {
-                  setSummary(nominalSummary);
-                  setExpensesBreakdownOptions({
-                    ...expensesBreakdownOptions,
-                    series: [
-                      {
-                        name: "Housing",
-                        type: "column",
-                        data: [
-                          ...summary.expenses.housing.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Consumables",
-                        type: "column",
-                        data: [
-                          ...summary.expenses.consumables.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Travel",
-                        type: "column",
-                        data: [
-                          ...summary.expenses.travel.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Shopping",
-                        type: "column",
-                        data: [
-                          ...summary.expenses.shopping.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Entertainment",
-                        type: "column",
-                        data: [
-                          ...summary.expenses.entertainment.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Holiday",
-                        type: "column",
-                        data: [
-                          ...summary.expenses.holiday.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "One-Off",
-                        type: "column",
-                        data: [
-                          ...summary.expenses.one_off.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Children",
-                        type: "column",
-                        data: [
-                          ...summary.expenses.children_education.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Financial",
-                        type: "column",
-                        data: [
-                          ...summary.expenses.financial.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Additional Tax",
-                        type: "column",
-                        data: [
-                          ...summary.expenses.additional_tax_charge.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                    ],
-                  });
-                } else {
-                  setSummary(realSummary);
-                  setExpensesBreakdownOptions({
-                    ...expensesBreakdownOptions,
-                    series: [
-                      {
-                        name: "Housing",
-                        type: "column",
-                        data: [
-                          ...summary.expenses.housing.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Consumables",
-                        type: "column",
-                        data: [
-                          ...summary.expenses.consumables.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Travel",
-                        type: "column",
-                        data: [
-                          ...summary.expenses.travel.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Shopping",
-                        type: "column",
-                        data: [
-                          ...summary.expenses.shopping.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Entertainment",
-                        type: "column",
-                        data: [
-                          ...summary.expenses.entertainment.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Holiday",
-                        type: "column",
-                        data: [
-                          ...summary.expenses.holiday.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "One-Off",
-                        type: "column",
-                        data: [
-                          ...summary.expenses.one_off.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Children",
-                        type: "column",
-                        data: [
-                          ...summary.expenses.children_education.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Financial",
-                        type: "column",
-                        data: [
-                          ...summary.expenses.financial.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Additional Tax",
-                        type: "column",
-                        data: [
-                          ...summary.expenses.additional_tax_charge.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                    ],
-                  });
-                }
+                setChartControls({ ...chartControls, zoomable: e });
               }}
             />
           </div>
@@ -519,9 +319,9 @@ const ExpensesBreakdown = () => {
                 range={{ draggableTrack: true }}
                 min={summary.years[0]}
                 max={summary.years[summary.years.length - 1]}
-                defaultValue={[summary.years[0], summary.years[summary.years.length - 1]]}
+                defaultValue={[summary.years[0], summary.years[0]]}
                 value={[sliderValue[0], sliderValue[1]]}
-                tipFormatter={(value) => {
+                tipFormatter={(value: any) => {
                   if (chartControls.label === "years") {
                     return `${value}`;
                   } else {
@@ -532,10 +332,10 @@ const ExpensesBreakdown = () => {
                   setSliderValue(e);
                 }}
                 onAfterChange={(e: number[]) => {
-                  setExpensesBreakdownOptions({
-                    ...expensesBreakdownOptions,
+                  setChartOptions({
+                    ...chartOptions,
                     xAxis: {
-                      ...expensesBreakdownOptions.xAxis,
+                      ...chartOptions.xAxis,
                       min: e[0] - summary.years[0],
                       max: e[1] - summary.years[0],
                     },
@@ -547,15 +347,15 @@ const ExpensesBreakdown = () => {
               <Button
                 onClick={(e) => {
                   setSliderValue([summary.years[0], summary.years[summary.years.length - 1]]);
-                  setExpensesBreakdownOptions({
-                    ...expensesBreakdownOptions,
+                  setChartOptions({
+                    ...chartOptions,
                     xAxis: {
-                      ...expensesBreakdownOptions.xAxis,
+                      ...chartOptions.xAxis,
                       min: 0,
                       max: summary.years.length - 1,
                     },
                     yAxis: {
-                      ...expensesBreakdownOptions.yAxis,
+                      ...chartOptions.yAxis,
                       max: null,
                     },
                   });
@@ -567,11 +367,11 @@ const ExpensesBreakdown = () => {
           </Row>
         )}
 
-        <Row justify="space-around">
-          <Col span={23}>
+        <Row>
+          <Col span={24}>
             <HighchartsReact
               highcharts={highcharts}
-              options={expensesBreakdownOptions}
+              options={chartOptions}
               ref={chartRef}
               callback={(chart: any) => {
                 setSome(chart.yAxis[0].max);
@@ -587,10 +387,10 @@ const ExpensesBreakdown = () => {
                 defaultValue={some}
                 style={{ marginRight: "16px" }}
                 onAfterChange={(e: number) => {
-                  setExpensesBreakdownOptions({
-                    ...expensesBreakdownOptions,
+                  setChartOptions({
+                    ...chartOptions,
                     yAxis: {
-                      ...expensesBreakdownOptions.yAxis,
+                      ...chartOptions.yAxis,
                       max: e,
                     },
                   });
@@ -599,6 +399,8 @@ const ExpensesBreakdown = () => {
             </Col>
           )}
         </Row>
+
+        {/* Table */}
         <Row style={{ marginTop: "16px" }}>
           <Col span={24}>
             <YearBreakdownTabs
@@ -624,4 +426,4 @@ const ExpensesBreakdown = () => {
   );
 };
 
-export default ExpensesBreakdown;
+export default IncomeBreakdown;

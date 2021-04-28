@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect } from "react";
 import Layout from "antd/lib/layout/layout";
 import { Card, Button, Row, Col, Switch, Slider } from "antd";
 
@@ -7,19 +7,19 @@ import HighchartsReact from "highcharts-react-official";
 
 import "rc-slider/assets/index.css";
 import { useState } from "react";
-import IForecastSummary from "../../interfaces/IForecastSummary";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import YearBreakdownTabs from "../../components/YearBreakdownTabs";
-import { setSummaryAction } from "../../redux/summary/summary";
 import IChartsData from "../../interfaces/IChartsData";
 
 import store from "../../redux/store";
+import IInputs from "../../interfaces/IInputs";
 
 const Cashflow = () => {
   const dispatch = useDispatch();
   const nominalSummary: IChartsData = store.getState().summaryReducer;
   const realSummary: IChartsData = store.getState().realSummaryReducer;
+  const inputs: IInputs = store.getState().currentInputSetReducer;
 
   const [summary, setSummary] = useState<IChartsData>(nominalSummary);
   const [sliderValue, setSliderValue] = useState([summary.years[0], summary.years[summary.years.length - 1]]);
@@ -28,7 +28,11 @@ const Cashflow = () => {
 
   const [selectedSummaryAtIndex, setSelectedSummaryAtIndex] = useState(0);
 
-  const [shortfall, setShortfall] = useState<number[]>(summary.cashflow.shortfall);
+  const [shortfall, setShortfall] = useState<number[]>([
+    ...summary.years.map((s, i) => {
+      return summary.cashflow.expenses[i] - summary.income.total_income[i];
+    }),
+  ]);
 
   const [incomeState, setIncomeState] = useState({
     employmentState: false,
@@ -41,11 +45,11 @@ const Cashflow = () => {
     otherState: false,
   });
 
-  const [cashFlowChartOptions, setCashFlowChartOptions] = useState<highcharts.Options>({
+  const [chartOptions, setChartOptions] = useState<highcharts.Options>({
     chart: {
       alignTicks: false,
       ignoreHiddenSeries: true,
-      // animation: false,
+      animation: false,
     },
     credits: {
       enabled: false,
@@ -74,22 +78,24 @@ const Cashflow = () => {
       plotBands: [
         {
           color: "#ffffff",
-          from: 0,
-          to: summary.years[0] - summary.years[0] + 0.5,
+          // color: "red",
+          from: -1,
+          to: inputs.household_owners[0].retirement_year - inputs.current_year + 0.5,
           label: {
             text: "",
             align: "right",
           },
           events: {
             click: () => {
-              setSliderValue([summary.years[0], summary.years[0]]);
+              console.log(summary.retirement_ages[0]);
+              setSliderValue([summary.years[0], inputs.household_owners[0].retirement_year + 3]);
 
-              setCashFlowChartOptions({
-                ...cashFlowChartOptions,
+              setChartOptions({
+                ...chartOptions,
                 xAxis: {
-                  ...cashFlowChartOptions.xAxis,
+                  ...chartOptions.xAxis,
                   min: 0,
-                  max: summary.years[0] - summary.years[0] + 0.5 + 1,
+                  max: inputs.household_owners[0].retirement_year - inputs.current_year + 2,
                 },
               });
             },
@@ -97,22 +103,25 @@ const Cashflow = () => {
         },
         {
           color: "#eeeeee",
-          from: summary.years[0] - summary.years[0] + 0.5,
-          to: summary.years[0] - summary.years[0] + 0.5,
+          from: inputs.household_owners[0].retirement_year - inputs.current_year + 0.5,
+          to: summary.years.length,
           label: {
             align: "right",
             text: "",
           },
           events: {
             click: (e) => {
-              setSliderValue([summary.years[0], summary.years[0]]);
+              setSliderValue([
+                inputs.household_owners[0].retirement_year,
+                summary.years[summary.years.length - 1],
+              ]);
 
-              setCashFlowChartOptions({
-                ...cashFlowChartOptions,
+              setChartOptions({
+                ...chartOptions,
                 xAxis: {
-                  ...cashFlowChartOptions.xAxis,
-                  min: summary.years[0] - summary.years[0] + 0.5 - 1,
-                  max: summary.years[0] - summary.years[0] + 0.5,
+                  ...chartOptions.xAxis,
+                  min: inputs.household_owners[0].retirement_year - inputs.current_year - 1,
+                  max: summary.years.length - 1,
                 },
               });
             },
@@ -180,7 +189,7 @@ const Cashflow = () => {
     },
     plotOptions: {
       series: {
-        // animation: false,
+        animation: false,
         point: {
           events: {
             click: (e) => {
@@ -229,7 +238,7 @@ const Cashflow = () => {
   const [nominalView, setNominalView] = useState<boolean>(true);
 
   useEffect(() => {
-    setCashFlowChartOptions({
+    setChartOptions({
       series: [
         {
           visible: true,
@@ -239,8 +248,8 @@ const Cashflow = () => {
           data: detailedView
             ? shortfall
             : [
-                ...summary.cashflow.shortfall.map((s, i) => {
-                  return s;
+                ...summary.years.map((s, i) => {
+                  return summary.cashflow.expenses[i] - summary.income.total_income[i];
                 }),
               ],
           color: "#f44336",
@@ -586,7 +595,11 @@ const Cashflow = () => {
   }, [summary, detailedView, shortfall]);
 
   useEffect(() => {
-    setShortfall(summary.cashflow.shortfall);
+    setShortfall([
+      ...summary.years.map((s, i) => {
+        return summary.cashflow.expenses[i] - summary.income.total_income[i];
+      }),
+    ]);
   }, [nominalView]);
 
   const [chartControls, setChartControls] = useState({
@@ -623,13 +636,13 @@ const Cashflow = () => {
                 e ? setSummary(nominalSummary) : setSummary(realSummary);
                 setNominalView(e);
 
-                const clone: any = { ...cashFlowChartOptions };
+                const clone: any = { ...chartOptions };
 
                 clone.series = clone.series.map((s: any) => {
                   return { ...s, visible: true };
                 });
 
-                setCashFlowChartOptions(clone);
+                setChartOptions(clone);
               }}
             />
             <Switch
@@ -650,7 +663,7 @@ const Cashflow = () => {
               <Slider
                 range={{ draggableTrack: true }}
                 min={summary.years[0]}
-                max={summary.years[0]}
+                max={summary.years[summary.years.length - 1]}
                 defaultValue={[summary.years[0], summary.years[0]]}
                 value={[sliderValue[0], sliderValue[1]]}
                 tipFormatter={(value: any) => {
@@ -664,10 +677,10 @@ const Cashflow = () => {
                   setSliderValue(e);
                 }}
                 onAfterChange={(e: number[]) => {
-                  setCashFlowChartOptions({
-                    ...cashFlowChartOptions,
+                  setChartOptions({
+                    ...chartOptions,
                     xAxis: {
-                      ...cashFlowChartOptions.xAxis,
+                      ...chartOptions.xAxis,
                       min: e[0] - summary.years[0],
                       max: e[1] - summary.years[0],
                     },
@@ -678,16 +691,16 @@ const Cashflow = () => {
             <Col>
               <Button
                 onClick={(e) => {
-                  setSliderValue([summary.years[0], summary.years[0]]);
-                  setCashFlowChartOptions({
-                    ...cashFlowChartOptions,
+                  setSliderValue([summary.years[0], summary.years[summary.years.length - 1]]);
+                  setChartOptions({
+                    ...chartOptions,
                     xAxis: {
-                      ...cashFlowChartOptions.xAxis,
+                      ...chartOptions.xAxis,
                       min: 0,
                       max: summary.years.length - 1,
                     },
                     yAxis: {
-                      ...cashFlowChartOptions.yAxis,
+                      ...chartOptions.yAxis,
                       max: null,
                     },
                   });
@@ -703,7 +716,7 @@ const Cashflow = () => {
           <Col span={24}>
             <HighchartsReact
               highcharts={highcharts}
-              options={cashFlowChartOptions}
+              options={chartOptions}
               ref={chartRef}
               callback={(chart: any) => {
                 setSome(chart.yAxis[0].max);
@@ -719,10 +732,10 @@ const Cashflow = () => {
                 defaultValue={some}
                 style={{ marginRight: "16px" }}
                 onAfterChange={(e: number) => {
-                  setCashFlowChartOptions({
-                    ...cashFlowChartOptions,
+                  setChartOptions({
+                    ...chartOptions,
                     yAxis: {
-                      ...cashFlowChartOptions.yAxis,
+                      ...chartOptions.yAxis,
                       max: e,
                     },
                   });

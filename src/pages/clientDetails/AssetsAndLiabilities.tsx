@@ -1,27 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import Layout from "antd/lib/layout/layout";
-import { Button, Card, Col, Row, Slider, Switch } from "antd";
+import { Card, Button, Row, Col, Switch, Slider } from "antd";
 
-import IForecastSummary from "../../interfaces/IForecastSummary";
-import { RootStateOrAny, useSelector } from "react-redux";
 import highcharts, { numberFormat } from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+
+import "rc-slider/assets/index.css";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+
 import YearBreakdownTabs from "../../components/YearBreakdownTabs";
 import IChartsData from "../../interfaces/IChartsData";
-const AssetsAndLiabilities = () => {
-  const nominalSummary: IChartsData = useSelector((state: RootStateOrAny) => state.summaryReducer);
 
-  const realSummary: IChartsData = useSelector((state: RootStateOrAny) => state.realSummaryReducer);
+import store from "../../redux/store";
+import IInputs from "../../interfaces/IInputs";
+
+const AssetsAndLiabilities = () => {
+  const dispatch = useDispatch();
+  const nominalSummary: IChartsData = store.getState().summaryReducer;
+  const realSummary: IChartsData = store.getState().realSummaryReducer;
+  const inputs: IInputs = store.getState().currentInputSetReducer;
 
   const [summary, setSummary] = useState<IChartsData>(nominalSummary);
-
   const [sliderValue, setSliderValue] = useState([summary.years[0], summary.years[summary.years.length - 1]]);
 
   const [selectedSummaryAtIndexNumber, setSelectedSummaryAtIndexNumber] = useState(0);
 
-  const [selectedSummaryAtIndex, setSelectedSummaryAtIndex] = useState(summary.years[0]);
+  const [selectedSummaryAtIndex, setSelectedSummaryAtIndex] = useState(0);
 
-  const [assetsAndLiabilityChartOptions, setAssetsAndLiabilityChartOptions] = useState<highcharts.Options>({
+  const [chartOptions, setChartOptions] = useState<highcharts.Options>({
     chart: {
       alignTicks: false,
       ignoreHiddenSeries: true,
@@ -34,7 +41,6 @@ const AssetsAndLiabilities = () => {
       text: "",
       align: "left",
     },
-    colors: ["#aed581", "#ffb74d", "#4dd0e1", "#424242"],
     xAxis: {
       crosshair: true,
       labels: {
@@ -55,22 +61,24 @@ const AssetsAndLiabilities = () => {
       plotBands: [
         {
           color: "#ffffff",
-          from: 0,
-          to: summary.retirement_ages[0] - summary.years[0] + 0.5,
+          // color: "red",
+          from: -1,
+          to: inputs.household_owners[0].retirement_year - inputs.current_year + 0.5,
           label: {
             text: "",
             align: "right",
           },
           events: {
             click: () => {
-              setSliderValue([summary.years[0], summary.retirement_ages[0]]);
+              console.log(summary.retirement_ages[0]);
+              setSliderValue([summary.years[0], inputs.household_owners[0].retirement_year + 3]);
 
-              setAssetsAndLiabilityChartOptions({
-                ...assetsAndLiabilityChartOptions,
+              setChartOptions({
+                ...chartOptions,
                 xAxis: {
-                  ...assetsAndLiabilityChartOptions.xAxis,
+                  ...chartOptions.xAxis,
                   min: 0,
-                  max: summary.retirement_ages[0] - summary.years[0] + 0.5 + 1,
+                  max: inputs.household_owners[0].retirement_year - inputs.current_year + 2,
                 },
               });
             },
@@ -78,22 +86,25 @@ const AssetsAndLiabilities = () => {
         },
         {
           color: "#eeeeee",
-          from: summary.retirement_ages[0] - summary.years[0] + 0.5,
-          to: summary.years[summary.years.length - 1] - summary.years[0] + 0.5,
+          from: inputs.household_owners[0].retirement_year - inputs.current_year + 0.5,
+          to: summary.years.length,
           label: {
             align: "right",
             text: "",
           },
           events: {
-            click: () => {
-              setSliderValue([summary.retirement_ages[0], summary.years[summary.years.length - 1]]);
+            click: (e) => {
+              setSliderValue([
+                inputs.household_owners[0].retirement_year,
+                summary.years[summary.years.length - 1],
+              ]);
 
-              setAssetsAndLiabilityChartOptions({
-                ...assetsAndLiabilityChartOptions,
+              setChartOptions({
+                ...chartOptions,
                 xAxis: {
-                  ...assetsAndLiabilityChartOptions.xAxis,
-                  min: summary.retirement_ages[0] - summary.years[0] + 0.5 - 1,
-                  max: summary.years[summary.years.length - 1] - summary.years[0] + 0.5,
+                  ...chartOptions.xAxis,
+                  min: inputs.household_owners[0].retirement_year - inputs.current_year - 1,
+                  max: summary.years.length - 1,
                 },
               });
             },
@@ -116,9 +127,6 @@ const AssetsAndLiabilities = () => {
         },
       },
     },
-    rangeSelector: {
-      selected: 1,
-    },
     tooltip: {
       useHTML: true,
       backgroundColor: "white",
@@ -127,7 +135,7 @@ const AssetsAndLiabilities = () => {
         let tooltip_html = this.x.toString();
         tooltip_html += "<table>";
 
-        this.points!.forEach(function (entry: any) {
+        this.points!.forEach(function (entry: any, index) {
           if (entry.y > 0) {
             if (entry.series.name === "Total Expenses") {
               tooltip_html +=
@@ -147,7 +155,7 @@ const AssetsAndLiabilities = () => {
                 entry.series.color +
                 '">' +
                 entry.series.name +
-                ':</td><td style="text-align: right"> ' +
+                '</td><td style="text-align: right"> ' +
                 "£" +
                 numberFormat(entry.y, 0, ".", ",") +
                 "</td></tr>";
@@ -164,6 +172,7 @@ const AssetsAndLiabilities = () => {
     },
     plotOptions: {
       series: {
+        animation: false,
         point: {
           events: {
             click: (e) => {
@@ -180,82 +189,76 @@ const AssetsAndLiabilities = () => {
         groupPadding: 0,
         pointRange: 1,
         events: {
-          click: () => {
+          click: (e) => {
             // console.log(e.point.x)
           },
         },
         point: {
           events: {
             select: (event) => {
-              console.log(event);
+              // console.log(event);
             },
           },
         },
       },
     },
-    series: [
-      {
-        name: "Pension Plans",
-        type: "column",
-        data: [
-          ...summary.assets_and_liabilities.pension_plans.map((s) => {
-            return s;
-          }),
-        ],
-        animation: false,
-      },
-      {
-        name: "Savings and Investments",
-        type: "column",
-        data: [
-          ...summary.assets_and_liabilities.savings_and_investments.map((s) => {
-            return s;
-          }),
-        ],
-        animation: false,
-      },
-      {
-        name: "Aggregated Bank Accounts",
-        type: "column",
-        data: [
-          ...summary.assets_and_liabilities.aggregated_bank_accounts.map((s) => {
-            return s;
-          }),
-        ],
-        animation: false,
-      },
-      {
-        name: "Property",
-        type: "column",
-        data: [
-          ...summary.assets_and_liabilities.properties.map((s) => {
-            return s;
-          }),
-        ],
-        animation: false,
-        color: "#7986cb",
-      },
-
-      {
-        name: "Liabilities",
-        type: "line",
-        step: "left",
-        data: [
-          ...summary.assets_and_liabilities.liabilities.map((s) => {
-            return s;
-          }),
-        ],
-        animation: false,
-        marker: {
-          enabled: false,
-        },
-        pointPlacement: -0.5,
-        lineWidth: 3,
-        color: "black",
-      },
-    ],
+    colors: ["#4dd0e1", "#aed581", "#ffb74d", "#90caf9", "#424242"],
   });
+
   let chartRef: any = React.useRef(null);
+
+  const [nominalView, setNominalView] = useState<boolean>(true);
+
+  useEffect(() => {
+    setChartOptions({
+      series: [
+        {
+          name: "Pension Plans",
+          type: "column",
+
+          data: [...summary.assets_and_liabilities.pension_plans],
+          legendIndex: 8,
+        },
+
+        {
+          name: "Savings and Investments",
+          type: "column",
+          data: [...summary.assets_and_liabilities.savings_and_investments],
+          legendIndex: 7,
+        },
+        {
+          name: "Bank Accounts",
+          type: "column",
+          data: [...summary.assets_and_liabilities.aggregated_bank_accounts],
+          legendIndex: 6,
+        },
+        {
+          name: "Property",
+          type: "column",
+
+          data: [...summary.assets_and_liabilities.properties],
+          legendIndex: 9,
+        },
+        {
+          zIndex: 99,
+          visible: true,
+          showInLegend: true,
+          type: "line",
+          name: "Total Liabilites",
+          step: "center",
+          data: [...summary.assets_and_liabilities.liabilities],
+          color: "#212121",
+          marker: {
+            enabled: false,
+          },
+          // pointPlacement: -0.5,
+
+          lineWidth: 3,
+          legendIndex: 10,
+        },
+      ],
+    });
+  }, [summary]);
 
   const [chartControls, setChartControls] = useState({
     label: "years",
@@ -267,149 +270,28 @@ const AssetsAndLiabilities = () => {
   return (
     <Layout style={{ backgroundColor: "white" }}>
       <Card
-        title="Assets and Liabilities"
+        title="Cashflow"
         style={{ margin: "16px" }}
         bordered={false}
         extra={
           <div>
             <Switch
               style={{ marginRight: "16px" }}
-              checkedChildren="Zoom"
-              unCheckedChildren="Static"
-              defaultChecked={false}
+              checkedChildren="Real"
+              unCheckedChildren="Nominal"
+              defaultChecked
               onChange={(e) => {
-                setChartControls({ ...chartControls, zoomable: e });
+                e ? setSummary(nominalSummary) : setSummary(realSummary);
+                setNominalView(e);
               }}
             />
             <Switch
               style={{ marginRight: "16px" }}
-              checkedChildren="Nominal"
-              unCheckedChildren="Real"
-              defaultChecked
+              checkedChildren="Zoom"
+              unCheckedChildren="Zoom"
+              defaultChecked={false}
               onChange={(e) => {
-                if (!e) {
-                  setSummary(nominalSummary);
-                  setAssetsAndLiabilityChartOptions({
-                    ...assetsAndLiabilityChartOptions,
-                    series: [
-                      {
-                        name: "Pension Plans",
-                        type: "column",
-                        data: [
-                          ...summary.assets_and_liabilities.pension_plans.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Savings and Investments",
-                        type: "column",
-                        data: [
-                          ...summary.assets_and_liabilities.savings_and_investments.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Aggregated Bank Accounts",
-                        type: "column",
-                        data: [
-                          ...summary.assets_and_liabilities.aggregated_bank_accounts.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Property",
-                        type: "column",
-                        data: [
-                          ...summary.assets_and_liabilities.properties.map((s) => {
-                            return s;
-                          }),
-                        ],
-                        animation: false,
-                        color: "#7986cb",
-                      },
-                      {
-                        name: "Liabilities",
-                        type: "line",
-                        step: "left",
-                        data: [
-                          ...summary.assets_and_liabilities.liabilities.map((s) => {
-                            return s;
-                          }),
-                        ],
-                        marker: {
-                          enabled: false,
-                        },
-                        pointPlacement: -0.5,
-                        lineWidth: 3,
-                        color: "black",
-                      },
-                    ],
-                  });
-                } else {
-                  setSummary(realSummary);
-                  setAssetsAndLiabilityChartOptions({
-                    ...assetsAndLiabilityChartOptions,
-                    series: [
-                      {
-                        name: "Pension Plans",
-                        type: "column",
-                        data: [
-                          ...summary.assets_and_liabilities.pension_plans.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Savings and Investments",
-                        type: "column",
-                        data: [
-                          ...summary.assets_and_liabilities.savings_and_investments.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Aggregated Bank Accounts",
-                        type: "column",
-                        data: [
-                          ...summary.assets_and_liabilities.aggregated_bank_accounts.map((s) => {
-                            return s;
-                          }),
-                        ],
-                      },
-                      {
-                        name: "Property",
-                        type: "column",
-                        data: [
-                          ...summary.assets_and_liabilities.properties.map((s) => {
-                            return s;
-                          }),
-                        ],
-                        animation: false,
-                        color: "#7986cb",
-                      },
-                      {
-                        name: "Liabilities",
-                        type: "line",
-                        step: "left",
-                        data: [
-                          ...summary.assets_and_liabilities.liabilities.map((s) => {
-                            return s;
-                          }),
-                        ],
-                        marker: {
-                          enabled: false,
-                        },
-                        pointPlacement: -0.5,
-                        lineWidth: 3,
-                        color: "black",
-                      },
-                    ],
-                  });
-                }
+                setChartControls({ ...chartControls, zoomable: e });
               }}
             />
           </div>
@@ -422,9 +304,9 @@ const AssetsAndLiabilities = () => {
                 range={{ draggableTrack: true }}
                 min={summary.years[0]}
                 max={summary.years[summary.years.length - 1]}
-                defaultValue={[summary.years[0], summary.years[summary.years.length - 1]]}
+                defaultValue={[summary.years[0], summary.years[0]]}
                 value={[sliderValue[0], sliderValue[1]]}
-                tipFormatter={(value) => {
+                tipFormatter={(value: any) => {
                   if (chartControls.label === "years") {
                     return `${value}`;
                   } else {
@@ -435,10 +317,10 @@ const AssetsAndLiabilities = () => {
                   setSliderValue(e);
                 }}
                 onAfterChange={(e: number[]) => {
-                  setAssetsAndLiabilityChartOptions({
-                    ...assetsAndLiabilityChartOptions,
+                  setChartOptions({
+                    ...chartOptions,
                     xAxis: {
-                      ...assetsAndLiabilityChartOptions.xAxis,
+                      ...chartOptions.xAxis,
                       min: e[0] - summary.years[0],
                       max: e[1] - summary.years[0],
                     },
@@ -448,17 +330,17 @@ const AssetsAndLiabilities = () => {
             </Col>
             <Col>
               <Button
-                onClick={() => {
+                onClick={(e) => {
                   setSliderValue([summary.years[0], summary.years[summary.years.length - 1]]);
-                  setAssetsAndLiabilityChartOptions({
-                    ...assetsAndLiabilityChartOptions,
+                  setChartOptions({
+                    ...chartOptions,
                     xAxis: {
-                      ...assetsAndLiabilityChartOptions.xAxis,
+                      ...chartOptions.xAxis,
                       min: 0,
                       max: summary.years.length - 1,
                     },
                     yAxis: {
-                      ...assetsAndLiabilityChartOptions.yAxis,
+                      ...chartOptions.yAxis,
                       max: null,
                     },
                   });
@@ -470,11 +352,11 @@ const AssetsAndLiabilities = () => {
           </Row>
         )}
 
-        <Row justify="space-around">
-          <Col span={23}>
+        <Row>
+          <Col span={24}>
             <HighchartsReact
               highcharts={highcharts}
-              options={assetsAndLiabilityChartOptions}
+              options={chartOptions}
               ref={chartRef}
               callback={(chart: any) => {
                 setSome(chart.yAxis[0].max);
@@ -490,10 +372,10 @@ const AssetsAndLiabilities = () => {
                 defaultValue={some}
                 style={{ marginRight: "16px" }}
                 onAfterChange={(e: number) => {
-                  setAssetsAndLiabilityChartOptions({
-                    ...assetsAndLiabilityChartOptions,
+                  setChartOptions({
+                    ...chartOptions,
                     yAxis: {
-                      ...assetsAndLiabilityChartOptions.yAxis,
+                      ...chartOptions.yAxis,
                       max: e,
                     },
                   });
@@ -502,6 +384,8 @@ const AssetsAndLiabilities = () => {
             </Col>
           )}
         </Row>
+
+        {/* Table */}
         <Row style={{ marginTop: "16px" }}>
           <Col span={24}>
             <YearBreakdownTabs
