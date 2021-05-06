@@ -1,0 +1,1079 @@
+import React, { useEffect } from "react";
+import Layout from "antd/lib/layout/layout";
+import { Card, Button, Row, Col, Switch, Slider, Typography, Tabs } from "antd";
+
+import highcharts, { numberFormat } from "highcharts";
+import HighchartsReact from "highcharts-react-official";
+
+import "rc-slider/assets/index.css";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+
+import YearBreakdownTabs from "../../components/YearBreakdownTabs";
+import IChartsData from "../../interfaces/IChartsData";
+
+import store from "../../redux/store";
+import IInputs from "../../interfaces/IInputs";
+const { Title, Text } = Typography;
+const { TabPane } = Tabs;
+
+const NeedAnalysis = () => {
+  const dispatch = useDispatch();
+  const nominalSummary: IChartsData = store.getState().summaryReducer;
+  const realSummary: IChartsData = store.getState().realSummaryReducer;
+  const inputs: IInputs = store.getState().currentInputSetReducer;
+
+  const [summary, setSummary] = useState<IChartsData>(nominalSummary);
+  const [sliderValue, setSliderValue] = useState([summary.years[0], summary.years[summary.years.length - 1]]);
+
+  const [selectedSummaryAtIndexNumber, setSelectedSummaryAtIndexNumber] = useState(0);
+
+  const [selectedSummaryAtIndex, setSelectedSummaryAtIndex] = useState(0);
+
+  const [shortfall, setShortfall] = useState<number[]>([
+    ...summary.years.map((s, i) => {
+      return summary.cashflow.expenses[i] - summary.income.total_income[i];
+    }),
+  ]);
+
+  const [incomeState, setIncomeState] = useState({
+    employmentState: false,
+    selfEmploymentState: false,
+    rentalState: false,
+    dividendState: false,
+    savingsAndInvestmentsState: false,
+    pensionState: false,
+    propertySaleState: false,
+    otherState: false,
+  });
+
+  const [chartOptions, setChartOptions] = useState<highcharts.Options>({
+    chart: {
+      alignTicks: false,
+      ignoreHiddenSeries: true,
+      animation: false,
+    },
+    credits: {
+      enabled: false,
+    },
+    title: {
+      text: "",
+      align: "left",
+    },
+    xAxis: {
+      crosshair: true,
+      labels: {
+        rotation: 0,
+        autoRotation: false,
+        overflow: "justify",
+        step: 4,
+      },
+      categories: [
+        ...summary.years.map((s, i) => {
+          return `<b>${s}</b> <br> ${summary.ages.owners[0][i] <= 100 ? summary.ages.owners[0][i] : "-"}<br>${
+            summary.ages.owners[1][i] <= 100 ? summary.ages.owners[1][i] : "-"
+          }`;
+        }),
+      ],
+      min: 0,
+      max: summary.years.length - 1,
+      plotBands: [
+        {
+          color: "#ffffff",
+          // color: "red",
+          from: -1,
+          to: inputs.household_owners[0].retirement_year - inputs.current_year + 0.5,
+          label: {
+            text: "",
+            align: "right",
+          },
+          events: {
+            click: () => {
+              console.log(summary.retirement_ages[0]);
+              setSliderValue([summary.years[0], inputs.household_owners[0].retirement_year + 3]);
+
+              setChartOptions({
+                ...chartOptions,
+                xAxis: {
+                  ...chartOptions.xAxis,
+                  min: 0,
+                  max: inputs.household_owners[0].retirement_year - inputs.current_year + 2,
+                },
+              });
+            },
+          },
+        },
+        {
+          color: "#eeeeee",
+          from: inputs.household_owners[0].retirement_year - inputs.current_year + 0.5,
+          to: summary.years.length,
+          label: {
+            align: "right",
+            text: "",
+          },
+          events: {
+            click: (e) => {
+              setSliderValue([
+                inputs.household_owners[0].retirement_year,
+                summary.years[summary.years.length - 1],
+              ]);
+
+              setChartOptions({
+                ...chartOptions,
+                xAxis: {
+                  ...chartOptions.xAxis,
+                  min: inputs.household_owners[0].retirement_year - inputs.current_year - 1,
+                  max: summary.years.length - 1,
+                },
+              });
+            },
+          },
+        },
+      ],
+    },
+    yAxis: {
+      gridLineWidth: 0,
+
+      min: 0,
+      max: null,
+      title: {
+        text: "",
+      },
+      labels: {
+        useHTML: true,
+        formatter: function (e: any) {
+          return "£" + e.value / 1000 + "k";
+        },
+      },
+    },
+    tooltip: {
+      useHTML: true,
+      backgroundColor: "white",
+      borderWidth: 0,
+      formatter: function () {
+        let tooltip_html = this.x.toString();
+        tooltip_html += "<table>";
+
+        this.points!.forEach(function (entry: any, index) {
+          if (entry.y > 0) {
+            if (entry.series.name === "Total Expenses") {
+              tooltip_html +=
+                '<tr><td style="font-weight:bold; color:' +
+                entry.series.color +
+                '">' +
+                entry.series.name +
+                ':</td><td style="text-align: right"> ' +
+                "(" +
+                "£" +
+                numberFormat(entry.y, 0, ".", ",") +
+                ")" +
+                "</td></tr>";
+            } else {
+              tooltip_html +=
+                '<tr><td style="font-weight:bold; color:' +
+                entry.series.color +
+                '">' +
+                entry.series.name +
+                '</td><td style="text-align: right"> ' +
+                "£" +
+                numberFormat(entry.y, 0, ".", ",") +
+                "</td></tr>";
+            }
+          }
+        });
+        tooltip_html += "</table>";
+
+        return tooltip_html;
+      },
+      followPointer: true,
+      shared: true,
+      distance: 30,
+    },
+    plotOptions: {
+      series: {
+        animation: false,
+        point: {
+          events: {
+            click: (e) => {
+              setSelectedSummaryAtIndexNumber(e.point.x);
+              setSelectedSummaryAtIndex(summary.years[e.point.x]);
+            },
+          },
+        },
+      },
+      column: {
+        stacking: "normal",
+        borderWidth: 1,
+        pointPadding: 0,
+        groupPadding: 0,
+        pointRange: 1,
+        events: {
+          click: (e) => {
+            // console.log(e.point.x)
+          },
+        },
+        point: {
+          events: {
+            select: (event) => {
+              // console.log(event);
+            },
+          },
+        },
+      },
+    },
+    colors: [
+      "#e3f2fd", //other
+      "#bbdefb", // bank
+      "#90caf9", // property
+      "#64b5f6", // pension
+      "#42a5f5", // SAI
+      "#2196f3", //dividend
+      "#1e88e5", //rental
+      "#1976d2", //self
+      "#1565c0", // employ
+    ],
+  });
+
+  let chartRef: any = React.useRef(null);
+
+  const [detailedView, setDetailedVliew] = useState<boolean>(true);
+  const [nominalView, setNominalView] = useState<boolean>(true);
+
+  useEffect(() => {
+    setChartOptions({
+      series: [
+        {
+          visible: true,
+          showInLegend: true,
+          name: "Shortfall",
+          type: "column",
+          data: detailedView
+            ? shortfall
+            : [
+                ...summary.years.map((s, i) => {
+                  return summary.cashflow.expenses[i] - summary.income.total_income[i];
+                }),
+              ],
+          color: "#f44336",
+          legendIndex: 11,
+        },
+        {
+          // visible: detailedView,
+          showInLegend: detailedView,
+          name: "Other",
+          type: "column",
+          events: detailedView
+            ? {
+                legendItemClick: (e) => {
+                  setIncomeState({ ...incomeState, otherState: !e.target.visible });
+                  if (e.target.visible) {
+                    setShortfall(
+                      shortfall.map((s, i) => {
+                        return s + summary.cashflow.other_income[i];
+                      })
+                    );
+                  } else {
+                    setShortfall(
+                      shortfall.map((s, i) => {
+                        return s - summary.cashflow.other_income[i];
+                      })
+                    );
+                  }
+                },
+              }
+            : {},
+          data: detailedView
+            ? [
+                ...summary.cashflow.other_income.map((s) => {
+                  return s;
+                }),
+              ]
+            : [],
+          legendIndex: 8,
+        },
+        {
+          // visible: detailedView,
+          showInLegend: detailedView,
+          name: "Bank Accounts",
+          type: "column",
+          events: detailedView
+            ? {
+                legendItemClick: (e) => {
+                  setIncomeState({ ...incomeState, otherState: !e.target.visible });
+                  if (e.target.visible) {
+                    setShortfall(
+                      shortfall.map((s, i) => {
+                        return s + summary.cashflow.bank_accounts[i];
+                      })
+                    );
+                  } else {
+                    setShortfall(
+                      shortfall.map((s, i) => {
+                        return s - summary.cashflow.bank_accounts[i];
+                      })
+                    );
+                  }
+                },
+              }
+            : {},
+          data: detailedView
+            ? [
+                ...summary.cashflow.bank_accounts.map((s) => {
+                  return s;
+                }),
+              ]
+            : [],
+          legendIndex: 9,
+        },
+        {
+          showInLegend: detailedView,
+          name: "Property Sale",
+          type: "column",
+          events: detailedView
+            ? {
+                legendItemClick: (e) => {
+                  setIncomeState({ ...incomeState, otherState: !e.target.visible });
+                  if (e.target.visible) {
+                    setShortfall(
+                      shortfall.map((s, i) => {
+                        return s + summary.cashflow.residential_property_sales_proceeds[i];
+                      })
+                    );
+                  } else {
+                    setShortfall(
+                      shortfall.map((s, i) => {
+                        return s - summary.cashflow.residential_property_sales_proceeds[i];
+                      })
+                    );
+                  }
+                },
+              }
+            : {},
+          data: detailedView
+            ? [
+                ...summary.cashflow.residential_property_sales_proceeds.map((s) => {
+                  return s;
+                }),
+              ]
+            : [],
+          legendIndex: 7,
+        },
+        {
+          // visible: detailedView,
+          showInLegend: detailedView,
+          name: "Pension",
+          type: "column",
+          events: detailedView
+            ? {
+                legendItemClick: (e) => {
+                  setIncomeState({ ...incomeState, pensionState: !e.target.visible });
+                  if (e.target.visible) {
+                    setShortfall(
+                      shortfall.map((s, i) => {
+                        return s + summary.cashflow.pension_income[i];
+                      })
+                    );
+                  } else {
+                    setShortfall(
+                      shortfall.map((s, i) => {
+                        return s - summary.cashflow.pension_income[i];
+                      })
+                    );
+                  }
+                },
+              }
+            : {},
+          data: detailedView
+            ? [
+                ...summary.cashflow.pension_income.map((s) => {
+                  return s;
+                }),
+              ]
+            : [],
+          legendIndex: 6,
+        },
+        {
+          // visible: detailedView,
+          showInLegend: detailedView,
+          name: "Savings and Investments",
+          type: "column",
+          events: detailedView
+            ? {
+                legendItemClick: (e) => {
+                  setIncomeState({ ...incomeState, savingsAndInvestmentsState: e.target.visible });
+                  if (e.target.visible) {
+                    setShortfall(
+                      shortfall.map((s, i) => {
+                        return s + summary.cashflow.savings_and_investments_drawdowns[i];
+                      })
+                    );
+                  } else {
+                    setShortfall(
+                      shortfall.map((s, i) => {
+                        return s - summary.cashflow.savings_and_investments_drawdowns[i];
+                      })
+                    );
+                  }
+                },
+              }
+            : {},
+          data: detailedView
+            ? [
+                ...summary.cashflow.savings_and_investments_drawdowns.map((s) => {
+                  return s;
+                }),
+              ]
+            : [],
+          legendIndex: 5,
+        },
+        {
+          // visible: detailedView,
+          showInLegend: detailedView,
+          name: "Dividend",
+          type: "column",
+          events: detailedView
+            ? {
+                legendItemClick: (e) => {
+                  setIncomeState({ ...incomeState, dividendState: !e.target.visible });
+                  if (e.target.visible) {
+                    setShortfall(
+                      shortfall.map((s, i) => {
+                        return s + summary.cashflow.dividend_income[i];
+                      })
+                    );
+                  } else {
+                    setShortfall(
+                      shortfall.map((s, i) => {
+                        return s - summary.cashflow.dividend_income[i];
+                      })
+                    );
+                  }
+                },
+              }
+            : {},
+          data: detailedView
+            ? [
+                ...summary.cashflow.dividend_income.map((s) => {
+                  return s;
+                }),
+              ]
+            : [],
+          legendIndex: 4,
+        },
+        {
+          // visible: detailedView,
+          showInLegend: detailedView,
+          name: "Rental",
+          type: "column",
+          events: detailedView
+            ? {
+                legendItemClick: (e) => {
+                  setIncomeState({ ...incomeState, rentalState: !e.target.visible });
+                  if (e.target.visible) {
+                    setShortfall(
+                      shortfall.map((s, i) => {
+                        return s + summary.cashflow.rental_income[i];
+                      })
+                    );
+                  } else {
+                    setShortfall(
+                      shortfall.map((s, i) => {
+                        return s - summary.cashflow.rental_income[i];
+                      })
+                    );
+                  }
+                },
+              }
+            : {},
+          data: detailedView
+            ? [
+                ...summary.cashflow.rental_income.map((s) => {
+                  return s;
+                }),
+              ]
+            : [],
+          legendIndex: 3,
+        },
+        {
+          // visible: incomeState.selfEmploymentState,
+          showInLegend: detailedView,
+          name: "Self-Employment",
+          type: "column",
+          events: detailedView
+            ? {
+                legendItemClick: (e) => {
+                  setIncomeState({ ...incomeState, selfEmploymentState: e.target.visible });
+                  if (e.target.visible) {
+                    setShortfall(
+                      shortfall.map((s, i) => {
+                        return s + summary.cashflow.self_employment_income[i];
+                      })
+                    );
+                  } else {
+                    setShortfall(
+                      shortfall.map((s, i) => {
+                        return s - summary.cashflow.self_employment_income[i];
+                      })
+                    );
+                  }
+                },
+              }
+            : {},
+          data: detailedView
+            ? [
+                ...summary.cashflow.self_employment_income.map((s) => {
+                  return s;
+                }),
+              ]
+            : [],
+          legendIndex: 2,
+        },
+        {
+          showInLegend: detailedView,
+          name: "Employment",
+          type: "column",
+          events: detailedView
+            ? {
+                legendItemClick: (e) => {
+                  setIncomeState({ ...incomeState, employmentState: e.target.visible });
+                  if (detailedView) {
+                    if (e.target.visible) {
+                      let v = shortfall.map((s, i) => {
+                        return s + summary.cashflow.employment_income[i];
+                      });
+                      setShortfall(v);
+                    } else {
+                      let v = shortfall.map((s, i) => {
+                        return s - summary.cashflow.employment_income[i];
+                      });
+                      setShortfall(v);
+                    }
+                  }
+                },
+              }
+            : {},
+          data: detailedView
+            ? [
+                ...summary.cashflow.employment_income.map((s) => {
+                  return s;
+                }),
+              ]
+            : [],
+          legendIndex: 1,
+
+          // ...(!detailedView
+          //   ? {
+          //       visible: false,
+          //     }
+          //   : { visible: true }),
+        },
+        {
+          visible: !detailedView,
+          showInLegend: !detailedView,
+          name: "Inflow",
+          type: "column",
+          color: "#1976d2",
+          data: [...summary.income.total_income],
+        },
+        {
+          zIndex: 99,
+          visible: true,
+          showInLegend: true,
+          type: "line",
+          name: "Total Expenses",
+          step: "center",
+          data: [...summary.cashflow.expenses],
+          color: "#212121",
+          marker: {
+            enabled: false,
+          },
+          // pointPlacement: -0.5,
+
+          lineWidth: 3,
+          legendIndex: 10,
+        },
+      ],
+    });
+  }, [summary, detailedView, shortfall]);
+
+  useEffect(() => {
+    setShortfall([
+      ...summary.years.map((s, i) => {
+        return summary.cashflow.expenses[i] - summary.income.total_income[i];
+      }),
+    ]);
+  }, [nominalView]);
+
+  const [chartControls, setChartControls] = useState({
+    label: "years",
+    zoomable: false,
+  });
+
+  const [some, setSome] = useState(0);
+
+  return (
+    <Layout style={{ backgroundColor: "white" }}>
+      <Card
+        title="Cashflow"
+        style={{ margin: "16px" }}
+        bordered={false}
+        extra={
+          <div>
+            <Switch
+              style={{ marginRight: "16px" }}
+              checkedChildren="Detailed"
+              unCheckedChildren="Detailed"
+              defaultChecked={true}
+              onChange={(e) => {
+                setDetailedVliew(e);
+              }}
+            />
+
+            <Switch
+              style={{ marginRight: "16px" }}
+              checkedChildren="Real"
+              unCheckedChildren="Nominal"
+              defaultChecked
+              onChange={(e) => {
+                e ? setSummary(nominalSummary) : setSummary(realSummary);
+                setNominalView(e);
+
+                const clone: any = { ...chartOptions };
+
+                clone.series = clone.series.map((s: any) => {
+                  return { ...s, visible: true };
+                });
+
+                setChartOptions(clone);
+              }}
+            />
+            <Switch
+              style={{ marginRight: "16px" }}
+              checkedChildren="Zoom"
+              unCheckedChildren="Zoom"
+              defaultChecked={false}
+              onChange={(e) => {
+                setChartControls({ ...chartControls, zoomable: e });
+              }}
+            />
+          </div>
+        }
+      >
+        {chartControls.zoomable && (
+          <Row justify="space-around" align="middle" style={{ marginBottom: "16px" }}>
+            <Col span={22}>
+              <Slider
+                range={{ draggableTrack: true }}
+                min={summary.years[0]}
+                max={summary.years[summary.years.length - 1]}
+                defaultValue={[summary.years[0], summary.years[0]]}
+                value={[sliderValue[0], sliderValue[1]]}
+                tipFormatter={(value: any) => {
+                  if (chartControls.label === "years") {
+                    return `${value}`;
+                  } else {
+                    return summary.ages.owners[0][value! - summary.years[0]].toString();
+                  }
+                }}
+                onChange={(e: number[]) => {
+                  setSliderValue(e);
+                }}
+                onAfterChange={(e: number[]) => {
+                  setChartOptions({
+                    ...chartOptions,
+                    xAxis: {
+                      ...chartOptions.xAxis,
+                      min: e[0] - summary.years[0],
+                      max: e[1] - summary.years[0],
+                    },
+                  });
+                }}
+              />
+            </Col>
+            <Col>
+              <Button
+                onClick={(e) => {
+                  setSliderValue([summary.years[0], summary.years[summary.years.length - 1]]);
+                  setChartOptions({
+                    ...chartOptions,
+                    xAxis: {
+                      ...chartOptions.xAxis,
+                      min: 0,
+                      max: summary.years.length - 1,
+                    },
+                    yAxis: {
+                      ...chartOptions.yAxis,
+                      max: null,
+                    },
+                  });
+                }}
+              >
+                Reset
+              </Button>
+            </Col>
+          </Row>
+        )}
+
+        <Row>
+          <Col span={24}>
+            <HighchartsReact
+              highcharts={highcharts}
+              options={chartOptions}
+              ref={chartRef}
+              callback={(chart: any) => {
+                setSome(chart.yAxis[0].max);
+              }}
+            />
+          </Col>
+          {chartControls.zoomable && (
+            <Col style={{ paddingBottom: "80px", paddingTop: "20px" }}>
+              <Slider
+                vertical
+                step={10000}
+                max={some}
+                defaultValue={some}
+                style={{ marginRight: "16px" }}
+                onAfterChange={(e: number) => {
+                  setChartOptions({
+                    ...chartOptions,
+                    yAxis: {
+                      ...chartOptions.yAxis,
+                      max: e,
+                    },
+                  });
+                }}
+              />
+            </Col>
+          )}
+        </Row>
+
+        <Card bordered={false}>
+          <Row justify={"center"}>
+            <Col>
+              <Button>Original (Planned) </Button>
+            </Col>
+            <Col>
+              <Button>Insight Result </Button>
+            </Col>
+          </Row>
+        </Card>
+
+        {/* Need Analysis Tabs */}
+        <Tabs tabPosition={"left"}>
+          <TabPane tab="Additional Annual Savings" key="1">
+            <Row justify={"space-around"}>
+              <Col span={23}>
+                <Title level={3}>Annual Savings</Title>
+                <Text>
+                  he Annual Savings analysis helps you decide how much you need to save from now until a
+                  future event in order to prevent shortfall. To run the Annual Savings analysis, select a
+                  target event in the future. The calculated figure is the amount that you should save
+                  annually to prevent shortfalls from occurring after the selected event.
+                </Text>
+              </Col>
+            </Row>
+
+            <Row justify="space-around">
+              <Col span={8}>
+                <Title level={3}>Start Event</Title>
+                <Card size="small">
+                  <Row>
+                    <Col span={4}>SVG</Col>
+                    <Col span={16}>
+                      <Text strong>Start </Text>
+                      <br />
+                      <Text strong>2021 </Text>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Title level={3}>End Event</Title>
+                <Card size="small">
+                  <Row>
+                    <Col span={4}>SVG</Col>
+                    <Col span={16}>
+                      <Text strong>end </Text>
+                      <br />
+                      <Text strong>2055 </Text>
+                    </Col>
+                    <Col span={4}>
+                      <Button type="link">Change</Button>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Card bordered={false}>
+                  <Row justify="space-around">
+                    <Col>
+                      <Button type="primary">Get Started</Button>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+
+              {/*           
+          <Col span={8}>
+            <Title level={3}>Additional Savings Needed</Title>
+            <Card size="small">
+              <Row>
+                <Col>
+                  <Title level={3}> 123 Annually</Title>
+                </Col>
+              </Row>
+            </Card>
+          </Col> */}
+            </Row>
+          </TabPane>
+
+          <TabPane tab="Retirement Spending" key="2">
+            <Row justify={"space-around"}>
+              <Col span={23}>
+                <Title level={3}>Retirement Spending</Title>
+                <Text>
+                  The retirement spending capacity analyzer determines the level of spending (with inflation)
+                  that could be achieved in retirement. If already retired, the analyzer will compute the
+                  spending capacity from the start of the plan.
+                </Text>
+              </Col>
+            </Row>
+
+            <Row justify="space-around">
+              <Col span={8}>
+                <Title level={3}>Texes</Title>
+              </Col>
+
+              <Col span={8}>
+                <Card bordered={false}>
+                  <Row justify="space-around">
+                    <Col>
+                      <Button type="primary">Get Started</Button>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+
+              {/*           
+          <Col span={8}>
+            <Title level={3}>Spending Capacity in Retirement</Title>
+            <Card size="small">
+              <Row>
+                <Col>
+                  <Title level={3}> 123 Annually</Title>
+                </Col>
+              </Row>
+            </Card>
+          </Col> */}
+            </Row>
+          </TabPane>
+
+          <TabPane tab="Investment Returns" key="3">
+            <Row justify={"space-around"}>
+              <Col span={23}>
+                <Title level={3}>Investment Returns</Title>
+                <Text>
+                  he Annual Savings analysis helps you decide how much you need to save from now until a
+                  future event in order to prevent shortfall. To run the Annual Savings analysis, select a
+                  target event in the future. The calculated figure is the amount that you should save
+                  annually to prevent shortfalls from occurring after the selected event.
+                </Text>
+              </Col>
+            </Row>
+
+            <Row justify="space-around">
+              <Col span={8}>
+                <Title level={3}>Start Event</Title>
+                <Card size="small">
+                  <Row>
+                    <Col span={4}>SVG</Col>
+                    <Col span={16}>
+                      <Text strong>Start </Text>
+                      <br />
+                      <Text strong>2021 </Text>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Title level={3}>End Event</Title>
+                <Card size="small">
+                  <Row>
+                    <Col span={4}>SVG</Col>
+                    <Col span={16}>
+                      <Text strong>end </Text>
+                      <br />
+                      <Text strong>2055 </Text>
+                    </Col>
+                    <Col span={4}>
+                      <Button type="link">Change</Button>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Card bordered={false}>
+                  <Row justify="space-around">
+                    <Col>
+                      <Button type="primary">Get Started</Button>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+
+              {/*           
+          <Col span={8}>
+            <Title level={3}>Required Rate of Return</Title>
+            <Card size="small">
+              <Row>
+                <Col>
+                  <Title level={3}> 12%</Title>
+                </Col>
+              </Row>
+            </Card>
+          </Col> */}
+            </Row>
+          </TabPane>
+
+          <TabPane tab="Lump Sum Savings Needs" key="4">
+            <Row justify={"space-around"}>
+              <Col span={23}>
+                <Title level={3}>Lump Sum Savings</Title>
+                <Text>
+                  he Annual Savings analysis helps you decide how much you need to save from now until a
+                  future event in order to prevent shortfall. To run the Annual Savings analysis, select a
+                  target event in the future. The calculated figure is the amount that you should save
+                  annually to prevent shortfalls from occurring after the selected event.
+                </Text>
+              </Col>
+            </Row>
+
+            <Row justify="space-around">
+              <Col span={8}>
+                <Title level={3}>Start Event</Title>
+                <Card size="small">
+                  <Row>
+                    <Col span={4}>SVG</Col>
+                    <Col span={16}>
+                      <Text strong>Start </Text>
+                      <br />
+                      <Text strong>2021 </Text>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Title level={3}>End Event</Title>
+                <Card size="small">
+                  <Row>
+                    <Col span={4}>SVG</Col>
+                    <Col span={16}>
+                      <Text strong>end </Text>
+                      <br />
+                      <Text strong>2055 </Text>
+                    </Col>
+                    <Col span={4}>
+                      <Button type="link">Change</Button>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Card bordered={false}>
+                  <Row justify="space-around">
+                    <Col>
+                      <Button type="primary">Get Started</Button>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+
+              {/*           
+          <Col span={8}>
+            <Title level={3}>Lump Sum Needed</Title>
+            <Card size="small">
+              <Row>
+                <Col>
+                  <Title level={3}> 1233</Title>
+                </Col>
+              </Row>
+            </Card>
+          </Col> */}
+            </Row>
+          </TabPane>
+
+          <TabPane tab="Loss Capacity" key="5">
+            <Row justify={"space-around"}>
+              <Col span={23}>
+                <Title level={3}>Retirement Spending</Title>
+                <Text>
+                  The retirement spending capacity analyzer determines the level of spending (with inflation)
+                  that could be achieved in retirement. If already retired, the analyzer will compute the
+                  spending capacity from the start of the plan.
+                </Text>
+              </Col>
+            </Row>
+
+            <Row justify="space-around">
+              <Col span={8}>
+                <Title level={3}>loss Event</Title>
+                <Card size="small">
+                  <Row>
+                    <Col span={4}>SVG</Col>
+                    <Col span={16}>
+                      <Text strong>end </Text>
+                      <br />
+                      <Text strong>2055 </Text>
+                    </Col>
+                    <Col span={4}>
+                      <Button type="link">Change</Button>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+
+              <Col span={8}>
+                <Card bordered={false}>
+                  <Row justify="space-around">
+                    <Col>
+                      <Button type="primary">Get Started</Button>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+
+              {/* <Col span={8}>
+            <Title level={3}>Loss Rate</Title>
+            <Card size="small">
+              <Row>
+                <Col>
+                  <Title level={3}> 123 %</Title>
+                </Col>
+              </Row>
+            </Card>
+          </Col>
+          <Col span={8}>
+            <Title level={3}>Loss Amount</Title>
+            <Card size="small">
+              <Row>
+                <Col>
+                  <Title level={3}> 123 </Title>
+                </Col>
+              </Row>
+            </Card>
+          </Col>  */}
+            </Row>
+          </TabPane>
+          <TabPane tab="Life Needs – First Member" key="6">
+            Content of Tab 3
+          </TabPane>
+          <TabPane tab="Life Needs – Second Member" key="7">
+            Content of Tab 3
+          </TabPane>
+        </Tabs>
+      </Card>
+    </Layout>
+  );
+};
+
+export default NeedAnalysis;

@@ -26,6 +26,7 @@ import Assumption from "./pages/assumptions/Assumption";
 import LifeMilestones from "./pages/clientDetails/LifeMilestones";
 import AssumptionFrom from "./pages/assumptions/AssumptionFrom";
 import InputsEditForm from "./pages/inputs/InputsEditForm";
+import NeedsAnalysis from "./pages/clientDetails/NeedsAnalysis";
 
 function App() {
   return (
@@ -77,6 +78,11 @@ function App() {
                 exact
                 path={"/dashboard/clientDashboard/clientPlanDetails/expensesBreakdown"}
                 component={ExpensesBreakdown}
+              />
+              <Route
+                exact
+                path={"/dashboard/clientDashboard/clientPlanDetails/needAnalysis"}
+                component={NeedsAnalysis}
               />
             </Switch>
           </Content>

@@ -53,6 +53,14 @@ const SideNav = () => {
               Expenses Breakdown
             </Link>
           </Menu.Item>
+          <Menu.Item key="7">
+            <Link
+              to={"/dashboard/clientDashboard/clientPlanDetails/needAnalysis"}
+              onClick={() => setMenuKey(["7"])}
+            >
+              Need Analysis
+            </Link>
+          </Menu.Item>
         </Menu>
       </Sider>
     </>
