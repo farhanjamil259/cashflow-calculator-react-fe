@@ -61,6 +61,14 @@ const SideNav = () => {
               Need Analysis
             </Link>
           </Menu.Item>
+          <Menu.Item key="8">
+            <Link
+              to={"/dashboard/clientDashboard/clientPlanDetails/forecast"}
+              onClick={() => setMenuKey(["8"])}
+            >
+              Forecast 
+            </Link>
+          </Menu.Item>
         </Menu>
       </Sider>
     </>

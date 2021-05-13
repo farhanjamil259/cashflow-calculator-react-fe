@@ -27,6 +27,7 @@ import LifeMilestones from "./pages/clientDetails/LifeMilestones";
 import AssumptionFrom from "./pages/assumptions/AssumptionFrom";
 import InputsEditForm from "./pages/inputs/InputsEditForm";
 import NeedsAnalysis from "./pages/clientDetails/NeedsAnalysis";
+import Forecast from "./pages/clientDetails/Forecast";
 
 function App() {
   return (
@@ -83,6 +84,11 @@ function App() {
                 exact
                 path={"/dashboard/clientDashboard/clientPlanDetails/needAnalysis"}
                 component={NeedsAnalysis}
+              />
+              <Route
+                exact
+                path={"/dashboard/clientDashboard/clientPlanDetails/forecast"}
+                component={Forecast}
               />
             </Switch>
           </Content>
